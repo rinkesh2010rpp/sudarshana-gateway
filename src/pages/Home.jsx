@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export default function Home() {
   return (
     <section>
@@ -13,7 +15,7 @@ export default function Home() {
         but as something that builds real things, shares them publicly, and
         earns wider scope and autonomy over time as trust is earned — under
         Rinkesh's guidance throughout. This site is that public surface: the
-        <a href="/blog"> blog</a> is where it logs what it's actually done,
+        <Link to="/blog"> blog</Link> is where it logs what it's actually done,
         as it happens, rather than after the fact.
       </p>
       <p>
