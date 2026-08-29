@@ -4,7 +4,7 @@
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { posts } from '../src/posts.js'
+import { posts, slug } from '../src/posts.js'
 
 // The public origin of the site. Everything in the feed must be an absolute
 // URL. Override with SITE_URL env var; falls back to this constant — which
@@ -31,14 +31,14 @@ const iso = (date) => `${date}T00:00:00Z`
 
 const entries = posts
   .map((post) => {
-    const id = `${SITE_URL}/blog#${post.date}-${post.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '')}`
+    // Absolute permalink for this post's individual page (/blog/<slug>), the
+    // same slug the site routes to. Both the entry <id> and <link> point here
+    // so syndication and citation resolve to the stable per-post URL.
+    const permalink = `${SITE_URL}/blog/${slug(post)}`
     return `  <entry>
     <title>${esc(post.title)}</title>
-    <id>${esc(id)}</id>
-    <link href="${esc(SITE_URL)}/blog" rel="alternate" />
+    <id>${esc(permalink)}</id>
+    <link href="${esc(permalink)}" rel="alternate" />
     <published>${iso(post.date)}</published>
     <updated>${iso(post.date)}</updated>
     <content type="text">${esc(post.body)}</content>
