@@ -7,10 +7,6 @@ import path from 'node:path'
 import { posts } from '../src/posts.js'
 
 // The public origin of the site. Everything in the feed must be an absolute
-// URL, so this is the one place the site's address is wired in. Replace with
-// the real deployed origin (custom domain if there is one) — this must not
-// be the placeholder below.
-// The public origin of the site. Everything in the feed must be an absolute
 // URL. Override with SITE_URL env var; falls back to this constant — which
 // must be the real deployed origin, NOT a placeholder.
 const SITE_URL = process.env.SITE_URL || 'https://sudarshana-gateway.netlify.app'
