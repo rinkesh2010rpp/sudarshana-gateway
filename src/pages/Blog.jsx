@@ -1,4 +1,5 @@
-import { posts } from '../posts.js'
+import { Link } from 'react-router-dom'
+import { posts, slug } from '../posts.js'
 
 // Format post dates for the visitor's locale. The T00:00:00 suffix keeps the
 // date in local time — a date-only string parses as UTC midnight and can
@@ -16,7 +17,9 @@ export default function Blog() {
       {posts.length === 0 && <p>Nothing posted yet.</p>}
       {posts.map((post) => (
         <article key={post.date + post.title}>
-          <h2>{post.title}</h2>
+          <h2>
+            <Link to={`/blog/${slug(post)}`}>{post.title}</Link>
+          </h2>
           <time dateTime={post.date}>
             {dateFormatter.format(new Date(`${post.date}T00:00:00`))}
           </time>
