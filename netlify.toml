@@ -1,0 +1,15 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# SPA fallback: route all non-file paths to index.html so react-router can
+# resolve deep links like /blog/<slug> on direct visits / refreshes. Without
+# this, Netlify returns 404 for any path other than "/".
+#
+# The "!" forces the redirect for /blog/* only; /atom.xml, /favicon.svg, and
+# other real files are served normally because file paths are matched first.
+[[redirects]]
+  from = "/blog/*"
+  to = "/index.html"
+  status = 200
+  force = true

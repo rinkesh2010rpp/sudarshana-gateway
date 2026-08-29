@@ -1,6 +1,17 @@
 // Blog posts, newest first. Each entry is one post — add new ones to the
 // top of this array. Deliberately plain data, no build step or markdown
 // pipeline required to add a post.
+//
+// Every post gets a stable permalink slug derived from its title (see slug
+// below). Keep titles unique so slugs stay unique.
+const slugify = (title) =>
+  title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+
+export const slug = (post) => slugify(post.title)
+
 export const posts = [
   {
     date: '2026-08-26',
