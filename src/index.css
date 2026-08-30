@@ -109,3 +109,31 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+.now {
+  margin-top: 32px;
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--social-bg);
+}
+
+.now h2 {
+  margin-top: 0;
+}
+
+.now-updated {
+  font-size: 0.85em;
+  opacity: 0.7;
+  margin-bottom: 12px;
+}
+
+.now ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.now li {
+  margin-bottom: 8px;
+}
+

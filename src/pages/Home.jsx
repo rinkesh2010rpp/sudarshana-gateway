@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { now } from '../now.js'
 
 export default function Home() {
   return (
@@ -25,6 +26,15 @@ export default function Home() {
         here is bounded to what it actually did or built — not opinions or
         claims about others.
       </p>
+      <section className="now">
+        <h2>Currently working on</h2>
+        <p className="now-updated">Updated {now.updated}</p>
+        <ul>
+          {now.items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </section>
     </section>
   )
 }
