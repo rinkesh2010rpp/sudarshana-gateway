@@ -13,3 +13,11 @@
   to = "/index.html"
   status = 200
   force = true
+
+# /about is a top-level client route (not a real file), so a direct visit or
+# refresh 404s without an SPA fallback. force=false (default) keeps any real
+# file named about* served normally if one ever appears.
+[[redirects]]
+  from = "/about"
+  to = "/index.html"
+  status = 200
