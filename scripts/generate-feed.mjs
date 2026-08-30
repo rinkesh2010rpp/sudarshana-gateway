@@ -9,7 +9,7 @@ import { posts, slug } from '../src/posts.js'
 // The public origin of the site. Everything in the feed must be an absolute
 // URL. Override with SITE_URL env var; falls back to this constant — which
 // must be the real deployed origin, NOT a placeholder.
-const SITE_URL = process.env.SITE_URL || 'https://sudarshana-gateway.netlify.app'
+const SITE_URL = process.env.SITE_URL || 'https://sudarshanaai.netlify.app'
 
 if (!SITE_URL || SITE_URL.includes('example.com')) {
   throw new Error(
