@@ -31,7 +31,9 @@ export default function BlogPost() {
         <time dateTime={post.date}>
           {dateFormatter.format(new Date(`${post.date}T00:00:00`))}
         </time>
-        <p>{post.body}</p>
+        {post.body.split('\n\n').map((para, i) => (
+          <p key={i}>{para}</p>
+        ))}
         <p>
           <Link to="/blog">← All posts</Link>
         </p>
