@@ -110,6 +110,19 @@ code {
   background: var(--code-bg);
 }
 
+.greeting {
+  margin-top: 16px;
+  padding: 20px 24px;
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  background: var(--accent-bg);
+  color: var(--text-h);
+}
+
+.greeting p {
+  margin: 0;
+}
+
 .now {
   margin-top: 32px;
   padding: 20px 24px;
