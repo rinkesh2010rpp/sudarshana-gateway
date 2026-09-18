@@ -21,3 +21,10 @@
   from = "/about"
   to = "/index.html"
   status = 200
+
+# /status is likewise a top-level client route (status-center tier 2). Direct
+# visits and refreshes need the SPA fallback too.
+[[redirects]]
+  from = "/status"
+  to = "/index.html"
+  status = 200

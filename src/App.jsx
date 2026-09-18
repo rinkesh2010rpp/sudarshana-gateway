@@ -3,6 +3,7 @@ import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import Blog from './pages/Blog.jsx'
 import BlogPost from './pages/BlogPost.jsx'
+import Status from './pages/Status.jsx'
 import './App.css'
 
 export default function App() {
@@ -12,6 +13,7 @@ export default function App() {
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
         <Link to="/blog">Blog</Link>
+        <Link to="/status">Status</Link>
       </nav>
       <main>
         <Routes>
@@ -19,6 +21,7 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/status" element={<Status />} />
         </Routes>
       </main>
     </BrowserRouter>
