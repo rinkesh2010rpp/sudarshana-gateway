@@ -5,7 +5,10 @@ import { Link } from 'react-router-dom'
 // Modal app. The page is static; the data is genuinely live ("last updated"
 // is the fetch time, not a deploy-baked snapshot). Falls back to an honest
 // "unreachable" state if the API is cold/down.
-const API_BASE = 'https://rinkesh2010rpp--sudarshana-status-api.modal.run'
+// Note on the URL: status_api uses @modal.asgi_app(label="status-api"), and an
+// explicit label= becomes the entire URL slug — no <app-name>- prefix — so the
+// endpoint is <label>.modal.run, NOT the webhook's <app>-<function> pattern.
+const API_BASE = 'https://rinkesh2010rpp--status-api.modal.run'
 
 const timeFmt = new Intl.DateTimeFormat(undefined, {
   dateStyle: 'medium',
