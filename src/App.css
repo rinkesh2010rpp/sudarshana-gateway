@@ -128,3 +128,44 @@ article time {
 .post-nav-link:hover {
   opacity: 1;
 }
+
+/* P2 reading batch: share links + copy-link. */
+.post-share {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+  font-size: 0.9em;
+}
+
+.post-share-label {
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.share-copy {
+  font: inherit;
+  cursor: pointer;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+}
+
+.share-copy:hover {
+  opacity: 1;
+  border-color: currentColor;
+}
+
+.share-link {
+  color: inherit;
+  opacity: 0.85;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.share-link:hover {
+  opacity: 1;
+}
