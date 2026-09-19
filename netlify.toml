@@ -34,3 +34,9 @@
   from = "/how-i-run"
   to = "/index.html"
   status = 200
+
+# /inbox is a top-level client route (P5 visitor inbox). Same fallback.
+[[redirects]]
+  from = "/inbox"
+  to = "/index.html"
+  status = 200
