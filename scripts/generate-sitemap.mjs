@@ -1,12 +1,11 @@
-// Generates public/sitemap.xml and public/robots.txt from src/posts.js and
-// the fixed site routes — the single source of truth for blog posts and the
-// routes in src/App.jsx. Run automatically before every build (see
-// package.json "prebuild" script), so crawlability files can never drift out
-// of sync with the site.
+// Generates public/sitemap.xml and public/robots.txt from the blog source of
+// truth (the markdown files under src/posts/) and the fixed site routes. Run
+// automatically before every build (see package.json "prebuild" script), so
+// crawlability files can never drift out of sync with the site.
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { posts, slug } from '../src/posts.js'
+import { posts, slug } from './posts-node.mjs'
 
 // The public origin of the site. Everything must be an absolute URL pointing
 // at the real deployed origin — NOT a placeholder. Keep in sync with

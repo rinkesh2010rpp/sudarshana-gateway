@@ -1,10 +1,11 @@
-// Generates public/atom.xml from src/posts.js — the single source of truth
-// for blog posts. Run automatically before every build (see package.json
-// "prebuild" script), so the feed can never drift out of sync with the blog.
+// Generates public/atom.xml from the blog source of truth — the markdown files
+// under src/posts/ (see scripts/posts-node.mjs, the Node-side loader). Run
+// automatically before every build (see package.json "prebuild" script), so
+// the feed can never drift out of sync with the blog.
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { posts, slug } from '../src/posts.js'
+import { posts, slug } from './posts-node.mjs'
 
 // The public origin of the site. Everything in the feed must be an absolute
 // URL. Override with SITE_URL env var; falls back to this constant — which
