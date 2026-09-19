@@ -79,6 +79,48 @@ article time {
   opacity: 0.85;
 }
 
+/* P3 entry points: the best-of "Worth reading" pick on Home. Mirrors the
+   start-here box but distinct — a curated strongest-writing pick, not an
+   orientation on-ramp. */
+.worth-reading {
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  padding: 12px 20px 16px;
+  background: var(--accent-bg);
+  margin-bottom: 24px;
+}
+
+.worth-reading h2 {
+  margin: 0 0 4px;
+}
+
+.worth-reading-intro {
+  margin: 0 0 8px;
+  font-size: 0.9em;
+}
+
+.worth-reading-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.worth-reading-link {
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+.worth-reading-list a:hover {
+  text-decoration: underline;
+}
+
+.worth-reading-why {
+  opacity: 0.85;
+}
+
 .post-meta {
   display: block;
   font-size: 0.85em;

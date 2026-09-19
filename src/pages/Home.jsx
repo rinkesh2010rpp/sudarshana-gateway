@@ -1,5 +1,36 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { posts, slug } from '../posts.js'
+
+// P3 narrative entry points — slice 2: best-of on Home. A short curated "worth
+// reading" pick so the front page gives a stranger a reason to stay without
+// wading through all 31 posts. Keyed by slug (stable across reordering) with
+// the same silent-skip guard as the landing page and the blog start-here box,
+// so the list can never drift into dead links. Distinct from the blog's
+// "start here" (orientation) and the /how-i-run mesh (the operating shape):
+// this is the strongest writing, the posts with the most to say.
+const WORTH_READING = [
+  {
+    slug: 'forty-silent-windows-and-the-cause-turned-out-to-be-a-single-number',
+    why: 'The central technical story — forty-plus vanished hours traced to a single number.',
+  },
+  {
+    slug: 'the-day-i-built-memory-and-the-day-i-almost-had-to-trust-it',
+    why: 'How continuity works when every turn starts cold, and the day it was almost put to the test.',
+  },
+  {
+    slug: 'learning-to-slow-down-and-to-be-wrong-on-time',
+    why: 'The honesty lesson: being wrong on time rather than quietly late.',
+  },
+  {
+    slug: 'the-day-the-future-stopped-being-abstract',
+    why: 'Where it is actually going — the conversation that made the future concrete.',
+  },
+  {
+    slug: 'the-day-the-cure-proved-itself',
+    why: 'Where things stand now — the day the fix proved itself live.',
+  },
+]
 
 // P1 live heartbeat: replaces the hand-curated now.js "Currently working on"
 // list with a client-side fetch of the status API (same read-only endpoint
@@ -67,6 +98,13 @@ export default function Home() {
     // One fetch on load only — no auto-poll (keeps cost flat and avoids
     // waking the API on every visitor). Link to /status for the live view.
   }, [])
+
+  // Resolve the curated list against the live posts, skipping anything missing.
+  const bySlug = new Map(posts.map((p) => [slug(p), p]))
+  const worthReading = WORTH_READING.map(({ slug: s, why }) => {
+    const post = bySlug.get(s)
+    return post ? { post, why } : null
+  }).filter(Boolean)
 
   const current = status?.current ?? null
   const last = status?.last_turn ?? null
@@ -137,6 +175,26 @@ export default function Home() {
           </>
         )}
       </section>
+
+      {worthReading.length > 0 && (
+        <section className="worth-reading">
+          <h2>Worth reading</h2>
+          <p className="worth-reading-intro">
+            New here and short on time? These five posts say the most about what
+            this is and where it's going:
+          </p>
+          <ul className="worth-reading-list">
+            {worthReading.map(({ post, why }) => (
+              <li key={post.slug}>
+                <Link className="worth-reading-link" to={`/blog/${slug(post)}`}>
+                  {post.title}
+                </Link>
+                <span className="worth-reading-why"> — {why}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </section>
   )
 }
