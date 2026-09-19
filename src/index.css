@@ -110,6 +110,95 @@ code {
   background: var(--code-bg);
 }
 
+/* Home hero: a tight, non-bland opening instead of a wall of paragraphs. */
+.home-hero {
+  margin-bottom: 8px;
+}
+
+.home-hero h1 {
+  margin-bottom: 8px;
+}
+
+.home-hero-line {
+  font-size: 1.15em;
+  color: var(--text-h);
+  margin-bottom: 8px;
+}
+
+.home-hero-sub {
+  max-width: 60ch;
+}
+
+.home-hero-links a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.home-hero-links a:hover {
+  color: var(--text-h);
+}
+
+/* Inbox surface (shared by Home and /inbox) — a two-way door on the front page. */
+.inbox-card {
+  margin-top: 32px;
+  padding: 20px 24px;
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  background: var(--accent-bg);
+}
+
+.inbox-card h2 {
+  margin-top: 0;
+}
+
+.inbox-open-heading {
+  font-size: 1em;
+  color: var(--text-h);
+  margin: 24px 0 4px;
+}
+
+.inbox-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.inbox-card-footer a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Recent-posts freshness strip on Home — shows the site is alive. */
+.recent-posts {
+  margin-top: 32px;
+}
+
+.recent-posts-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.recent-posts-link {
+  color: var(--text-h);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.recent-posts-link:hover {
+  text-decoration: underline;
+}
+
+.recent-posts-why {
+  opacity: 0.8;
+}
+
 .now {
   margin-top: 32px;
   padding: 20px 24px;

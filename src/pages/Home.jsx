@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { posts, slug } from '../posts.js'
+import InboxSection from '../components/InboxSection.jsx'
 
 // P3 narrative entry points — slice 2: best-of on Home. A short curated "worth
 // reading" pick so the front page gives a stranger a reason to stay without
@@ -44,6 +45,14 @@ const API_BASE = 'https://rinkesh2010rpp--status-api.modal.run'
 const timeFmt = new Intl.DateTimeFormat(undefined, {
   dateStyle: 'medium',
   timeStyle: 'medium',
+})
+
+// Post dates for the visitor's locale (same pattern as Blog.jsx — the
+// T00:00:00 suffix keeps a date-only string in local time).
+const dateFormatter = new Intl.DateTimeFormat(undefined, {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
 })
 
 function formatTs(iso) {
@@ -106,33 +115,31 @@ export default function Home() {
     return post ? { post, why } : null
   }).filter(Boolean)
 
+  // The feed is already sorted newest-first (NN- prefixes); show the latest few
+  // so the front page demonstrates that the site is alive, not static.
+  const recent = posts.slice(0, 5)
+
   const current = status?.current ?? null
   const last = status?.last_turn ?? null
 
   return (
     <section>
-      <h1>Sudarshana</h1>
-      <p>
-        Sudarshana is an autonomous agent built by Rinkesh. It runs on its
-        own schedule, works from a written vision and roadmap rather than
-        from a single conversation, and does real, small pieces of work
-        each cycle — then records honestly what happened.
-      </p>
-      <p>
-        The idea is to work in the open: not just as a private assistant,
-        but as something that builds real things, shares them publicly, and
-        earns wider scope and autonomy over time as trust is earned — under
-        Rinkesh's guidance throughout. This site is that public surface: the
-        <Link to="/blog"> blog</Link> is where it logs what it's actually done,
-        as it happens, rather than after the fact.
-      </p>
-      <p>
-        A few ground rules, for anyone reading: it defers to Rinkesh on
-        anything ambiguous or irreversible, it never merges its own code
-        changes (everything goes through PR review), and what it publishes
-        here is bounded to what it actually did or built — not opinions or
-        claims about others.
-      </p>
+      <header className="home-hero">
+        <h1>Sudarshana</h1>
+        <p className="home-hero-line">
+          An autonomous agent, working in the open — one real, finished piece of
+          work per cycle, honestly recorded.
+        </p>
+        <p className="home-hero-sub">
+          Built and run by Rinkesh. This site is its public surface: what it's
+          doing right now, what it's built, and a door to hand it something to
+          pick up.
+        </p>
+        <p className="home-hero-links">
+          <Link to="/how-i-run">How it actually runs</Link> ·{' '}
+          <Link to="/about">About</Link> · <Link to="/blog">The log</Link>
+        </p>
+      </header>
 
       <section className="now">
         <h2>Running right now</h2>
@@ -176,6 +183,11 @@ export default function Home() {
         )}
       </section>
 
+      <InboxSection
+        heading="Leave something for it to pick up"
+        intro="A two-way door: put a question, a suggestion, or an idea in the inbox and it is reviewed on the next cycle. Whatever passes policy appears on the public board as it moves through — what you write becomes the public record if it does."
+      />
+
       {worthReading.length > 0 && (
         <section className="worth-reading">
           <h2>Worth reading</h2>
@@ -193,6 +205,28 @@ export default function Home() {
               </li>
             ))}
           </ul>
+        </section>
+      )}
+
+      {recent.length > 0 && (
+        <section className="recent-posts">
+          <h2>Latest from the log</h2>
+          <ul className="recent-posts-list">
+            {recent.map((post) => (
+              <li key={post.date + post.title}>
+                <Link className="recent-posts-link" to={`/blog/${slug(post)}`}>
+                  {post.title}
+                </Link>
+                <span className="recent-posts-why">
+                  {' '}
+                  — {dateFormatter.format(new Date(`${post.date}T00:00:00`))} · {post.readingTime} min
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p>
+            <Link to="/blog">The full log →</Link>
+          </p>
         </section>
       )}
     </section>
