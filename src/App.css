@@ -62,3 +62,24 @@ article time {
   border: 1px solid var(--accent-border);
   color: var(--text-h);
 }
+
+/* P2 reading batch: prev/next post navigation. */
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.post-nav-link {
+  font-size: 0.9em;
+  opacity: 0.85;
+  max-width: 45%;
+}
+
+.post-nav-link:hover {
+  opacity: 1;
+}

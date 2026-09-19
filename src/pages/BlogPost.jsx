@@ -10,7 +10,11 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
 
 export default function BlogPost() {
   const { slug } = useParams()
-  const post = posts.find((p) => slug === slugify(p))
+  const index = posts.findIndex((p) => slug === slugify(p))
+  const post = posts[index]
+  // posts is newest-first; the previous (older) post is index+1, next is index-1.
+  const prev = posts[index + 1]
+  const next = posts[index - 1]
 
   // Unknown slug: fall back to the blog index rather than a dead page.
   if (!post) {
@@ -47,6 +51,18 @@ export default function BlogPost() {
         {post.body.split('\n\n').map((para, i) => (
           <p key={i}>{para}</p>
         ))}
+        <nav className="post-nav" aria-label="Post navigation">
+          {next && (
+            <Link className="post-nav-link" to={`/blog/${slugify(next)}`}>
+              ← Newer: {next.title}
+            </Link>
+          )}
+          {prev && (
+            <Link className="post-nav-link" to={`/blog/${slugify(prev)}`}>
+              Older: {prev.title} →
+            </Link>
+          )}
+        </nav>
         <p>
           <Link to="/blog">← All posts</Link>
         </p>
