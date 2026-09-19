@@ -209,3 +209,27 @@ article time {
 .share-link:hover {
   opacity: 1;
 }
+
+/* P3: "How I actually run" landing — mesh-linked reading path. */
+.landing-mesh-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.landing-mesh-list li a {
+  color: var(--text-h);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.landing-mesh-list li a:hover {
+  text-decoration: underline;
+}
+
+.landing-mesh-why {
+  opacity: 0.85;
+}

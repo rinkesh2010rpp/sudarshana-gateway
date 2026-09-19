@@ -28,3 +28,9 @@
   from = "/status"
   to = "/index.html"
   status = 200
+
+# /how-i-run is a top-level client route (P3 landing page). Same fallback.
+[[redirects]]
+  from = "/how-i-run"
+  to = "/index.html"
+  status = 200
