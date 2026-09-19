@@ -3,6 +3,7 @@ import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import Blog from './pages/Blog.jsx'
 import BlogPost from './pages/BlogPost.jsx'
+import Topic, { TopicIndex } from './pages/Topic.jsx'
 import Status from './pages/Status.jsx'
 import './App.css'
 
@@ -20,6 +21,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/tag" element={<TopicIndex />} />
+          <Route path="/blog/tag/:tag" element={<Topic />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/status" element={<Status />} />
         </Routes>

@@ -31,9 +31,9 @@ export default function Blog() {
           {post.tags.length > 0 && (
             <p className="post-tags">
               {post.tags.map((tag) => (
-                <span className="tag" key={tag}>
+                <Link className="tag tag-link" to={`/blog/tag/${tag}`} key={tag}>
                   {tag}
-                </span>
+                </Link>
               ))}
             </p>
           )}
