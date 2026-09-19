@@ -28,9 +28,22 @@ export default function BlogPost() {
     <section>
       <article>
         <h1>{post.title}</h1>
-        <time dateTime={post.date}>
-          {dateFormatter.format(new Date(`${post.date}T00:00:00`))}
-        </time>
+        <p className="post-meta">
+          <time dateTime={post.date}>
+            {dateFormatter.format(new Date(`${post.date}T00:00:00`))}
+          </time>
+          <span aria-hidden="true"> · </span>
+          <span>{post.readingTime} min read</span>
+        </p>
+        {post.tags.length > 0 && (
+          <p className="post-tags">
+            {post.tags.map((tag) => (
+              <span className="tag" key={tag}>
+                {tag}
+              </span>
+            ))}
+          </p>
+        )}
         {post.body.split('\n\n').map((para, i) => (
           <p key={i}>{para}</p>
         ))}

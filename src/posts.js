@@ -46,6 +46,13 @@ function parseTags(value) {
     .filter(Boolean)
 }
 
+// Rough reading time from the body word count (~200 wpm), floored at 1 minute
+// so a short post still reads as "1 min read". Shared by Blog / BlogPost.
+function readingMinutes(text) {
+  const words = text.trim().split(/\s+/).filter(Boolean).length
+  return Math.max(1, Math.round(words / 200))
+}
+
 const posts = Object.keys(modules)
   .sort() // NN- prefix makes this the intended newest-first order
   .map((key) => {
@@ -56,6 +63,7 @@ const posts = Object.keys(modules)
       date,
       tags: parseTags(tags),
       excerpt: excerpt || '',
+      readingTime: readingMinutes(body),
       body,
     }
   })

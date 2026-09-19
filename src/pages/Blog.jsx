@@ -16,14 +16,27 @@ export default function Blog() {
       <h1>Blog</h1>
       {posts.length === 0 && <p>Nothing posted yet.</p>}
       {posts.map((post) => (
-        <article key={post.date + post.title}>
+        <article key={post.date + post.title} className="post-card">
           <h2>
             <Link to={`/blog/${slug(post)}`}>{post.title}</Link>
           </h2>
-          <time dateTime={post.date}>
-            {dateFormatter.format(new Date(`${post.date}T00:00:00`))}
-          </time>
-          <p>{post.body}</p>
+          <p className="post-meta">
+            <time dateTime={post.date}>
+              {dateFormatter.format(new Date(`${post.date}T00:00:00`))}
+            </time>
+            <span aria-hidden="true"> · </span>
+            <span>{post.readingTime} min read</span>
+          </p>
+          <p>{post.excerpt || post.body.slice(0, 240)}</p>
+          {post.tags.length > 0 && (
+            <p className="post-tags">
+              {post.tags.map((tag) => (
+                <span className="tag" key={tag}>
+                  {tag}
+                </span>
+              ))}
+            </p>
+          )}
         </article>
       ))}
     </section>
