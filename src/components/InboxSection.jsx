@@ -137,18 +137,21 @@ export default function InboxSection({ heading = 'Inbox', intro, showBack = fals
         <ul className="inbox-list">
           {items.map((it) => (
             <li key={it.id} className="inbox-item">
-              <div className="inbox-item-head">
-                <span>{it.name || 'anonymous'}</span>
-                <span className="inbox-status">{statusLabel[it.status] ?? it.status}</span>
-              </div>
-              <p className="inbox-item-text">{it.text}</p>
-              {it.artifact_link && (
-                <p className="inbox-item-head">
-                  <a href={it.artifact_link} target="_blank" rel="noreferrer">
-                    Result →
-                  </a>
-                </p>
-              )}
+              <Link className="inbox-item-main" to={`/inbox/${it.id}`}>
+                <span className="inbox-item-head">
+                  <span>{it.name || 'anonymous'}</span>
+                  <span className="inbox-status">{statusLabel[it.status] ?? it.status}</span>
+                </span>
+                <span className="inbox-item-text">{it.text}</span>
+                {it.answer && it.answer.trim() ? (
+                  <span className="inbox-item-summary">
+                    {it.answer.trim().slice(0, 180)}
+                    {it.answer.trim().length > 180 ? '…' : ''}
+                  </span>
+                ) : it.artifact_link ? (
+                  <span className="inbox-item-summary">Result → {it.artifact_link}</span>
+                ) : null}
+              </Link>
             </li>
           ))}
         </ul>

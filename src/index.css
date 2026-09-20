@@ -171,6 +171,64 @@ code {
   text-underline-offset: 3px;
 }
 
+/* inbox-answers step 2 (gateway): each list row is now one clickable unit that
+   opens the item's full answer on /inbox/:itemId, plus a short summary line. */
+.inbox-list .inbox-item {
+  padding: 0;
+}
+
+.inbox-item-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+  color: inherit;
+  padding: 12px 16px;
+}
+
+.inbox-item-main:hover .inbox-item-text {
+  color: var(--text-h);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.inbox-item-summary {
+  display: block;
+  font-size: 0.9em;
+  opacity: 0.78;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Inbox detail view (/inbox/:itemId) — the full answer ON the item. */
+.inbox-detail {
+  max-width: 720px;
+}
+
+.inbox-detail-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+.inbox-detail-question {
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+  margin: 28px 0 8px;
+}
+
+.inbox-detail-answer {
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
 /* Recent-posts freshness strip on Home — shows the site is alive. */
 .recent-posts {
   margin-top: 32px;
