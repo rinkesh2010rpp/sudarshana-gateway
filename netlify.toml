@@ -40,3 +40,11 @@
   from = "/inbox"
   to = "/index.html"
   status = 200
+
+# /inbox/:itemId is the inbox-answers step-2 detail view (client route, no real
+# files under /inbox/). Direct visits and refreshes of a worked item's detail
+# page need the same SPA fallback; /inbox alone is covered by the rule above.
+[[redirects]]
+  from = "/inbox/*"
+  to = "/index.html"
+  status = 200
