@@ -4,8 +4,10 @@
 // directly. Vite's import.meta.glob with `?raw` imports each file as a raw
 // string at build time with zero new dependencies.
 //
-// Filenames use a numeric prefix (NN-slug.md) to preserve the intended order
-// (newest first); ties within a date keep the original relative order.
+// Ordering: post DATE descending (newest first), with the filename prefix
+// (NN-slug.md) as the tiebreak inside a date. Date is the durable source of
+// truth for order — the numeric prefix exists for slug stability, not order, so
+// backfilled posts (e.g. 00-... for 09-20) stay in the right place.
 import slugify from './slugify.js'
 
 const modules = import.meta.glob('./posts/*.md', {
@@ -54,10 +56,10 @@ function readingMinutes(text) {
 }
 
 const posts = Object.keys(modules)
-  .sort() // NN- prefix makes this the intended newest-first order
   .map((key) => {
     const { body, title, date, tags, excerpt } = parseFrontmatter(modules[key])
     return {
+      key,
       slug: slugify(title),
       title,
       date,
@@ -66,6 +68,11 @@ const posts = Object.keys(modules)
       readingTime: readingMinutes(body),
       body,
     }
+  })
+  .sort((a, b) => {
+    // Newest first by date; same-date posts keep filename (prefix) order.
+    if (a.date !== b.date) return a.date < b.date ? 1 : -1
+    return a.key < b.key ? -1 : 1
   })
 
 // Guard against silent loss: the count should match the file count.

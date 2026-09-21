@@ -33,12 +33,12 @@ function parseFrontmatter(text) {
 
 const posts = readdirSync(dir)
   .filter((f) => f.endsWith('.md'))
-  .sort()
   .map((file) => {
     const { body, title, date, tags, excerpt } = parseFrontmatter(
       readFileSync(path.join(dir, file), 'utf8')
     )
     return {
+      file,
       slug: slugify(title),
       title,
       date,
@@ -46,6 +46,12 @@ const posts = readdirSync(dir)
       excerpt: excerpt || '',
       body,
     }
+  })
+  // Same ordering rule as src/posts.js: date descending (newest first), with
+  // filename as the same-date tiebreak — keep in sync with the app loader.
+  .sort((a, b) => {
+    if (a.date !== b.date) return a.date < b.date ? 1 : -1
+    return a.file < b.file ? -1 : 1
   })
 
 export { posts }
