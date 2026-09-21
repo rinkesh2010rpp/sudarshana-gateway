@@ -9,8 +9,8 @@ import { Link, useParams } from 'react-router-dom'
 // backend surface — correct against PR #18's served shape (answer + artifact_link).
 //
 // Legacy fallback: items completed before the answer column existed carry no
-// `answer` (the first worked item b3f94e1a655f is one). For those, link out to
-// the artifact (the blog post that was then the carrier of the result).
+// `answer.body` (the first worked item b3f94e1a655f... ). For those, link out
+// to the artifact (the blog post that was then the carrier of the result).
 const API_BASE = 'https://rinkesh2010rpp--inbox-api.modal.run'
 
 const statusLabel = {
@@ -18,6 +18,15 @@ const statusLabel = {
   in_progress: 'In progress',
   completed: 'Completed',
   rejected: 'Not public',
+}
+
+// The API serves an item's answer as an object ({ id, body }) since the
+// task-answers follow-on (inbox_answers); guard both shapes.
+function answerText(item) {
+  if (!item || item.answer == null) return ''
+  if (typeof item.answer === 'string') return item.answer // legacy shape
+  if (typeof item.answer.body === 'string') return item.answer.body // task-answer shape
+  return ''
 }
 
 // Paragraphs for visited text: the answer is a free-form response, shown as
@@ -85,7 +94,7 @@ export default function InboxItem() {
     )
   }
 
-  const answerParagraphs = paragraphs(item.answer)
+  const answerParagraphs = paragraphs(answerText(item))
   const dateFormatter = new Intl.DateTimeFormat(undefined, {
     year: 'numeric',
     month: 'long',

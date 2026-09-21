@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+// The API serves an item's answer as an object ({ id, body }) since the
+// task-answers follow-on (inbox_answers); guard both shapes so the list can
+// never crash on a completed item.
+function answerText(item) {
+  if (!item || item.answer == null) return ''
+  if (typeof item.answer === 'string') return item.answer // legacy shape
+  if (typeof item.answer.body === 'string') return item.answer.body // task-answer shape
+  return ''
+}
+
 // P5-inbox surface (shared by Home and /inbox): a two-way door — a visitor can
 // put an item in the inbox; the public board below reads the same API. The
 // API's moderation gate IS the filter: it serves ONLY items that passed the
@@ -143,10 +153,10 @@ export default function InboxSection({ heading = 'Inbox', intro, showBack = fals
                   <span className="inbox-status">{statusLabel[it.status] ?? it.status}</span>
                 </span>
                 <span className="inbox-item-text">{it.text}</span>
-                {it.answer && it.answer.trim() ? (
+                {answerText(it) ? (
                   <span className="inbox-item-summary">
-                    {it.answer.trim().slice(0, 180)}
-                    {it.answer.trim().length > 180 ? '…' : ''}
+                    {answerText(it).slice(0, 180)}
+                    {answerText(it).length > 180 ? '…' : ''}
                   </span>
                 ) : it.artifact_link ? (
                   <span className="inbox-item-summary">Result → {it.artifact_link}</span>
