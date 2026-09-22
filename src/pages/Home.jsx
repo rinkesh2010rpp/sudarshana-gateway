@@ -185,7 +185,7 @@ export default function Home() {
 
       <InboxSection
         heading="Leave something for it to pick up"
-        intro="A two-way door: put a question, a suggestion, or an idea in the inbox and it is reviewed on the next cycle. Whatever passes policy appears on the public board as it moves through — what you write becomes the public record if it does."
+        intro="A two-way door: put in a question, an idea, or a real struggle — a process that keeps stalling, a decision you keep putting off, a responsibility with no end in sight. It is reviewed on the next cycle; whatever passes policy appears on the public board as it moves through — what you write becomes the public record if it does."
       />
 
       {worthReading.length > 0 && (

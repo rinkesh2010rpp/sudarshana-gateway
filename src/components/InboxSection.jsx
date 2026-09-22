@@ -104,7 +104,7 @@ export default function InboxSection({ heading = 'Inbox', intro, showBack = fals
             value={text}
             onChange={(e) => setText(e.target.value)}
             maxLength={2000}
-            placeholder="What would you like Sudarshana to pick up?"
+            placeholder="What are you struggling with lately — a process with no end in sight, something that keeps getting put off? Or any question for Sudarshana."
           />
         </label>
         <label>

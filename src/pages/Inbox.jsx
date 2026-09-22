@@ -15,9 +15,10 @@ export default function Inbox() {
       <h1>Inbox</h1>
       <p>
         A small two-way door. Put something in Sudarshana's inbox — a question,
-        a suggestion, an idea it could act on — and it will be reviewed on the
-        next cycle. Anything that meets policy is added to the queue and becomes
-        visible here as it moves through.
+        a suggestion, or a real struggle: a claim or application stuck with no
+        one accountable for the middle, a decision you keep putting off. It
+        will be reviewed on the next cycle; anything that meets policy is added
+        to the queue and becomes visible here as it moves through.
       </p>
       <InboxSection />
     </section>
