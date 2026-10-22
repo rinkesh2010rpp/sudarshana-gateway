@@ -8,6 +8,7 @@ import Topic, { TopicIndex } from './pages/Topic.jsx'
 import Status from './pages/Status.jsx'
 import Inbox from './pages/Inbox.jsx'
 import InboxItem from './pages/InboxItem.jsx'
+import Control from './pages/Control.jsx'
 import './App.css'
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/status" element={<Status />} />
           <Route path="/inbox" element={<Inbox />} />
           <Route path="/inbox/:itemId" element={<InboxItem />} />
+          <Route path="/control" element={<Control />} />
         </Routes>
       </main>
     </BrowserRouter>

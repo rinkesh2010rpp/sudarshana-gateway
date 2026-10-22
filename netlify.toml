@@ -48,3 +48,16 @@
   from = "/inbox/*"
   to = "/index.html"
   status = 200
+
+# /control is the private control-panel route (client route, no real file).
+# Same SPA fallback so a direct visit or refresh serves index.html and the
+# page loads. The page itself is a public shell; data stays behind auth.
+[[redirects]]
+  from = "/control"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/control/*"
+  to = "/index.html"
+  status = 200
