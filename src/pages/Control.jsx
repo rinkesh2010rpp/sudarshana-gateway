@@ -1,26 +1,18 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import netlifyIdentity from 'netlify-identity-widget'
+import netlifyIdentity, { ensureIdentity } from '../identity.js'
 
 // Control panel — private page at /control (not in the public nav).
 //
-// Auth = Netlify Identity on this site. The zero-config widget talks directly
-// to <site>/.netlify/identity; it also reads an #invite_token from the URL and
-// auto-opens the "set your password" flow for a pending invite.
+// Auth = Netlify Identity on this site. Identity is initialized app-wide in
+// src/identity.js (via App) so a pending #invite_token is caught on any page.
+// The widget itself is the sign-in UI.
 //
 // Data = the private control API on Modal (read-only). It is not deployed
 // until the matching sudarshana PR is merged and deployed, so until then this
 // page shows an honest "control service not available yet" state rather than
 // pretending.
 const CONTROL_API = 'https://rinkesh2010rpp--control-api.modal.run'
-
-let widgetReady = false // init() exactly once per page load
-
-function setupWidget() {
-  if (widgetReady) return
-  widgetReady = true
-  netlifyIdentity.init()
-}
 
 const sizeFmt = (n) => {
   if (n == null) return '—'
@@ -41,7 +33,7 @@ export default function Control() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    setupWidget()
+    ensureIdentity()
     const onLogin = () => setUser(netlifyIdentity.currentUser())
     const onLogout = () => {
       setUser(null)

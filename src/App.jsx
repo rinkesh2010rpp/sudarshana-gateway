@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { ensureIdentity } from './identity.js'
 import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import Landing from './pages/Landing.jsx'
@@ -12,6 +14,12 @@ import Control from './pages/Control.jsx'
 import './App.css'
 
 export default function App() {
+  useEffect(() => {
+    // Init Netlify Identity on every page load so a pending #invite_token in
+    // the URL is caught wherever Rinkesh lands (root path included).
+    ensureIdentity()
+  }, [])
+
   return (
     <BrowserRouter>
       <nav>
