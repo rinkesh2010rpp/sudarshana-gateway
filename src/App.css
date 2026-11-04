@@ -403,3 +403,45 @@ textarea.inbox-field {
 .inbox-empty {
   opacity: 0.8;
 }
+
+/* control panel — detail views + clickable list rows */
+.control-pre {
+  background: #f7f7f7;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 6px;
+  padding: 12px 16px;
+  overflow: auto;
+  max-height: 26rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.85em;
+  line-height: 1.45;
+}
+
+.control-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.control-list li {
+  margin-bottom: 6px;
+}
+
+.control-list button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.control-list button:hover {
+  text-decoration: underline;
+}
+
+.control-meta {
+  opacity: 0.75;
+  font-size: 0.9em;
+}
