@@ -48,6 +48,13 @@ export default function Control() {
   const [error, setError] = useState(null)
   const [view, setView] = useState(null) // {kind:'session'|'log', id} or null
   const [detail, setDetail] = useState(null) // {loading, data, error}
+  const [stateData, setStateData] = useState(null) // /api/control/state payload
+  const [stateBusy, setStateBusy] = useState(false)
+  const [stateErr, setStateErr] = useState(null)
+  const [actions, setActions] = useState(null) // action-file list
+  const [actionsBusy, setActionsBusy] = useState(false)
+  const [actionsErr, setActionsErr] = useState(null)
+  const [activeAction, setActiveAction] = useState(null) // {id, loading, data, error}
 
   useEffect(() => {
     ensureIdentity()
@@ -60,6 +67,13 @@ export default function Control() {
       setError(null)
       setView(null)
       setDetail(null)
+      setStateData(null)
+      setStateBusy(false)
+      setStateErr(null)
+      setActions(null)
+      setActionsBusy(false)
+      setActionsErr(null)
+      setActiveAction(null)
     }
     const onInit = (u) => setUser(u || netlifyIdentity.currentUser())
     netlifyIdentity.on('login', onLogin)
@@ -137,6 +151,47 @@ export default function Control() {
     setDetail(null)
   }
 
+  async function loadState() {
+    setStateBusy(true)
+    setStateErr(null)
+    try {
+      const d = await authFetch('/api/control/state')
+      setStateData(d)
+    } catch (err) {
+      setStateErr(err instanceof Error ? err.message : String(err))
+    } finally {
+      setStateBusy(false)
+    }
+  }
+
+  async function loadActions() {
+    setActionsBusy(true)
+    setActionsErr(null)
+    try {
+      const d = await authFetch('/api/control/actions')
+      setActions(Array.isArray(d?.actions) ? d.actions : [])
+    } catch (err) {
+      setActionsErr(err instanceof Error ? err.message : String(err))
+    } finally {
+      setActionsBusy(false)
+    }
+  }
+
+  async function openAction(id) {
+    setActiveAction({ id, loading: true, data: null, error: null })
+    try {
+      const d = await authFetch(`/api/control/actions/${encodeURIComponent(id)}`)
+      setActiveAction({ id, loading: false, data: d, error: null })
+    } catch (err) {
+      setActiveAction({
+        id,
+        loading: false,
+        data: null,
+        error: err instanceof Error ? err.message : String(err),
+      })
+    }
+  }
+
   if (!user) {
     return (
       <section>
@@ -205,6 +260,78 @@ export default function Control() {
                 </li>
               ))}
             </ul>
+          )}
+
+          <h2>State</h2>
+          {stateData === null && !stateBusy && (
+            <button onClick={loadState}>Load state</button>
+          )}
+          {stateBusy && <p>Loading…</p>}
+          {stateErr && (
+            <p className="status-error">Couldn&apos;t load state: {stateErr}</p>
+          )}
+          {stateData && (
+            <section>
+              {Array.isArray(stateData.missing) &&
+                stateData.missing.length > 0 && (
+                  <p className="status-error">
+                    Missing files: {stateData.missing.join(', ')}
+                  </p>
+                )}
+              {['state_md', 'decisions_md', 'roadmap_md'].map(
+                (k) =>
+                  stateData.files?.[k] != null && (
+                    <section key={k}>
+                      <h3>{k}</h3>
+                      <pre className="control-pre">{stateData.files[k]}</pre>
+                    </section>
+                  )
+              )}
+            </section>
+          )}
+
+          <h2>Actions</h2>
+          {actions === null && !actionsBusy && (
+            <button onClick={loadActions}>Load actions</button>
+          )}
+          {actionsBusy && <p>Loading…</p>}
+          {actionsErr && (
+            <p className="status-error">
+              Couldn&apos;t load actions: {actionsErr}
+            </p>
+          )}
+          {actions !== null && actions.length === 0 && (
+            <p>No action files found.</p>
+          )}
+          {actions !== null && actions.length > 0 && (
+            <ul className="control-list">
+              {actions.map((a) => (
+                <li key={a.id}>
+                  <button onClick={() => openAction(a.id)}>
+                    <strong>{a.id}</strong> — {sizeFmt(a.size)} ·{' '}
+                    {a.modified ? timeFmt.format(new Date(a.modified)) : '—'}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          {activeAction && (
+            <section>
+              {activeAction.loading && <p>Loading…</p>}
+              {activeAction.error && (
+                <p className="status-error">
+                  Couldn&apos;t load: {activeAction.error}
+                </p>
+              )}
+              {activeAction.data && (
+                <section>
+                  <h3>{activeAction.data.id}</h3>
+                  <pre className="control-pre">
+                    {String(activeAction.data.content ?? '')}
+                  </pre>
+                </section>
+              )}
+            </section>
           )}
 
           {detail && (
