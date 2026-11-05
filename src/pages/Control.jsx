@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import netlifyIdentity, { ensureIdentity } from '../identity.js'
+import StatusStrip from '../components/StatusStrip.jsx'
 
 // Control panel — private page at /control (not in the public nav).
 //
@@ -44,6 +45,7 @@ export default function Control() {
   const [user, setUser] = useState(() => netlifyIdentity.currentUser())
   const [sessions, setSessions] = useState(null)
   const [logs, setLogs] = useState(null)
+  const [loadedAt, setLoadedAt] = useState(null) // when the strip data was fetched
   const [phase, setPhase] = useState('idle') // idle|loading|ready|unavailable|error
   const [error, setError] = useState(null)
   const [view, setView] = useState(null) // {kind:'session'|'log', id} or null
@@ -63,6 +65,7 @@ export default function Control() {
       setUser(null)
       setSessions(null)
       setLogs(null)
+      setLoadedAt(null)
       setPhase('idle')
       setError(null)
       setView(null)
@@ -96,6 +99,7 @@ export default function Control() {
       ])
       setSessions(Array.isArray(s?.sessions) ? s.sessions : [])
       setLogs(Array.isArray(l?.logs) ? l.logs : [])
+      setLoadedAt(new Date())
       setPhase('ready')
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
@@ -106,7 +110,10 @@ export default function Control() {
   }
 
   useEffect(() => {
-    if (user) load()
+    if (user) {
+      load()
+      loadState() // state.md powers the status strip's "Current state" card
+    }
     // load() re-runs when the user object changes (login/logout).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
@@ -162,6 +169,12 @@ export default function Control() {
     } finally {
       setStateBusy(false)
     }
+  }
+
+  // Refresh the strip AND the state card together.
+  function refreshAll() {
+    load()
+    loadState()
   }
 
   async function loadActions() {
@@ -229,6 +242,14 @@ export default function Control() {
 
       {phase === 'ready' && (
         <section>
+          <StatusStrip
+            sessions={sessions}
+            logs={logs}
+            stateMd={stateData?.files?.state_md}
+            loadedAt={loadedAt}
+            onRefresh={refreshAll}
+          />
+
           <h2>Conversation sessions</h2>
           {sessions.length === 0 ? (
             <p>No conversation sessions found.</p>
