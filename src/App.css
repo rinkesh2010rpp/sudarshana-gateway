@@ -695,3 +695,83 @@ textarea.inbox-field {
   margin: 8px 0 0;
   font-size: 0.85em;
 }
+
+/* cc-log: daily-log viewer (prev/next day nav, in-log search, durable tint,
+   published-marker badge) */
+.cc-l-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 8px;
+}
+.cc-l-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cc-l-date {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.cc-l-pub {
+  margin-left: auto;
+  font-size: 0.78em;
+  color: #777;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 2px 8px;
+  background: #f6f7f8;
+  white-space: nowrap;
+}
+.cc-l-pub-yes {
+  color: #1a7f37;
+  border-color: #9ad3ae;
+  background: #eef8f1;
+}
+.cc-l-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 0.85em;
+}
+.cc-l-search {
+  flex: 0 1 240px;
+  padding: 5px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95em;
+}
+.cc-l-count {
+  font-variant-numeric: tabular-nums;
+  color: #555;
+}
+.cc-l-box {
+  max-height: 32rem;
+  overflow: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fafbfc;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8em;
+  line-height: 1.5;
+}
+.cc-log-row {
+  padding: 0 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #222;
+}
+.cc-log-durable {
+  background: rgba(255, 224, 138, 0.22);
+}
+.cc-log-row mark {
+  background: #ffe08a;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+.cc-log-row .cc-mark-cur {
+  background: #ffb347;
+}

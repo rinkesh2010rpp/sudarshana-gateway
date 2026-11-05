@@ -4,6 +4,7 @@ import netlifyIdentity, { ensureIdentity } from '../identity.js'
 import StatusStrip from '../components/StatusStrip.jsx'
 import SessionsPanel from '../components/SessionsPanel.jsx'
 import TranscriptView from '../components/TranscriptView.jsx'
+import LogView from '../components/LogView.jsx'
 import { sizeFmt } from '../components/format.js'
 
 // Control panel — private page at /control (not in the public nav).
@@ -357,12 +358,12 @@ export default function Control() {
                     />
                   </section>
                 ) : (
-                  <section>
-                    <h3>{detail.data.date}</h3>
-                    <pre className="control-pre">
-                      {String(detail.data.content ?? '')}
-                    </pre>
-                  </section>
+                  <LogView
+                    date={detail.data.date}
+                    logDates={logs.map((l) => String(l.id).replace(/\.md$/, ''))}
+                    initial={detail.data}
+                    onOpenLog={openLog}
+                  />
                 ))}
             </section>
           )}
