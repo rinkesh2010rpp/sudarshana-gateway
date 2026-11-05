@@ -610,3 +610,88 @@ textarea.inbox-field {
   color: #a33;
   font-style: italic;
 }
+
+/* cc-transcript: windowed transcript viewer (load-older, gutter, search) */
+.cc-t-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 0.85em;
+}
+.cc-t-search {
+  flex: 0 1 240px;
+  padding: 5px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95em;
+}
+.cc-t-count {
+  font-variant-numeric: tabular-nums;
+  color: #555;
+}
+.cc-t-meta {
+  margin-left: auto;
+  color: #777;
+  font-size: 0.92em;
+  font-variant-numeric: tabular-nums;
+}
+.cc-btn {
+  padding: 4px 10px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 0.92em;
+  cursor: pointer;
+}
+.cc-btn:hover:not(:disabled) {
+  background: #f0f4f8;
+  border-color: #888;
+}
+.cc-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.cc-t-box {
+  position: relative; /* line-number gutter anchors inside this box */
+  max-height: 26rem;
+  overflow: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fafbfc;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8em;
+  line-height: 1.5;
+}
+.cc-trow {
+  display: flex;
+  align-items: baseline;
+}
+.cc-tno {
+  flex: 0 0 3.6rem;
+  min-width: 3.6rem;
+  padding: 0 10px 0 0;
+  text-align: right;
+  color: #9aa0a6;
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+.cc-ttext {
+  flex: 1;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #222;
+}
+.cc-ttext mark {
+  background: #ffe08a;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+.cc-ttext .cc-mark-cur {
+  background: #ffb347;
+}
+.cc-t-more {
+  margin: 8px 0 0;
+  font-size: 0.85em;
+}

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import netlifyIdentity, { ensureIdentity } from '../identity.js'
 import StatusStrip from '../components/StatusStrip.jsx'
 import SessionsPanel from '../components/SessionsPanel.jsx'
+import TranscriptView from '../components/TranscriptView.jsx'
 import { sizeFmt } from '../components/format.js'
 
 // Control panel — private page at /control (not in the public nav).
@@ -349,18 +350,11 @@ export default function Control() {
                 (view.kind === 'session' ? (
                   <section>
                     <h3>{detail.data.id}</h3>
-                    <p className="control-meta">
-                      {detail.data.total_lines} lines total — showing lines{' '}
-                      {detail.data.start_line + 1}–{detail.data.end_line}{' '}
-                      (latest 2000)
-                    </p>
-                    {Array.isArray(detail.data.lines) ? (
-                      <pre className="control-pre">
-                        {detail.data.lines.join('')}
-                      </pre>
-                    ) : (
-                      <p className="status-error">No transcript lines.</p>
-                    )}
+                    <TranscriptView
+                      sessionId={detail.data.id}
+                      initial={detail.data}
+                      apiFetch={authFetch}
+                    />
                   </section>
                 ) : (
                   <section>
