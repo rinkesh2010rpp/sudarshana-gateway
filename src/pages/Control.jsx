@@ -319,7 +319,7 @@ export default function Control() {
         </section>
       )}
 
-      {phase === 'loading' && <p>Loading…</p>}
+      {(phase === 'idle' || phase === 'loading') && <p>Loading…</p>}
 
       {phase === 'unavailable' && (
         <section>

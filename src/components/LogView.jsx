@@ -159,11 +159,15 @@ export default function LogView({ date, logDates, initial, onOpenLog }) {
         )}
       </div>
 
-      <div className="cc-l-box" ref={boxRef} role="log" aria-label="Daily log">
-        {lines.map((t, i) => (
-          <Line key={i} idx={i} text={t} q={q} cur={i === curMatchLine} durable={isDurable(t)} />
-        ))}
-      </div>
+      {content.trim() === '' ? (
+        <p>No content in this log day.</p>
+      ) : (
+        <div className="cc-l-box" ref={boxRef} role="log" aria-label="Daily log">
+          {lines.map((t, i) => (
+            <Line key={i} idx={i} text={t} q={q} cur={i === curMatchLine} durable={isDurable(t)} />
+          ))}
+        </div>
+      )}
     </section>
   )
 }
