@@ -1,11 +1,16 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { pdtToday, relTime, sizeFmt } from './format.js'
 
 // Command-center status strip (cc-status). One glance: is the system alive,
-// did today's log get written, how many sessions, and what's the current
-// state summary. All data comes from the same read-only control API as the
-// rest of the panel — nothing here is baked at build time.
+// did today's log get written, how many sessions, and what the agent is
+// currently focused on. All data comes from the same read-only control API
+// as the rest of the panel — nothing here is baked at build time.
 // Calendar note: "today" follows the runtime's PDT day (see format.js).
+//
+// cc-usability INC-2: this used to be four bordered cards, one of which
+// dumped a 230-character paragraph of state.md. The glance is now a single
+// line of facts; the focus is one sentence, with the full state one click
+// away on the System tab.
 
 // Pull the `**now:**` paragraph out of state.md — that line is the agent's
 // own current-state summary, so showing it verbatim is honest by construction.
@@ -18,9 +23,22 @@ function extractNowLine(stateMd) {
   return line.replace(/^\*\*now:\*\*\s*/, '').trim()
 }
 
-export default function StatusStrip({ sessions, logs, stateMd, loadedAt, onRefresh }) {
-  const [expanded, setExpanded] = useState(false)
+// First sentence of the now-line, capped — enough to know what the agent is
+// on, not enough to become a wall of text. Cut on a word boundary.
+function firstSentence(text, max = 180) {
+  if (!text) return null
+  const m = text.match(/^(.+?[.!?])(\s|$)/)
+  let s = m ? m[1] : text
+  if (s.length > max) {
+    s = s.slice(0, max)
+    const cut = s.lastIndexOf(' ')
+    if (cut > 60) s = s.slice(0, cut)
+    s = `${s.replace(/[,;:—-]$/, '')}…`
+  }
+  return s
+}
 
+export default function StatusStrip({ sessions, logs, stateMd, loadedAt, onRefresh, onOpenSystem }) {
   const cards = useMemo(() => {
     const sessionList = Array.isArray(sessions) ? sessions : []
     let lastActive = null
@@ -36,33 +54,55 @@ export default function StatusStrip({ sessions, logs, stateMd, loadedAt, onRefre
     const logToday = logList.find((l) => String(l.id).startsWith(today)) || null
 
     const nowText = extractNowLine(stateMd)
-    const nowNote = nowText
-      ? nowText.length > 230
-        ? (expanded ? nowText : `${nowText.slice(0, 230)}…`)
-        : nowText
-      : null
+    const focus = firstSentence(nowText)
 
     const staleH = lastActive === null ? null : (Date.now() - lastActive) / 3600000
-    const dotState =
-      lastActive === null ? 'none' : staleH > 2 ? 'quiet' : 'ok'
+    const dotState = lastActive === null ? 'none' : staleH > 2 ? 'quiet' : 'ok'
 
     return {
-      sessionList,
+      count: sessionList.length,
       lastActive,
       totalSize,
       today,
       logToday,
       nowText,
-      nowNote,
+      focus,
       dotState,
     }
-  }, [sessions, logs, stateMd, expanded])
+  }, [sessions, logs, stateMd])
 
   return (
     <section className="cc-strip">
-      <div className="cc-strip-head">
-        <h2>Status</h2>
-        <span className="cc-strip-meta">
+      <div className="cc-glance">
+        <span
+          className="cc-glance-item"
+          title={
+            cards.lastActive === null
+              ? 'no sessions yet'
+              : cards.dotState === 'quiet'
+                ? 'no session activity for more than 2h'
+                : 'recent session activity'
+          }
+        >
+          <span className={`cc-dot cc-dot--${cards.dotState}`} />
+          {cards.lastActive === null ? 'no sessions yet' : `active ${relTime(cards.lastActive)}`}
+        </span>
+        <span className="cc-glance-sep">·</span>
+        <span
+          className="cc-glance-item"
+          title={
+            cards.logToday
+              ? `${cards.logToday.id} · ${sizeFmt(cards.logToday.size)}`
+              : `no log for ${cards.today} yet — the agent logs every cycle`
+          }
+        >
+          {cards.logToday ? 'log today ✓' : 'log today ✗'}
+        </span>
+        <span className="cc-glance-sep">·</span>
+        <span className="cc-glance-item" title={`${sizeFmt(cards.totalSize)} of transcripts`}>
+          {cards.count} {cards.count === 1 ? 'conversation' : 'conversations'}
+        </span>
+        <span className="cc-glance-meta">
           updated {relTime(loadedAt ? loadedAt.getTime() : null)}
           {' · '}
           <button className="cc-refresh" onClick={onRefresh}>
@@ -71,62 +111,17 @@ export default function StatusStrip({ sessions, logs, stateMd, loadedAt, onRefre
         </span>
       </div>
 
-      <div className="cc-cards">
-        <article className="cc-card">
-          <h3>Last activity</h3>
-          <p className="cc-value">
-            <span className={`cc-dot cc-dot--${cards.dotState}`} />
-            {cards.lastActive === null ? 'no sessions yet' : relTime(cards.lastActive)}
-            {cards.lastActive !== null && (
-              <span className="cc-note">
-                {' '}
-                · most recent session touched{' '}
-                {cards.dotState === 'quiet' ? '— quiet more than 2h' : ''}
-              </span>
-            )}
-          </p>
-        </article>
-
-        <article className="cc-card">
-          <h3>Log today</h3>
-          <p className="cc-value">
-            {cards.logToday ? '✓ written' : '✗ not found'}
-          </p>
-          <p className="cc-note">
-            {cards.logToday
-              ? `${cards.logToday.id} · ${sizeFmt(cards.logToday.size)}`
-              : `no log for ${cards.today} yet — the agent logs every cycle`}
-          </p>
-        </article>
-
-        <article className="cc-card">
-          <h3>Sessions</h3>
-          <p className="cc-value">
-            {cards.sessionList.length}{' '}
-            {cards.sessionList.length === 1 ? 'conversation' : 'conversations'} ·{' '}
-            {sizeFmt(cards.totalSize)} total
-          </p>
-          <p className="cc-note">transcripts are read-only, latest first</p>
-        </article>
-
-        <article className="cc-card cc-card--wide">
-          <h3>Current state</h3>
-          {cards.nowNote ? (
-            <>
-              <p className="cc-value">{cards.nowNote}</p>
-              {cards.nowText && cards.nowText.length > 230 && (
-                <button className="cc-refresh" onClick={() => setExpanded(!expanded)}>
-                  {expanded ? 'less' : 'more'}
-                </button>
-              )}
-            </>
-          ) : (
-            <p className="cc-value cc-value--muted">
-              state not loaded — check the State section below
-            </p>
+      {cards.focus && (
+        <p className="cc-focus">
+          <span className="cc-focus-label">Focus</span>
+          <span className="cc-focus-text">{cards.focus}</span>
+          {onOpenSystem && (
+            <button className="cc-refresh cc-focus-more" onClick={onOpenSystem}>
+              full state →
+            </button>
           )}
-        </article>
-      </div>
+        </p>
+      )}
     </section>
   )
 }

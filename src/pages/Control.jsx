@@ -370,6 +370,7 @@ export default function Control() {
                 stateMd={stateData?.files?.state_md}
                 loadedAt={loadedAt}
                 onRefresh={refreshAll}
+                onOpenSystem={() => setTab('system')}
               />
 
               <h2>Recent conversations</h2>
