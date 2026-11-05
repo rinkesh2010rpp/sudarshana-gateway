@@ -41,6 +41,8 @@ const timeFmt = new Intl.DateTimeFormat(undefined, {
 export default function Control() {
   const { id: routeSession, date: routeDate } = useParams()
   const navigate = useNavigate()
+  const filterRef = useRef(null)
+  const [showShortcuts, setShowShortcuts] = useState(false)
   const [user, setUser] = useState(() => netlifyIdentity.currentUser())
   const [sessions, setSessions] = useState(null)
   const [logs, setLogs] = useState(null)
@@ -151,6 +153,42 @@ export default function Control() {
     // re-trigger the effect. The view-guard above prevents same-target refetch.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, routeSession, routeDate])
+
+  // Keyboard shortcuts (cc-polish): only while signed in, and never while the
+  // user is typing in a field.  ?  toggle help ·  /  focus session filter ·
+  //  r  refresh status+state ·  Esc  close detail (or the help card).
+  useEffect(() => {
+    if (!user) return undefined
+    function onKey(e) {
+      const t = e.target
+      const typing =
+        t &&
+        (t.tagName === 'INPUT' ||
+          t.tagName === 'TEXTAREA' ||
+          t.tagName === 'SELECT' ||
+          t.isContentEditable)
+      if (typing) return
+      if (e.key === '?') {
+        e.preventDefault()
+        setShowShortcuts((v) => !v)
+      } else if (e.key === 'Escape') {
+        e.preventDefault()
+        if (showShortcuts) setShowShortcuts(false)
+        else if (view) closeDetail()
+      } else if (e.key === '/') {
+        e.preventDefault()
+        filterRef.current?.focus()
+      } else if (e.key.toLowerCase() === 'r') {
+        e.preventDefault()
+        refreshAll()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+    // refreshAll/closeDetail are recreated each render; the effect only needs
+    // to attach once per signed-in session, keyed on what it actually reads.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, showShortcuts, view])
 
   async function openSession(id) {
     setView({ kind: 'session', id })
@@ -263,8 +301,23 @@ export default function Control() {
       <h1>Control</h1>
       <p>
         Signed in as <strong>{user.email}</strong>.{' '}
-        <button onClick={() => netlifyIdentity.logout()}>Sign out</button>
+        <button onClick={() => netlifyIdentity.logout()}>Sign out</button>{' '}
+        <button onClick={() => setShowShortcuts((v) => !v)}>⌨ Shortcuts</button>
       </p>
+
+      {showShortcuts && (
+        <section className="cc-help">
+          <p>
+            Press <kbd>?</kbd> anywhere (except in a text field) to toggle this
+            list.
+          </p>
+          <ul className="cc-help-list">
+            <li><kbd>/</kbd> — jump to the conversation filter</li>
+            <li><kbd>r</kbd> — refresh status + state</li>
+            <li><kbd>Esc</kbd> — close the open transcript/log (or this help)</li>
+          </ul>
+        </section>
+      )}
 
       {phase === 'loading' && <p>Loading…</p>}
 
@@ -288,7 +341,7 @@ export default function Control() {
           />
 
           <h2>Conversation sessions</h2>
-          <SessionsPanel sessions={sessions} onOpen={openSession} apiFetch={authFetch} />
+          <SessionsPanel sessions={sessions} onOpen={openSession} apiFetch={authFetch} filterRef={filterRef} />
 
           <h2>Daily logs</h2>
           {logs.length === 0 ? (

@@ -533,6 +533,31 @@ textarea.inbox-field {
 }
 
 /* command-center sessions panel (cc-sessions) */
+.cc-help {
+  margin: 0 0 1.2rem;
+  padding: 10px 12px;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 6px;
+  background: #fbfbfb;
+}
+.cc-help p {
+  margin: 0 0 6px;
+}
+.cc-help-list {
+  margin: 0;
+  padding-left: 1.2em;
+}
+.cc-help-list li {
+  margin: 2px 0;
+}
+kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  padding: 1px 5px;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 4px;
+  background: #fff;
+}
 .cc-sessions {
   margin: 0 0 1.6rem;
 }

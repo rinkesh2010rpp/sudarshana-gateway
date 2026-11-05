@@ -31,7 +31,7 @@ function snippetText(lines) {
   return text.length > 180 ? `${text.slice(0, 180).trimEnd()}…` : text
 }
 
-export default function SessionsPanel({ sessions, onOpen, apiFetch }) {
+export default function SessionsPanel({ sessions, onOpen, apiFetch, filterRef }) {
   const [query, setQuery] = useState('')
   // id -> { state: 'ok'|'err', text?, total? }
   const [snippets, setSnippets] = useState({})
@@ -119,6 +119,7 @@ export default function SessionsPanel({ sessions, onOpen, apiFetch }) {
   return (
     <section className="cc-sessions">
       <input
+        ref={filterRef}
         className="cc-filter"
         type="search"
         value={query}
