@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import netlifyIdentity, { ensureIdentity } from '../identity.js'
 import StatusStrip from '../components/StatusStrip.jsx'
 import SessionsPanel from '../components/SessionsPanel.jsx'
@@ -39,6 +39,8 @@ const timeFmt = new Intl.DateTimeFormat(undefined, {
 })
 
 export default function Control() {
+  const { id: routeSession, date: routeDate } = useParams()
+  const navigate = useNavigate()
   const [user, setUser] = useState(() => netlifyIdentity.currentUser())
   const [sessions, setSessions] = useState(null)
   const [logs, setLogs] = useState(null)
@@ -115,9 +117,45 @@ export default function Control() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
+  const detailRef = useRef(null)
+  // Direct deep links: /control/sessions/:id and /control/logs/:date load
+  // straight into that conversation/day (the Netlify /control/* fallback
+  // serves index.html for these). Fire once data is ready, skip if the view
+  // already matches (so list clicks and prev/next-day nav don't double-fetch),
+  // and scroll the transcript/log into view so the landing is focused.
+  useEffect(() => {
+    if (phase !== 'ready') return
+    if (
+      routeSession &&
+      !(view && view.kind === 'session' && view.id === routeSession)
+    ) {
+      openSession(routeSession)
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() =>
+          detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        )
+      )
+    } else if (
+      routeDate &&
+      !(view && view.kind === 'log' && view.id === routeDate)
+    ) {
+      openLog(routeDate)
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() =>
+          detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        )
+      )
+    }
+    // Intentional deps: re-run only when data readiness or the URL changes —
+    // openSession/openLog would otherwise be in the closure each render and
+    // re-trigger the effect. The view-guard above prevents same-target refetch.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, routeSession, routeDate])
+
   async function openSession(id) {
     setView({ kind: 'session', id })
     setDetail({ loading: true, data: null, error: null })
+    navigate(`/control/sessions/${encodeURIComponent(id)}`)
     try {
       // tail=N is server-sliced (bounded at 2000 lines) — the live session
       // file is tens of MB, only the requested window ever ships.
@@ -138,6 +176,7 @@ export default function Control() {
     const date = String(id).replace(/\.md$/, '')
     setView({ kind: 'log', id: date })
     setDetail({ loading: true, data: null, error: null })
+    navigate(`/control/logs/${encodeURIComponent(date)}`)
     try {
       const d = await authFetch(`/api/control/logs/${date}`)
       setDetail({ loading: false, data: d, error: null })
@@ -153,6 +192,7 @@ export default function Control() {
   function closeDetail() {
     setView(null)
     setDetail(null)
+    navigate('/control')
   }
 
   async function loadState() {
@@ -339,7 +379,7 @@ export default function Control() {
           )}
 
           {detail && (
-            <section>
+            <section ref={detailRef}>
               <p>
                 <button onClick={closeDetail}>← back</button>
               </p>

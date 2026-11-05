@@ -43,6 +43,8 @@ export default function App() {
           <Route path="/inbox" element={<Inbox />} />
           <Route path="/inbox/:itemId" element={<InboxItem />} />
           <Route path="/control" element={<Control />} />
+          <Route path="/control/sessions/:id" element={<Control />} />
+          <Route path="/control/logs/:date" element={<Control />} />
         </Routes>
       </main>
     </BrowserRouter>
