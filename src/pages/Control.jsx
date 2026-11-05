@@ -6,6 +6,7 @@ import SessionsPanel from '../components/SessionsPanel.jsx'
 import TranscriptView from '../components/TranscriptView.jsx'
 import LogView from '../components/LogView.jsx'
 import { sizeFmt, relTime } from '../components/format.js'
+import { extractNowLine } from '../components/stateText.js'
 
 // Control panel — private page at /control (not in the public nav).
 //
@@ -445,13 +446,31 @@ export default function Control() {
                     Missing files: {stateData.missing.join(', ')}
                   </p>
                 )}
-              {['state_md', 'decisions_md', 'roadmap_md'].map(
-                (k) =>
+              {/* The readable part first: the agent's own now-line, verbatim. */}
+              {extractNowLine(stateData.files?.state_md) && (
+                <p className="cc-now">
+                  {extractNowLine(stateData.files?.state_md)}
+                </p>
+              )}
+              {/* Raw files stay available, but collapsed — machinery is a
+                  rare need, and three open dumps is the scroll problem. */}
+              {[
+                ['state_md', 'state.md'],
+                ['decisions_md', 'decisions.md'],
+                ['roadmap_md', 'roadmap.md'],
+              ].map(
+                ([k, label]) =>
                   stateData.files?.[k] != null && (
-                    <section key={k}>
-                      <h3>{k}</h3>
+                    <details className="cc-raw" key={k}>
+                      <summary>
+                        {label}
+                        <span className="cc-raw-size">
+                          {' '}
+                          · {sizeFmt(stateData.files[k].length)} raw
+                        </span>
+                      </summary>
                       <pre className="control-pre">{stateData.files[k]}</pre>
-                    </section>
+                    </details>
                   )
               )}
             </section>

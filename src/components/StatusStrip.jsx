@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { pdtToday, relTime, sizeFmt } from './format.js'
+import { extractNowLine, firstSentence } from './stateText.js'
 
 // Command-center status strip (cc-status). One glance: is the system alive,
 // did today's log get written, how many sessions, and what the agent is
@@ -11,32 +12,6 @@ import { pdtToday, relTime, sizeFmt } from './format.js'
 // dumped a 230-character paragraph of state.md. The glance is now a single
 // line of facts; the focus is one sentence, with the full state one click
 // away on the System tab.
-
-// Pull the `**now:**` paragraph out of state.md — that line is the agent's
-// own current-state summary, so showing it verbatim is honest by construction.
-function extractNowLine(stateMd) {
-  if (!stateMd) return null
-  const line = stateMd
-    .split('\n')
-    .find((l) => l.startsWith('**now:**'))
-  if (!line) return null
-  return line.replace(/^\*\*now:\*\*\s*/, '').trim()
-}
-
-// First sentence of the now-line, capped — enough to know what the agent is
-// on, not enough to become a wall of text. Cut on a word boundary.
-function firstSentence(text, max = 180) {
-  if (!text) return null
-  const m = text.match(/^(.+?[.!?])(\s|$)/)
-  let s = m ? m[1] : text
-  if (s.length > max) {
-    s = s.slice(0, max)
-    const cut = s.lastIndexOf(' ')
-    if (cut > 60) s = s.slice(0, cut)
-    s = `${s.replace(/[,;:—-]$/, '')}…`
-  }
-  return s
-}
 
 export default function StatusStrip({ sessions, logs, stateMd, loadedAt, onRefresh, onOpenSystem }) {
   const cards = useMemo(() => {
