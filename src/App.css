@@ -531,3 +531,82 @@ textarea.inbox-field {
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* command-center sessions panel (cc-sessions) */
+.cc-sessions {
+  margin: 0 0 1.6rem;
+}
+.cc-filter {
+  width: 100%;
+  max-width: 30rem;
+  box-sizing: border-box;
+  padding: 7px 10px;
+  margin-bottom: 14px;
+  font: inherit;
+  font-size: 0.9em;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 6px;
+  background: #fff;
+  color: inherit;
+}
+.cc-group {
+  margin-bottom: 12px;
+}
+.cc-group-head {
+  margin: 0 0 6px;
+  font-size: 0.78em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+}
+.cc-group-count {
+  display: inline-block;
+  min-width: 1.4em;
+  text-align: center;
+  margin-left: 4px;
+  font-size: 0.85em;
+  background: #eee;
+  border-radius: 999px;
+  opacity: 1;
+  padding: 1px 5px;
+}
+.cc-session-open {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 6px;
+  background: #fbfbfb;
+}
+.cc-session-open:hover {
+  text-decoration: none;
+  border-color: #aaa;
+  background: #f4f4f4;
+}
+.cc-session-name {
+  display: block;
+  font-weight: 600;
+  word-break: break-all;
+}
+.cc-session-meta {
+  display: block;
+  font-size: 0.8em;
+  opacity: 0.7;
+  margin-top: 1px;
+}
+.cc-snippet {
+  display: block;
+  margin-top: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78em;
+  line-height: 1.4;
+  color: #444;
+  white-space: normal;
+}
+.cc-snippet--pending {
+  color: #999;
+}
+.cc-snippet--err {
+  color: #a33;
+  font-style: italic;
+}

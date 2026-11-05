@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import netlifyIdentity, { ensureIdentity } from '../identity.js'
 import StatusStrip from '../components/StatusStrip.jsx'
+import SessionsPanel from '../components/SessionsPanel.jsx'
+import { sizeFmt } from '../components/format.js'
 
 // Control panel — private page at /control (not in the public nav).
 //
@@ -27,13 +29,6 @@ async function authFetch(path) {
   }
   if (!res.ok) throw new Error(`control API responded ${res.status}`)
   return res.json()
-}
-
-const sizeFmt = (n) => {
-  if (n == null) return '—'
-  if (n < 1024) return `${n} B`
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} kB`
-  return `${(n / (1024 * 1024)).toFixed(1)} MB`
 }
 
 const timeFmt = new Intl.DateTimeFormat(undefined, {
@@ -251,21 +246,7 @@ export default function Control() {
           />
 
           <h2>Conversation sessions</h2>
-          {sessions.length === 0 ? (
-            <p>No conversation sessions found.</p>
-          ) : (
-            <ul className="control-list">
-              {sessions.map((s) => (
-                <li key={s.id}>
-                  <button onClick={() => openSession(s.id)}>
-                    <strong>{s.id}</strong> — {sizeFmt(s.size)} ·{' '}
-                    {s.modified ? timeFmt.format(new Date(s.modified)) : '—'}
-                    {s.lines != null ? ` · ${s.lines} lines` : ''}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+          <SessionsPanel sessions={sessions} onOpen={openSession} apiFetch={authFetch} />
 
           <h2>Daily logs</h2>
           {logs.length === 0 ? (

@@ -1,36 +1,11 @@
 import { useMemo, useState } from 'react'
+import { pdtToday, relTime, sizeFmt } from './format.js'
 
 // Command-center status strip (cc-status). One glance: is the system alive,
 // did today's log get written, how many sessions, and what's the current
 // state summary. All data comes from the same read-only control API as the
 // rest of the panel — nothing here is baked at build time.
-//
-// Note on "today": state/log files are date-stamped by the runtime's PDT
-// calendar (the agent's working day), so "today" is computed in
-// America/Los_Angeles regardless of the viewer's own timezone.
-
-const TODAY_FMT = new Intl.DateTimeFormat('en-CA', {
-  timeZone: 'America/Los_Angeles',
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-})
-
-function relTime(ts) {
-  if (!ts) return 'unknown'
-  const s = Math.max(0, Math.round((Date.now() - ts) / 1000))
-  if (s < 60) return 'just now'
-  if (s < 3600) return `${Math.floor(s / 60)}m ago`
-  if (s < 86400) return `${Math.floor(s / 3600)}h ago`
-  return `${Math.floor(s / 86400)}d ago`
-}
-
-function sizeFmt(n) {
-  if (n == null) return '—'
-  if (n < 1024) return `${n} B`
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} kB`
-  return `${(n / (1024 * 1024)).toFixed(1)} MB`
-}
+// Calendar note: "today" follows the runtime's PDT day (see format.js).
 
 // Pull the `**now:**` paragraph out of state.md — that line is the agent's
 // own current-state summary, so showing it verbatim is honest by construction.
@@ -57,7 +32,7 @@ export default function StatusStrip({ sessions, logs, stateMd, loadedAt, onRefre
     }
 
     const logList = Array.isArray(logs) ? logs : []
-    const today = TODAY_FMT.format(new Date())
+    const today = pdtToday()
     const logToday = logList.find((l) => String(l.id).startsWith(today)) || null
 
     const nowText = extractNowLine(stateMd)
