@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import netlifyIdentity, { ensureIdentity } from '../identity.js'
 import StatusStrip from '../components/StatusStrip.jsx'
 import SessionsPanel from '../components/SessionsPanel.jsx'
 import TranscriptView from '../components/TranscriptView.jsx'
 import LogView from '../components/LogView.jsx'
-import { sizeFmt } from '../components/format.js'
+import { sizeFmt, relTime } from '../components/format.js'
 
 // Control panel — private page at /control (not in the public nav).
 //
@@ -58,6 +58,20 @@ export default function Control() {
   const [actionsBusy, setActionsBusy] = useState(false)
   const [actionsErr, setActionsErr] = useState(null)
   const [activeAction, setActiveAction] = useState(null) // {id, loading, data, error}
+  // cc-usability: one screen per need. Tab bar (Overview | Conversations | Logs |
+  // System) replaces the single long vertical stack; an opened transcript/day log
+  // REPLACES the main content instead of appending below everything.
+  const [tab, setTab] = useState('overview')
+  const [focusTick, setFocusTick] = useState(0) // '/' on Overview/Logs jumps & focuses session filter
+
+  // Overview shows only the most recent conversations — find-that-conversation
+  // lives in the full list on the Conversations tab.
+  const recentSessions = useMemo(() => {
+    const list = Array.isArray(sessions) ? [...sessions] : []
+    return list
+      .sort((a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime())
+      .slice(0, 6)
+  }, [sessions])
 
   useEffect(() => {
     ensureIdentity()
@@ -78,6 +92,8 @@ export default function Control() {
       setActionsBusy(false)
       setActionsErr(null)
       setActiveAction(null)
+      setTab('overview')
+      setFocusTick(0)
     }
     const onInit = (u) => setUser(u || netlifyIdentity.currentUser())
     netlifyIdentity.on('login', onLogin)
@@ -123,8 +139,8 @@ export default function Control() {
   // Direct deep links: /control/sessions/:id and /control/logs/:date load
   // straight into that conversation/day (the Netlify /control/* fallback
   // serves index.html for these). Fire once data is ready, skip if the view
-  // already matches (so list clicks and prev/next-day nav don't double-fetch),
-  // and scroll the transcript/log into view so the landing is focused.
+  // already matches (so list clicks and prev/next-day nav don't double-fetch).
+  // The detail now REPLACES the main content, so scroll to top = focused landing.
   useEffect(() => {
     if (phase !== 'ready') return
     if (
@@ -132,21 +148,13 @@ export default function Control() {
       !(view && view.kind === 'session' && view.id === routeSession)
     ) {
       openSession(routeSession)
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() =>
-          detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        )
-      )
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } else if (
       routeDate &&
       !(view && view.kind === 'log' && view.id === routeDate)
     ) {
       openLog(routeDate)
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() =>
-          detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        )
-      )
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
     // Intentional deps: re-run only when data readiness or the URL changes —
     // openSession/openLog would otherwise be in the closure each render and
@@ -177,7 +185,9 @@ export default function Control() {
         else if (view) closeDetail()
       } else if (e.key === '/') {
         e.preventDefault()
-        filterRef.current?.focus()
+        // Filter lives in the Conversations tab; jump there, then focus on mount.
+        setTab('conversations')
+        setFocusTick((t) => t + 1)
       } else if (e.key.toLowerCase() === 'r') {
         e.preventDefault()
         refreshAll()
@@ -189,6 +199,11 @@ export default function Control() {
     // to attach once per signed-in session, keyed on what it actually reads.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, showShortcuts, view])
+
+  // '/' shortcut: focus the session filter once the Conversations tab mounts.
+  useEffect(() => {
+    if (tab === 'conversations' && focusTick > 0) filterRef.current?.focus()
+  }, [tab, focusTick])
 
   async function openSession(id) {
     setView({ kind: 'session', id })
@@ -332,18 +347,67 @@ export default function Control() {
 
       {phase === 'ready' && (
         <section>
-          <StatusStrip
-            sessions={sessions}
-            logs={logs}
-            stateMd={stateData?.files?.state_md}
-            loadedAt={loadedAt}
-            onRefresh={refreshAll}
-          />
+          {!(detail && view) && (
+            <nav className="cc-tabs" aria-label="Control sections">
+              {['overview', 'conversations', 'logs', 'system'].map((t) => (
+                <button
+                  key={t}
+                  className={tab === t ? 'cc-tab cc-tab--on' : 'cc-tab'}
+                  onClick={() => setTab(t)}
+                >
+                  {t[0].toUpperCase() + t.slice(1)}
+                </button>
+              ))}
+            </nav>
+          )}
 
-          <h2>Conversation sessions</h2>
-          <SessionsPanel sessions={sessions} onOpen={openSession} apiFetch={authFetch} filterRef={filterRef} />
+          {/* N1 at-a-glance: strip + the handful of recent conversations. */}
+          {!(detail && view) && tab === 'overview' && (
+            <section>
+              <StatusStrip
+                sessions={sessions}
+                logs={logs}
+                stateMd={stateData?.files?.state_md}
+                loadedAt={loadedAt}
+                onRefresh={refreshAll}
+              />
 
-          <h2>Daily logs</h2>
+              <h2>Recent conversations</h2>
+              {recentSessions.length === 0 ? (
+                <p>No sessions yet.</p>
+              ) : (
+                <ul className="control-list">
+                  {recentSessions.map((s) => (
+                    <li key={s.id}>
+                      <button onClick={() => openSession(s.id)}>
+                        <strong>{s.id}</strong> —{' '}
+                        {relTime(new Date(s.modified).getTime())} ·{' '}
+                        {sizeFmt(s.size)}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
+
+          {/* N2/N3 find + read a conversation. */}
+          {!(detail && view) && tab === 'conversations' && (
+            <section>
+              <h2>Conversation sessions</h2>
+              <SessionsPanel
+                sessions={sessions}
+                onOpen={openSession}
+                apiFetch={authFetch}
+                filterRef={filterRef}
+              />
+            </section>
+          )}
+
+          {/* N4 what happened on a day. */}
+          {!(detail && view) && tab === 'logs' && (
+            <section>
+              <h2>Daily logs</h2>
           {logs.length === 0 ? (
             <p>No daily logs found.</p>
           ) : (
@@ -358,8 +422,13 @@ export default function Control() {
               ))}
             </ul>
           )}
+            </section>
+          )}
 
-          <h2>State</h2>
+          {/* N5 machinery: state files + action files, lazy-loaded. */}
+          {!(detail && view) && tab === 'system' && (
+            <section className="cc-system">
+              <h2>State</h2>
           {stateData === null && !stateBusy && (
             <button onClick={loadState}>Load state</button>
           )}
@@ -430,8 +499,12 @@ export default function Control() {
               )}
             </section>
           )}
+            </section>
+          )}
 
-          {detail && (
+          {/* N3/N4 focused read: an opened transcript or day log REPLACES the
+              main content so it's never buried below other sections. */}
+          {detail && view && (
             <section ref={detailRef}>
               <p>
                 <button onClick={closeDetail}>← back</button>
