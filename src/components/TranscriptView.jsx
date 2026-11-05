@@ -60,16 +60,18 @@ export default function TranscriptView({ sessionId, initial, apiFetch }) {
   }, [sessionId, initial]) // parent's tail fetch; reset per (session, data)
 
   // Per-render scroll anchoring: when older lines were prepended above the
-  // reader's position, keep that position steady instead of jumping.
+  // reader's position, keep that position steady instead of jumping. The box
+  // is now document-flow (no inner scrollbar), so compensate the *window*
+  // scroll by however far the anchor line moved down the page.
   useLayoutEffect(() => {
     const pending = pendingAnchor.current
     if (!pending || !boxRef.current) return
     const box = boxRef.current
     const el = box.querySelector(`[data-line="${earliest}"]`)
     if (el) {
-      box.scrollTop = pending.scrollTop + (el.offsetTop - pending.anchorTop)
+      window.scrollBy({ top: el.offsetTop - pending.anchorTop })
     } else {
-      box.scrollTop = pending.scrollTop + (box.scrollHeight - pending.beforeScrollH)
+      window.scrollBy({ top: box.scrollHeight - pending.beforeScrollH })
     }
     pendingAnchor.current = null
   })
@@ -82,7 +84,7 @@ export default function TranscriptView({ sessionId, initial, apiFetch }) {
     const anchor = box ? box.querySelector(`[data-line="${earliest}"]`) : null
     pendingAnchor.current =
       box && anchor
-        ? { scrollTop: box.scrollTop, anchorTop: anchor.offsetTop, beforeScrollH: box.scrollHeight }
+        ? { anchorTop: anchor.offsetTop, beforeScrollH: box.scrollHeight }
         : null
     try {
       // page = ceil(earliest / PER_PAGE) guarantees the returned window

@@ -706,23 +706,22 @@ kbd {
 }
 .cc-t-box {
   position: relative; /* line-number gutter anchors inside this box */
-  max-height: 26rem;
-  overflow: auto;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fafbfc;
+  border: 1px solid #e2e4e8;
+  border-radius: 10px;
+  background: #fcfcfd;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.8em;
-  line-height: 1.5;
+  font-size: 0.85em;
+  line-height: 1.65;
 }
 .cc-trow {
   display: flex;
   align-items: baseline;
+  padding: 1px 0;
 }
 .cc-tno {
-  flex: 0 0 3.6rem;
-  min-width: 3.6rem;
-  padding: 0 10px 0 0;
+  flex: 0 0 4rem;
+  min-width: 4rem;
+  padding: 0 12px 0 0;
   text-align: right;
   color: #9aa0a6;
   user-select: none;
@@ -733,6 +732,8 @@ kbd {
   white-space: pre-wrap;
   word-break: break-word;
   color: #222;
+  max-width: 68ch;
+  padding-right: 12px;
 }
 .cc-ttext mark {
   background: #ffe08a;
@@ -800,20 +801,19 @@ kbd {
   color: #555;
 }
 .cc-l-box {
-  max-height: 32rem;
-  overflow: auto;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fafbfc;
+  border: 1px solid #e2e4e8;
+  border-radius: 10px;
+  background: #fcfcfd;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.8em;
-  line-height: 1.5;
+  font-size: 0.85em;
+  line-height: 1.65;
 }
 .cc-log-row {
-  padding: 0 8px;
+  padding: 1px 10px;
   white-space: pre-wrap;
   word-break: break-word;
   color: #222;
+  max-width: 72ch;
 }
 .cc-log-durable {
   background: rgba(255, 224, 138, 0.22);
