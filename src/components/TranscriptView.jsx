@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { parseBlocks } from './transcriptParse.js'
 
 // Transcript viewer (cc-transcript). A session transcript is a growing file;
 // the control API always slices server-side, so the viewer works in windows:
@@ -124,6 +125,14 @@ export default function TranscriptView({ sessionId, initial, apiFetch }) {
     return out
   }, [lines, query])
 
+  // Group the raw line window into readable conversation blocks. Re-parsed on
+  // every prepend (load older) so the window and the blocks never diverge.
+  const blocks = useMemo(() => parseBlocks(lines), [lines])
+
+  // While a search is active, force tool-call/result details open so a hit
+  // inside them is visible; cleared search lets the user toggle freely.
+  const forceOpen = query.trim() ? true : undefined
+
   useEffect(() => {
     setMatchIdx(0)
     if (matches.length === 0) return
@@ -186,15 +195,58 @@ export default function TranscriptView({ sessionId, initial, apiFetch }) {
 
       {lines.length === 0 && <p className="status-error">No transcript lines.</p>}
 
-      <div className="cc-t-box" ref={boxRef} role="log" aria-label="Transcript lines">
-        {lines.map((l) => (
-          <div className="cc-trow" data-line={l.n} key={l.n}>
-            <span className="cc-tno">{l.n}</span>
-            <span className="cc-ttext">
-              <Line text={l.text} q={q} cur={l.n === curLine} />
-            </span>
-          </div>
-        ))}
+      <div className="cc-t-box" ref={boxRef} role="log" aria-label="Conversation">
+        {blocks.map((b) =>
+          b.kind === 'summary' ? (
+            <div className="cc-tmsg cc-role-summary" key={b.n} data-line={b.n}>
+              <span className="cc-tno">{b.n}</span>
+              <span className="cc-ttext cc-sum">
+                <span className="cc-role-label">checkpoint</span> {b.text}
+              </span>
+            </div>
+          ) : b.kind === 'plain' ? (
+            <div className="cc-tmsg cc-role-plain" key={b.n} data-line={b.n}>
+              <span className="cc-tno">{b.n}</span>
+              <span className="cc-ttext">
+                <Line text={b.rows[0].text} q={q} cur={b.rows[0].n === curLine} />
+              </span>
+            </div>
+          ) : (
+            <div className={`cc-tmsg cc-role-${b.role.key}`} key={b.n} data-line={b.n}>
+              <span className="cc-tno">{b.n}</span>
+              <div className="cc-tbody">
+                <span className="cc-role-label">{b.role.label}</span>
+                {b.rows.map((r) =>
+                  r.t === 'toolcall' ? (
+                    <details
+                      className="cc-tdetails cc-td-call"
+                      key={r.n}
+                      data-line={r.n}
+                      open={forceOpen}
+                    >
+                      <summary className="cc-td-sum">⚙ tool → {r.name}</summary>
+                      <pre className="cc-td-json">{r.json}</pre>
+                    </details>
+                  ) : r.t === 'toolresult' ? (
+                    <details
+                      className="cc-tdetails cc-td-result"
+                      key={r.n}
+                      data-line={r.n}
+                      open={forceOpen}
+                    >
+                      <summary className="cc-td-sum">⚙ tool response</summary>
+                      <pre className="cc-td-json">{r.text}</pre>
+                    </details>
+                  ) : (
+                    <p className="cc-p" key={r.n} data-line={r.n}>
+                      <Line text={r.text} q={q} cur={r.n === curLine} />
+                    </p>
+                  )
+                )}
+              </div>
+            </div>
+          )
+        )}
       </div>
 
       {earliest != null && earliest > 0 && (

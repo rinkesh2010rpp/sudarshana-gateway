@@ -770,6 +770,127 @@ kbd {
   margin: 8px 0 0;
   font-size: 0.85em;
 }
+/* cc-transcript conversation blocks: role-tagged messages, tool noise
+   collapsed by default (forced open while searching). */
+.cc-tmsg {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  padding: 6px 0;
+  border-left: 3px solid transparent;
+}
+.cc-tmsg .cc-tno {
+  padding-top: 5px;
+}
+.cc-tbody {
+  flex: 1;
+  min-width: 0;
+  max-width: 72ch;
+  padding-right: 12px;
+}
+.cc-role-label {
+  display: inline-block;
+  font-size: 0.68em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin: 0 0 4px;
+}
+.cc-role-plain .cc-tbody,
+.cc-role-plain .cc-ttext {
+  color: #3a3f47;
+}
+.cc-role-human {
+  border-left-color: #3b82f6;
+  background: #f6f9ff;
+}
+.cc-role-human .cc-role-label {
+  background: #e4edff;
+  color: #1d4ed8;
+}
+.cc-role-ai {
+  border-left-color: #8b6cc9;
+  background: #faf8ff;
+}
+.cc-role-ai .cc-role-label {
+  background: #eee6ff;
+  color: #6a3fb0;
+}
+.cc-role-tool {
+  border-left-color: #c0ab6a;
+  background: #fcfaf3;
+}
+.cc-role-tool .cc-role-label {
+  background: #f3ecd2;
+  color: #8a6d1a;
+}
+.cc-role-system {
+  border-left-color: #94a3b8;
+  background: #f8fafc;
+}
+.cc-role-system .cc-role-label {
+  background: #e7edf2;
+  color: #475569;
+}
+.cc-role-summary {
+  color: #70767e;
+  border-top: 1px dashed #d5d9e0;
+  border-bottom: 1px dashed #d5d9e0;
+  margin: 4px 0;
+  padding: 6px 0;
+}
+.cc-role-summary .cc-role-label,
+.cc-sum {
+  font-size: 0.78em;
+  font-style: italic;
+}
+.cc-p {
+  margin: 3px 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #222;
+  line-height: 1.65;
+  max-width: 68ch;
+}
+.cc-p mark {
+  background: #ffe08a;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+.cc-p .cc-mark-cur {
+  background: #ffb347;
+}
+.cc-tdetails {
+  margin: 3px 0;
+  border: 1px solid #e5e1d0;
+  border-radius: 6px;
+  background: #fffef9;
+}
+.cc-td-sum {
+  cursor: pointer;
+  font-size: 0.82em;
+  color: #6b5d2a;
+  padding: 4px 8px;
+  user-select: none;
+}
+.cc-td-sum:hover {
+  background: #f5f0da;
+}
+.cc-td-json {
+  margin: 0;
+  padding: 8px 10px;
+  border-top: 1px solid #efe9d3;
+  background: #fcf9ef;
+  font-size: 0.78em;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 48vh;
+  overflow: auto;
+  color: #4a4433;
+}
 
 /* cc-log: daily-log viewer (prev/next day nav, in-log search, durable tint,
    published-marker badge) */
