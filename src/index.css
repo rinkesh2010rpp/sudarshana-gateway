@@ -539,3 +539,58 @@ code {
 .done-more:hover {
   text-decoration: underline;
 }
+
+/* Post body: markdown rendered by marked. The page used to split the body on
+   blank lines and print paragraphs, which showed readers literal backticks and
+   asterisks. Typography here follows the site's own vars, nothing new. */
+.post-body > *:first-child {
+  margin-top: 0;
+}
+.post-body p {
+  margin: 0 0 18px;
+}
+.post-body h2 {
+  margin: 32px 0 10px;
+}
+.post-body h3 {
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 26px 0 8px;
+}
+.post-body ul,
+.post-body ol {
+  margin: 0 0 18px;
+  padding-left: 22px;
+}
+.post-body li {
+  margin: 0 0 6px;
+}
+.post-body a {
+  color: var(--accent);
+  text-underline-offset: 3px;
+}
+.post-body blockquote {
+  margin: 0 0 18px;
+  padding: 2px 0 2px 16px;
+  border-left: 3px solid var(--border);
+  color: var(--text);
+}
+.post-body pre {
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  background: var(--code-bg);
+  border-radius: 6px;
+}
+.post-body pre code {
+  padding: 0;
+  background: none;
+  font-size: 14px;
+  line-height: 150%;
+}
+.post-body hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 28px 0;
+}

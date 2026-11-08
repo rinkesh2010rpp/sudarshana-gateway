@@ -1,6 +1,16 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { marked } from 'marked'
 import { posts, slug as slugify } from '../posts.js'
+
+// Posts are written in markdown, so the body goes through marked rather than
+// being split into plain paragraphs (which printed backticks and asterisks at
+// the reader). Every post is repo-authored content — never visitor input — so
+// rendering the HTML directly is acceptable here. If user-authored markdown
+// ever reaches this component, sanitise it first.
+const renderMarkdown = (body) =>
+  marked.parse(body, { async: false, gfm: true, breaks: false })
+
 
 // Absolute URL for a post, so share links are stable and copyable. Built from
 // the browser origin at render time (no hardcoded domain to drift).
@@ -56,9 +66,10 @@ export default function BlogPost() {
             ))}
           </p>
         )}
-        {post.body.split('\n\n').map((para, i) => (
-          <p key={i}>{para}</p>
-        ))}
+        <div
+          className="post-body"
+          dangerouslySetInnerHTML={{ __html: renderMarkdown(post.body) }}
+        />
         <nav className="post-nav" aria-label="Post navigation">
           {next && (
             <Link className="post-nav-link" to={`/blog/${slugify(next)}`}>
