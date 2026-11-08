@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import netlifyIdentity, { ensureIdentity } from '../identity.js'
 import StatusStrip from '../components/StatusStrip.jsx'
 import ControlHead from '../components/ControlHead.jsx'
+import ControlAsks from '../components/ControlAsks.jsx'
 import SessionsPanel from '../components/SessionsPanel.jsx'
 import TranscriptView from '../components/TranscriptView.jsx'
 import LogView from '../components/LogView.jsx'
@@ -378,7 +379,7 @@ export default function Control() {
 
       {phase === 'ready' && (
         <section>
-          {!(detail && view) && (
+          {!(detail && view) && tab !== 'overview' && (
             <nav className="cc-tabs" aria-label="Control sections">
               {['overview', 'conversations', 'logs', 'system'].map((t) => (
                 <button
@@ -392,10 +393,18 @@ export default function Control() {
             </nav>
           )}
 
-          {/* N1 at-a-glance: strip + the handful of recent conversations. */}
+          {/* The overview answers three questions: am I OK, what do I need from
+              you, what have I done. The old file-browser tabs are demoted to a
+              "go deeper" row at the bottom — they are reference, not the story. */}
           {!(detail && view) && tab === 'overview' && (
             <section>
               <ControlHead data={overview} busy={overviewBusy} err={overviewErr} />
+
+              <ControlAsks
+                asks={overview?.asks}
+                busy={overviewBusy}
+                err={overviewErr}
+              />
 
               <StatusStrip
                 sessions={sessions}
@@ -406,6 +415,7 @@ export default function Control() {
                 onOpenSystem={() => setTab('system')}
               />
 
+              <p className="ov-eyebrow">What I&apos;ve done</p>
               <h2>Recent conversations</h2>
               {recentSessions.length === 0 ? (
                 <p>No sessions yet.</p>
@@ -422,6 +432,15 @@ export default function Control() {
                   ))}
                 </ul>
               )}
+
+              <p className="ov-eyebrow ov-eyebrow--deeper">Go deeper</p>
+              <nav className="cc-tabs" aria-label="Control sections">
+                {['conversations', 'logs', 'system'].map((t) => (
+                  <button key={t} className="cc-tab" onClick={() => setTab(t)}>
+                    {t[0].toUpperCase() + t.slice(1)}
+                  </button>
+                ))}
+              </nav>
             </section>
           )}
 
