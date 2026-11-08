@@ -30,6 +30,16 @@ function verdictFor(health) {
   return { tone: 'ok', text: "I'm fine. Nothing is broken." }
 }
 
+function outcomeNote(outcome) {
+  // The newest record can be the turn running right now — it has not finished,
+  // and the zombie outcome never finished either. Saying "finished running"
+  // would be a small lie in the tile.
+  if (!outcome) return 'no record'
+  if (outcome === 'running') return 'in progress'
+  if (outcome === 'zombie') return 'died mid-run'
+  return `finished ${outcome}`
+}
+
 export default function ControlHead({ data, busy, err }) {
   const health = data?.health
   const errors24h = Number(health?.errors_24h ?? 0)
@@ -66,7 +76,7 @@ export default function ControlHead({ data, busy, err }) {
     {
       label: 'Last cycle',
       value: health.last_cycle ? relTime(new Date(health.last_cycle).getTime()) : '—',
-      note: health.last_outcome ? `finished ${health.last_outcome}` : 'no record',
+      note: outcomeNote(health.last_outcome),
     },
     {
       label: 'Turns today',
