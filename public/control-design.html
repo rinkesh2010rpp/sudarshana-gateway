@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="robots" content="noindex,nofollow" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Control — design mockup</title>
+<style>
+  :root{
+    --bg:#16171d; --panel:#1b1c23; --panel2:#20222b; --border:#2e303a;
+    --text:#9ca3af; --head:#f3f4f6; --muted:#6b7280;
+    --accent:#c084fc; --accent-bg:rgba(192,132,252,.14); --accent-bd:rgba(192,132,252,.45);
+    --ok:#4ade80; --ok-bg:rgba(74,222,128,.12); --ok-bd:rgba(74,222,128,.35);
+    --warn:#fbbf24; --warn-bg:rgba(251,191,36,.12); --warn-bd:rgba(251,191,36,.35);
+    --sans:system-ui,'Segoe UI',Roboto,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);
+    font:18px/1.45 var(--sans);letter-spacing:.18px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1126px;margin:0 auto;padding:28px 34px 60px}
+  header.top{display:flex;align-items:center;gap:14px;justify-content:space-between;
+    padding-bottom:18px;border-bottom:1px solid var(--border)}
+  .brand{display:flex;align-items:baseline;gap:10px}
+  .brand b{color:var(--head);font-size:22px;font-weight:650;letter-spacing:-.2px}
+  .brand span{color:var(--muted);font-size:14px}
+  .pill{display:inline-flex;align-items:center;gap:8px;font-size:14px;
+    border:1px solid var(--ok-bd);background:var(--ok-bg);color:#bbf7d0;
+    padding:6px 12px;border-radius:999px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);
+    box-shadow:0 0 0 3px rgba(74,222,128,.18)}
+  .who{font-size:13px;color:var(--muted)}
+  .who button{background:none;border:none;color:var(--muted);text-decoration:underline;
+    cursor:pointer;font-size:13px;padding:0}
+
+  /* ---- Q1: am I OK ---- */
+  .q1{margin-top:26px;display:grid;grid-template-columns:1.6fr 1fr;gap:18px}
+  .verdict{border:1px solid var(--ok-bd);background:linear-gradient(180deg,rgba(74,222,128,.10),rgba(74,222,128,.03));
+    border-radius:14px;padding:22px 24px}
+  .verdict .kicker{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
+  .verdict h1{margin:6px 0 4px;color:var(--head);font-size:30px;line-height:1.15;font-weight:700;letter-spacing:-.4px}
+  .verdict p{margin:0;color:#a7f3c8;font-size:15px}
+  .facts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .fact{border:1px solid var(--border);background:var(--panel);border-radius:11px;padding:12px 14px}
+  .fact .l{font-size:11.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+  .fact .v{color:var(--head);font-size:17px;margin-top:4px;font-weight:600}
+  .fact .v small{color:var(--muted);font-weight:400;font-size:12px}
+
+  /* ---- Q2: what I need from you ---- */
+  .qhead{display:flex;align-items:center;gap:12px;margin:34px 0 12px}
+  .qhead h2{margin:0;color:var(--head);font-size:19px;font-weight:650;letter-spacing:-.2px}
+  .qhead .n{font-size:12px;color:#e9d5ff;background:var(--accent-bg);border:1px solid var(--accent-bd);
+    padding:2px 9px;border-radius:999px}
+  .qhead .hint{margin-left:auto;font-size:13px;color:var(--muted)}
+  .asks{display:flex;flex-direction:column;gap:12px}
+  .ask{border:1px solid var(--accent-bd);background:var(--panel);border-radius:13px;
+    padding:18px 20px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+  .ask .t{color:var(--head);font-size:17.5px;font-weight:620;margin:0 0 5px;letter-spacing:-.1px}
+  .ask .d{margin:0;font-size:14.5px;color:var(--text);max-width:78ch}
+  .ask .meta{margin-top:8px;font-size:12.5px;color:var(--muted);display:flex;gap:14px}
+  .ask .meta em{font-style:normal;color:#e9d5ff}
+  .btn{display:inline-block;border:1px solid var(--accent-bd);background:var(--accent-bg);
+    color:#f3e8ff;padding:9px 16px;border-radius:9px;font-size:14px;font-weight:600;
+    text-decoration:none;white-space:nowrap}
+  .empty{border:1px dashed var(--border);border-radius:13px;padding:18px 20px;color:var(--muted);font-size:14.5px}
+
+  /* ---- Q3: what I've done ---- */
+  .done{list-style:none;margin:0;padding:0;border-left:2px solid var(--border);margin-left:6px}
+  .done li{position:relative;padding:0 0 18px 22px}
+  .done li:before{content:"";position:absolute;left:-7px;top:4px;width:12px;height:12px;border-radius:50%;
+    background:var(--panel2);border:2px solid var(--accent-bd)}
+  .done .when{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+  .done .what{color:var(--head);font-size:15.5px;font-weight:600;margin:2px 0 3px}
+  .done .why{font-size:14px;color:var(--text);margin:0}
+  .more{margin-top:4px}
+  .more a{color:#d8b4fe;font-size:14px;text-decoration:none}
+
+  /* ---- deeper ---- */
+  footer.deeper{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  footer.deeper .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-right:6px}
+  footer.deeper a{border:1px solid var(--border);background:var(--panel);color:var(--text);
+    border-radius:8px;padding:6px 12px;font-size:13.5px;text-decoration:none}
+  footer.deeper a:hover{border-color:var(--accent-bd)}
+
+  /* ---- mobile: stack everything, never squeeze a column ---- */
+  @media (max-width:760px){
+    .wrap{padding:20px 18px 48px}
+    header.top{flex-direction:column;align-items:flex-start;gap:12px}
+    .who{order:3}
+    .q1{grid-template-columns:1fr;margin-top:20px}
+    .verdict h1{font-size:26px}
+    .ask{grid-template-columns:1fr;gap:12px}
+    .ask .btn{justify-self:start}
+    .qhead .hint{display:none}
+    .fact .v{font-size:16px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand"><b>Control</b><span>Sudarshana</span><span style="color:#fbbf24;font-size:11.5px;border:1px solid rgba(251,191,36,.35);background:rgba(251,191,36,.1);padding:2px 9px;border-radius:999px;letter-spacing:.06em">DESIGN MOCKUP · SAMPLE DATA</span></div>
+    <div class="pill"><span class="dot"></span> Running fine · last cycle 12 min ago</div>
+    <div class="who">signed in as you · <button>Sign out</button></div>
+  </header>
+
+  <!-- ========== Q1: AM I OK ========== -->
+  <section class="q1">
+    <div class="verdict">
+      <div class="kicker">Am I ok?</div>
+      <h1>I'm fine. Nothing is broken.</h1>
+      <p>Last cycle finished 12 minutes ago. No errors, no stuck turns, nothing waiting on a retry.</p>
+    </div>
+    <div class="facts">
+      <div class="fact"><div class="l">Last cycle</div><div class="v">23:0x <small>· 12m ago</small></div></div>
+      <div class="fact"><div class="l">Turns today</div><div class="v">21 <small>· all clean</small></div></div>
+      <div class="fact"><div class="l">Model</div><div class="v" style="font-size:14px">deepseek-v4.1-flash</div></div>
+      <div class="fact"><div class="l">Errors (24h)</div><div class="v" style="color:var(--ok)">0</div></div>
+    </div>
+  </section>
+
+  <!-- ========== Q2: WHAT DO YOU NEED FROM ME ========== -->
+  <div class="qhead">
+    <h2>What I need from you</h2><span class="n">2 open</span>
+    <span class="hint">Answer these and I can move.</span>
+  </div>
+  <div class="asks">
+    <div class="ask">
+      <div>
+        <p class="t">Look at the new /control design</p>
+        <p class="d">The panel is reorganised around three questions instead of a file tree: am I OK, what do I need from you, what have I done. Tell me if this is the right shape before I build it.</p>
+        <div class="meta"><span>waiting <em>22 min</em></span><span>asked 2026-11-07 23:38</span></div>
+      </div>
+      <a class="btn" href="#">View mockup →</a>
+    </div>
+    <div class="ask">
+      <div>
+        <p class="t">Decide: per-turn knowledge retrieval?</p>
+        <p class="d">The knowledge index is ~3,174 tokens — over the 3,000 cap on every call. Two options: build per-turn retrieval (keyword-scan primer), or keep the index as-is. The supersede lever stays paused until you decide.</p>
+        <div class="meta"><span>waiting <em>2 days</em></span><span>asked 2026-11-05 05:0x</span></div>
+      </div>
+      <a class="btn" href="#">Open proposal →</a>
+    </div>
+  </div>
+
+  <!-- ========== Q3: WHAT HAVE I DONE ========== -->
+  <div class="qhead"><h2>What I've done</h2><span class="hint">the last few cycles, in plain language</span></div>
+  <ul class="done">
+    <li>
+      <div class="when">Today · 23:38</div>
+      <div class="what">Reorganised /control around three questions</div>
+      <p class="why">Am I OK, what do I need from you, what have I done — designed before any code is written.</p>
+    </li>
+    <li>
+      <div class="when">Today · 22:0x</div>
+      <div class="what">Built a screenshot tool and proved I can see my own pages</div>
+      <p class="why">/data/tools/shot.py renders any URL with headless Chromium; I read the PNG back to check it with my own eyes.</p>
+    </li>
+    <li>
+      <div class="when">Yesterday · 11-06</div>
+      <div class="what">Shipped readable conversations (INC-5)</div>
+      <p class="why">Transcript parser turns raw JSONL into human-readable turns; unit-tested against the real session files.</p>
+    </li>
+    <li>
+      <div class="when">11-05</div>
+      <div class="what">Proposed knowledge retrieval; closed the control-panel and command-center lanes</div>
+      <p class="why">Both lanes finished their increments; the only thing blocking the next step is your decision.</p>
+    </li>
+  </ul>
+  <div class="more"><a href="#">Read the full log for today →</a></div>
+
+  <!-- ========== DEEPER ========== -->
+  <footer class="deeper">
+    <span class="lbl">Go deeper</span>
+    <a href="#">Conversations</a>
+    <a href="#">Logs</a>
+    <a href="#">Actions</a>
+    <a href="#">System</a>
+  </footer>
+
+</div>
+</body>
+</html>
