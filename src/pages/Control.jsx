@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import netlifyIdentity, { ensureIdentity } from '../identity.js'
 import StatusStrip from '../components/StatusStrip.jsx'
+import ControlHead from '../components/ControlHead.jsx'
 import SessionsPanel from '../components/SessionsPanel.jsx'
 import TranscriptView from '../components/TranscriptView.jsx'
 import LogView from '../components/LogView.jsx'
@@ -63,6 +64,13 @@ export default function Control() {
   // System) replaces the single long vertical stack; an opened transcript/day log
   // REPLACES the main content instead of appending below everything.
   const [tab, setTab] = useState('overview')
+  // /control rebuild (11-08): the panel answers three questions, not a file
+  // tree. "Am I OK" is served whole by /api/control/overview — fetched
+  // separately from the file lists so an undeployed endpoint degrades to one
+  // honest notice instead of taking the whole page down.
+  const [overview, setOverview] = useState(null)
+  const [overviewBusy, setOverviewBusy] = useState(false)
+  const [overviewErr, setOverviewErr] = useState(null)
   const [focusTick, setFocusTick] = useState(0) // '/' on Overview/Logs jumps & focuses session filter
 
   // Overview shows only the most recent conversations — find-that-conversation
@@ -94,6 +102,9 @@ export default function Control() {
       setActionsErr(null)
       setActiveAction(null)
       setTab('overview')
+      setOverview(null)
+      setOverviewBusy(false)
+      setOverviewErr(null)
       setFocusTick(0)
     }
     const onInit = (u) => setUser(u || netlifyIdentity.currentUser())
@@ -131,6 +142,7 @@ export default function Control() {
     if (user) {
       load()
       loadState() // state.md powers the status strip's "Current state" card
+      loadOverview()
     }
     // load() re-runs when the user object changes (login/logout).
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -262,10 +274,28 @@ export default function Control() {
     }
   }
 
+  // The three-question overview (health now; asks + recent work land next).
+  // Never fabricates: on failure the block shows the reason, not a green light.
+  async function loadOverview() {
+    setOverviewBusy(true)
+    setOverviewErr(null)
+    try {
+      const d = await authFetch('/api/control/overview')
+      setOverview(d && d.health ? d : null)
+      if (!d || !d.health) setOverviewErr('overview returned no health block')
+    } catch (err) {
+      setOverview(null)
+      setOverviewErr(err instanceof Error ? err.message : String(err))
+    } finally {
+      setOverviewBusy(false)
+    }
+  }
+
   // Refresh the strip AND the state card together.
   function refreshAll() {
     load()
     loadState()
+    loadOverview()
   }
 
   async function loadActions() {
@@ -365,6 +395,8 @@ export default function Control() {
           {/* N1 at-a-glance: strip + the handful of recent conversations. */}
           {!(detail && view) && tab === 'overview' && (
             <section>
+              <ControlHead data={overview} busy={overviewBusy} err={overviewErr} />
+
               <StatusStrip
                 sessions={sessions}
                 logs={logs}

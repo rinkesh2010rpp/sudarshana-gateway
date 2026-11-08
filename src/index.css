@@ -284,3 +284,109 @@ code {
   margin-bottom: 8px;
 }
 
+
+/* --- /control: the "Am I OK" block (first of the three questions) --------- */
+.ov {
+  margin: 0 0 28px;
+}
+
+.ov-eyebrow {
+  margin: 0 0 6px;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+  opacity: 0.75;
+}
+
+.ov-verdict {
+  margin: 0 0 18px;
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--text-h);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ov-verdict--unknown {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.ov-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  transform: translateY(-2px);
+  background: var(--text);
+}
+
+.ov-dot--ok {
+  background: #22c55e;
+}
+
+.ov-dot--warn {
+  background: #f59e0b;
+}
+
+.ov-dot--unknown {
+  background: var(--text);
+  opacity: 0.5;
+}
+
+.ov-note {
+  margin: -8px 0 0;
+  font-size: 0.9em;
+  max-width: 60ch;
+}
+
+.ov-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.ov-tile {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: var(--social-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ov-tile-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.ov-tile-value {
+  font-size: 1.05rem;
+  color: var(--text-h);
+  overflow-wrap: anywhere;
+}
+
+.ov-tile-note {
+  font-size: 0.78rem;
+  color: var(--text);
+  opacity: 0.75;
+}
+
+@media (max-width: 760px) {
+  .ov-verdict {
+    font-size: 1.2rem;
+  }
+
+  .ov-tiles {
+    grid-template-columns: 1fr 1fr;
+  }
+}
