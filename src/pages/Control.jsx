@@ -411,7 +411,7 @@ export default function Control() {
               <ControlDone
                 items={overview?.recent_work}
                 busy={overviewBusy}
-                err={overviewErr}
+                err={overviewErr || overview?.recent_work_error}
                 today={todayISO}
                 onSeeMore={() => setTab('logs')}
               />
