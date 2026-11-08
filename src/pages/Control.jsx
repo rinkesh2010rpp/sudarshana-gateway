@@ -402,7 +402,10 @@ export default function Control() {
               <ControlAsks
                 asks={overview?.asks}
                 busy={overviewBusy}
-                err={overviewErr}
+                // Two different failures, one honest response: the whole
+                // request failed, or the API could read me but not my asks
+                // file. Either way the panel must not say "nothing waiting".
+                err={overviewErr || overview?.asks_error}
               />
 
               <ControlDone
