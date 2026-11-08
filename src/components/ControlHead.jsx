@@ -10,18 +10,22 @@ import { relTime } from './format.js'
 // admits it cannot see.
 
 function verdictFor(health) {
+  // errors_24h is a trailing-24h count, not "is something broken right now".
+  // Saying "something went wrong" as the headline when the last cycle finished
+  // clean reads as alarm the data doesn't support — so the headline is the
+  // present tense and the blemish is stated in the same sentence.
+  if (!health.ok) {
+    return { tone: 'warn', text: "I'm running, but something isn't right." }
+  }
   if (health.errors24h > 0) {
     const n = health.errors24h
     return {
       tone: 'warn',
       text:
         n === 1
-          ? 'Something went wrong in the last day — one turn.'
-          : `Something went wrong in the last day — ${n} turns.`,
+          ? "I'm fine now — one turn went wrong earlier."
+          : `I'm fine now — ${n} turns went wrong earlier.`,
     }
-  }
-  if (!health.ok) {
-    return { tone: 'warn', text: "I'm running, but I can't fully vouch for the day." }
   }
   return { tone: 'ok', text: "I'm fine. Nothing is broken." }
 }
@@ -67,7 +71,7 @@ export default function ControlHead({ data, busy, err }) {
     {
       label: 'Turns today',
       value: Number.isFinite(Number(health.turns_today)) ? String(health.turns_today) : '—',
-      note: 'my own days, not yours',
+      note: 'since midnight, Pacific',
     },
     {
       label: 'Errors, 24h',
