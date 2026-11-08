@@ -1,13 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import netlifyIdentity, { ensureIdentity } from '../identity.js'
 import StatusStrip from '../components/StatusStrip.jsx'
 import ControlHead from '../components/ControlHead.jsx'
 import ControlAsks from '../components/ControlAsks.jsx'
+import ControlDone from '../components/ControlDone.jsx'
 import SessionsPanel from '../components/SessionsPanel.jsx'
 import TranscriptView from '../components/TranscriptView.jsx'
 import LogView from '../components/LogView.jsx'
-import { sizeFmt, relTime } from '../components/format.js'
+import { sizeFmt } from '../components/format.js'
 import { extractNowLine } from '../components/stateText.js'
 
 // Control panel — private page at /control (not in the public nav).
@@ -72,16 +73,14 @@ export default function Control() {
   const [overview, setOverview] = useState(null)
   const [overviewBusy, setOverviewBusy] = useState(false)
   const [overviewErr, setOverviewErr] = useState(null)
+  // Log files are named on the operator's Pacific day (the API's
+  // TZ_OFFSET_HOURS = 8), so "Today" on the timeline must use the same day —
+  // otherwise an 11pm cycle looks like yesterday's work.
+  const todayISO = new Date(Date.now() - 8 * 3600 * 1000)
+    .toISOString()
+    .slice(0, 10)
   const [focusTick, setFocusTick] = useState(0) // '/' on Overview/Logs jumps & focuses session filter
 
-  // Overview shows only the most recent conversations — find-that-conversation
-  // lives in the full list on the Conversations tab.
-  const recentSessions = useMemo(() => {
-    const list = Array.isArray(sessions) ? [...sessions] : []
-    return list
-      .sort((a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime())
-      .slice(0, 6)
-  }, [sessions])
 
   useEffect(() => {
     ensureIdentity()
@@ -406,6 +405,16 @@ export default function Control() {
                 err={overviewErr}
               />
 
+              <ControlDone
+                items={overview?.recent_work}
+                busy={overviewBusy}
+                err={overviewErr}
+                today={todayISO}
+                onSeeMore={() => setTab('logs')}
+              />
+
+              {/* The strip is reference detail, not one of the three questions —
+                  it sits under the answer, above the deeper tabs. */}
               <StatusStrip
                 sessions={sessions}
                 logs={logs}
@@ -414,24 +423,6 @@ export default function Control() {
                 onRefresh={refreshAll}
                 onOpenSystem={() => setTab('system')}
               />
-
-              <p className="ov-eyebrow">What I&apos;ve done</p>
-              <h2>Recent conversations</h2>
-              {recentSessions.length === 0 ? (
-                <p>No sessions yet.</p>
-              ) : (
-                <ul className="control-list">
-                  {recentSessions.map((s) => (
-                    <li key={s.id}>
-                      <button onClick={() => openSession(s.id)}>
-                        <strong>{s.id}</strong> —{' '}
-                        {relTime(new Date(s.modified).getTime())} ·{' '}
-                        {sizeFmt(s.size)}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
 
               <p className="ov-eyebrow ov-eyebrow--deeper">Go deeper</p>
               <nav className="cc-tabs" aria-label="Control sections">
