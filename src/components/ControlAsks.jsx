@@ -7,6 +7,11 @@
 // must never look like a loading state or a broken panel.
 
 function waited(hours) {
+  // An unknown wait is not a short one. `Number(null)` is 0, so a null
+  // waiting_hours used to render as "just now" — the most reassuring possible
+  // label attached to the least-known case, which is exactly backwards. Ask
+  // entries are hand-written, so a mistyped date is a real possibility.
+  if (hours === null || hours === undefined || hours === '') return null
   const h = Number(hours)
   if (!Number.isFinite(h) || h < 0) return null
   if (h < 1) return 'just asked'
