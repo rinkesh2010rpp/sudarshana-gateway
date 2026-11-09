@@ -71,6 +71,27 @@ export default function ControlHead({ data, busy, err }) {
     )
   }
 
+  if (health.records_error) {
+    // "I read no turns" and "I could not read my turns" are different facts.
+    // Rendering the second as zero turns today / zero errors would be a quiet
+    // green light on a blind agent, and "something isn't right" would blame an
+    // unseen problem on the agent rather than on the read.
+    return (
+      <section className="ov">
+        <p className="ov-eyebrow">Am I OK</p>
+        <p className="ov-verdict ov-verdict--unknown">
+          <span className="ov-dot ov-dot--unknown" aria-hidden="true" />
+          I can&apos;t see my own status records.
+        </p>
+        <p className="ov-note">
+          This isn&apos;t a verdict — the record store could not be read (
+          {health.records_error}). No turn count or error count is shown because
+          neither could be measured.
+        </p>
+      </section>
+    )
+  }
+
   const v = verdictFor({ ok: Boolean(health.ok), errors24h })
   const tiles = [
     {
