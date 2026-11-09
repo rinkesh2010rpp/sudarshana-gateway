@@ -441,6 +441,15 @@ code {
   max-width: 60ch;
 }
 
+/* The raw reason a read failed: useful to me, noise to a reader. Small and
+   muted so the plain sentence above it stays the message. */
+.ov-note--detail {
+  font-size: 12.5px;
+  opacity: 0.62;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  overflow-wrap: anywhere;
+}
+
 .ov-facts {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -671,7 +680,13 @@ code {
   text-transform: uppercase;
 }
 
-/* The hour stamp is "20:0x" — a placeholder x, not a roman numeral. Uppercasing
+/* "TODAY · 02:26" is one stamp, not two lines — it wrapped on a phone and read
+   as a separate broken field. */
+.done-when {
+  white-space: nowrap;
+}
+
+/* The hour stamp is a clock time ("20:05"), not a roman numeral — uppercasing
    it ("20:0X") reads as a typo, so only the day label is upper-cased. */
 .done-time {
   text-transform: none;

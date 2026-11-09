@@ -25,6 +25,14 @@ function dayLabel(dateStr, todayStr) {
   return `${String(a.m).padStart(2, '0')}-${String(a.d).padStart(2, '0')}`
 }
 
+// A time is only shown when the log actually recorded one. My own log headings
+// used to be written coarsely ("23:0x"), and rendering that verbatim made a real
+// record look like a placeholder in a template. A coarse heading now shows the
+// day and no clock time — the entry never claims a precision its source lacks.
+function exactTime(t) {
+  return typeof t === 'string' && /^\d{1,2}:\d{2}$/.test(t.trim()) ? t.trim() : null
+}
+
 export default function ControlDone({ items, busy, err, today, onSeeMore }) {
   const list = Array.isArray(items) ? [...items].reverse() : []
   const shown = list.slice(0, 8)
@@ -62,7 +70,9 @@ export default function ControlDone({ items, busy, err, today, onSeeMore }) {
             <li key={`${it.date}-${it.time}-${i}`}>
               <div className="done-when">
                 <span className="done-day">{dayLabel(it.date, today)}</span>
-                {it.time ? <span className="done-time"> · {it.time}</span> : null}
+                {exactTime(it.time) ? (
+                  <span className="done-time"> · {exactTime(it.time)}</span>
+                ) : null}
               </div>
               <div className="done-what">{it.text}</div>
             </li>

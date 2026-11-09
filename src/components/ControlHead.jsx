@@ -4,10 +4,12 @@ import { relTime } from './format.js'
 //
 // Data comes from the control API's /api/control/overview (health object built
 // from the status records). This component renders ONLY what the server sent:
-// no derived guesses, no placeholder numbers. When the endpoint is not there
-// yet (merged but not deployed, say) it says so plainly instead of showing a
-// fake green light — a panel that invents "I'm fine" is worse than one that
-// admits it cannot see.
+// no derived guesses, no placeholder numbers. When nothing came back it says so
+// plainly instead of showing a fake green light — a panel that invents "I'm
+// fine" is worse than one that admits it cannot see.
+//
+// Everything here is written for a person, not for whoever wrote the code: no
+// error codes, no internal field names, no "endpoint".
 
 function verdictFor(health) {
   // errors_24h is a trailing-24h count, not "is something broken right now" —
@@ -56,11 +58,11 @@ function outcomeNote(outcome) {
   // "finished done" and "finished step-limit", which is a database field
   // leaking onto a page written in plain words.
   if (!outcome) return 'no record'
-  if (outcome === 'running') return 'in progress'
-  if (outcome === 'zombie') return 'died mid-run'
+  if (outcome === 'running') return 'still running'
+  if (outcome === 'zombie') return 'crashed mid-run'
   if (outcome === 'done') return 'finished cleanly'
-  if (outcome === 'step-limit') return 'hit the step limit'
-  return 'finished, but not cleanly'
+  if (outcome === 'step-limit') return 'ran out of steps'
+  return "didn't finish cleanly"
 }
 
 export default function ControlHead({ data, busy, err }) {
@@ -93,17 +95,16 @@ export default function ControlHead({ data, busy, err }) {
   }
 
   if (!health) {
-    const notDeployed = /404/.test(err || '')
     return (
       <section className="ov-q1">
         <div className="ov-verdict-card ov-verdict-card--unknown">
           <p className="ov-kicker">Am I ok?</p>
           <h1 className="ov-headline">I can&apos;t tell you right now.</h1>
           <p className="ov-note">
-            {notDeployed
-              ? 'The health endpoint answered 404 — it is built but not deployed yet, so there is nothing honest to show here.'
-              : `The health endpoint could not be read${err ? ` (${err})` : ''}.`}
+            I asked for my own status and nothing came back, so there is nothing
+            here to judge. That is not the same as being fine.
           </p>
+          {err ? <p className="ov-note ov-note--detail">{err}</p> : null}
         </div>
       </section>
     )
@@ -120,9 +121,11 @@ export default function ControlHead({ data, busy, err }) {
           <p className="ov-kicker">Am I ok?</p>
           <h1 className="ov-headline">I can&apos;t see my own status records.</h1>
           <p className="ov-note">
-            This isn&apos;t a verdict — {health.records_error}. No turn or error
-            count is shown, because neither could be measured.
+            This isn&apos;t a verdict. My own record of turns couldn&apos;t be
+            read, so no count is shown — a record I can&apos;t read is not an
+            empty one.
           </p>
+          <p className="ov-note ov-note--detail">{health.records_error}</p>
         </div>
       </section>
     )
@@ -143,12 +146,15 @@ export default function ControlHead({ data, busy, err }) {
     {
       label: 'Errors, 24h',
       value: String(errors24h),
-      note: 'turns that died or closed wrong',
+      note: 'turns that crashed or ended badly',
     },
     {
       label: 'Right now',
       value: health.state ? String(health.state).replace('running-', 'running: ') : '—',
-      note: health.since ? `since ${relTime(new Date(health.since).getTime())}` : '',
+      // relTime reads "22m ago"; a duration needs "for 22m", so drop the "ago".
+      note: health.since
+        ? `for ${relTime(new Date(health.since).getTime()).replace(/ ago$/, '')}`
+        : '',
     },
   ]
 
