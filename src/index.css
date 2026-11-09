@@ -332,13 +332,15 @@ code {
 .ctrl-pill--ok {
   border-color: rgba(74, 222, 128, 0.35);
   background: rgba(74, 222, 128, 0.12);
-  color: #bbf7d0;
+  /* The tint lives in the border and background. Pale green text only reads on
+     a dark page, and this site also ships light. */
+  color: var(--text-h);
 }
 
 .ctrl-pill--warn {
   border-color: rgba(251, 191, 36, 0.35);
   background: rgba(251, 191, 36, 0.12);
-  color: #fde68a;
+  color: var(--text-h);
 }
 
 .ctrl-pill-dot {
@@ -478,6 +480,20 @@ code {
   opacity: 0.8;
 }
 
+@media (max-width: 760px) {
+  /* The mockup stacks the masthead on a phone: brand, then the state pill,
+     then who is signed in — never three items squeezed onto one row. */
+  .ctrl-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .ctrl-who {
+    order: 3;
+  }
+}
+
 @media (max-width: 900px) {
   .ov-q1 {
     grid-template-columns: 1fr;
@@ -507,7 +523,7 @@ code {
 
 .ctrl-count {
   font-size: 12px;
-  color: #e9d5ff;
+  color: var(--accent);
   background: rgba(192, 132, 252, 0.14);
   border: 1px solid rgba(192, 132, 252, 0.45);
   padding: 2px 9px;
@@ -585,7 +601,7 @@ code {
 
 .ov-ask-wait {
   font-size: 12.5px;
-  color: #e9d5ff;
+  color: var(--accent);
   white-space: nowrap;
 }
 
