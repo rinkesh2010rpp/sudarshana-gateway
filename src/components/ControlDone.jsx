@@ -31,8 +31,11 @@ export default function ControlDone({ items, busy, err, today, onSeeMore }) {
   const known = !err
 
   return (
-    <section className="ov ov-done">
-      <p className="ov-eyebrow">What I&apos;ve done</p>
+    <section className="ov-done">
+      <div className="ctrl-qhead">
+        <h2>What I&apos;ve done</h2>
+        <span className="ctrl-hint">the last few cycles, in plain language</span>
+      </div>
 
       {!known && (
         <p className="ov-note">

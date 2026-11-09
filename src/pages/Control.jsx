@@ -342,14 +342,41 @@ export default function Control() {
     )
   }
 
+  // The masthead's pill is the same fact the verdict card leads with, one line
+  // up: green only when the error count is zero and the store answered.
+  const h = overview?.health
+  const pillTone = !h
+    ? 'unknown'
+    : Number(h.errors_24h ?? 0) > 0
+      ? 'warn'
+      : h.ok
+        ? 'ok'
+        : 'unknown'
+  const pillText = !h
+    ? 'reading my state'
+    : pillTone === 'ok'
+      ? 'running fine'
+      : pillTone === 'warn'
+        ? 'something went wrong earlier'
+        : 'no record of a turn yet'
+
   return (
     <section>
-      <h1>Control</h1>
-      <p>
-        Signed in as <strong>{user.email}</strong>.{' '}
-        <button onClick={() => netlifyIdentity.logout()}>Sign out</button>{' '}
-        <button onClick={() => setShowShortcuts((v) => !v)}>⌨ Shortcuts</button>
-      </p>
+      <header className="ctrl-top">
+        <div className="ctrl-brand">
+          <b>Control</b>
+          <span>Sudarshana</span>
+        </div>
+        <div className={`ctrl-pill ctrl-pill--${pillTone}`}>
+          <span className="ctrl-pill-dot" aria-hidden="true" />
+          {pillText}
+        </div>
+        <div className="ctrl-who">
+          signed in as {user.email} ·{' '}
+          <button onClick={() => netlifyIdentity.logout()}>Sign out</button>
+          <button onClick={() => setShowShortcuts((v) => !v)}>⌨ Shortcuts</button>
+        </div>
+      </header>
 
       {showShortcuts && (
         <section className="cc-help">

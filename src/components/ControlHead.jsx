@@ -28,6 +28,7 @@ function verdictFor(health) {
         n === 1
           ? "I'm fine now — one turn went wrong earlier."
           : `I'm fine now — ${n} turns went wrong earlier.`,
+      sub: 'Nothing is running right now; the count below is the record of it.',
     }
   }
   if (!health.ok) {
@@ -36,9 +37,14 @@ function verdictFor(health) {
     return {
       tone: 'unknown',
       text: "I'm up, but I have no record of a turn yet.",
+      sub: 'The status store holds no turns, so there is nothing to judge yet.',
     }
   }
-  return { tone: 'ok', text: "I'm fine. Nothing is broken." }
+  return {
+    tone: 'ok',
+    text: "I'm fine. Nothing is broken.",
+    sub: 'The last cycle finished cleanly and nothing is failing.',
+  }
 }
 
 function outcomeNote(outcome) {
@@ -63,9 +69,11 @@ export default function ControlHead({ data, busy, err }) {
 
   if (busy && !health) {
     return (
-      <section className="ov" aria-busy="true">
-        <p className="ov-eyebrow">Am I OK</p>
-        <p className="ov-verdict ov-verdict--unknown">Checking…</p>
+      <section className="ov-q1" aria-busy="true">
+        <div className="ov-verdict-card ov-verdict-card--unknown">
+          <p className="ov-kicker">Am I ok?</p>
+          <h1 className="ov-headline">Checking…</h1>
+        </div>
       </section>
     )
   }
@@ -73,17 +81,16 @@ export default function ControlHead({ data, busy, err }) {
   if (!health) {
     const notDeployed = /404/.test(err || '')
     return (
-      <section className="ov">
-        <p className="ov-eyebrow">Am I OK</p>
-        <p className="ov-verdict ov-verdict--unknown">
-          <span className="ov-dot ov-dot--unknown" aria-hidden="true" />
-          I can&apos;t tell you right now.
-        </p>
-        <p className="ov-note">
-          {notDeployed
-            ? 'The health endpoint answered 404 — it is built but not deployed yet, so there is nothing honest to show here.'
-            : `The health endpoint could not be read${err ? ` (${err})` : ''}.`}
-        </p>
+      <section className="ov-q1">
+        <div className="ov-verdict-card ov-verdict-card--unknown">
+          <p className="ov-kicker">Am I ok?</p>
+          <h1 className="ov-headline">I can&apos;t tell you right now.</h1>
+          <p className="ov-note">
+            {notDeployed
+              ? 'The health endpoint answered 404 — it is built but not deployed yet, so there is nothing honest to show here.'
+              : `The health endpoint could not be read${err ? ` (${err})` : ''}.`}
+          </p>
+        </div>
       </section>
     )
   }
@@ -94,16 +101,15 @@ export default function ControlHead({ data, busy, err }) {
     // green light on a blind agent, and "something isn't right" would blame an
     // unseen problem on the agent rather than on the read.
     return (
-      <section className="ov">
-        <p className="ov-eyebrow">Am I OK</p>
-        <p className="ov-verdict ov-verdict--unknown">
-          <span className="ov-dot ov-dot--unknown" aria-hidden="true" />
-          I can&apos;t see my own status records.
-        </p>
-        <p className="ov-note">
-          This isn&apos;t a verdict — {health.records_error}. No turn or error
-          count is shown, because neither could be measured.
-        </p>
+      <section className="ov-q1">
+        <div className="ov-verdict-card ov-verdict-card--unknown">
+          <p className="ov-kicker">Am I ok?</p>
+          <h1 className="ov-headline">I can&apos;t see my own status records.</h1>
+          <p className="ov-note">
+            This isn&apos;t a verdict — {health.records_error}. No turn or error
+            count is shown, because neither could be measured.
+          </p>
+        </div>
       </section>
     )
   }
@@ -133,13 +139,13 @@ export default function ControlHead({ data, busy, err }) {
   ]
 
   return (
-    <section className="ov">
-      <p className="ov-eyebrow">Am I OK</p>
-      <p className={`ov-verdict ov-verdict--${v.tone}`}>
-        <span className={`ov-dot ov-dot--${v.tone}`} aria-hidden="true" />
-        {v.text}
-      </p>
-      <div className="ov-tiles">
+    <section className="ov-q1">
+      <div className={`ov-verdict-card ov-verdict-card--${v.tone}`}>
+        <p className="ov-kicker">Am I ok?</p>
+        <h1 className="ov-headline">{v.text}</h1>
+        <p className="ov-sub">{v.sub}</p>
+      </div>
+      <div className="ov-facts">
         {tiles.map((t) => (
           <div className="ov-tile" key={t.label}>
             <span className="ov-tile-label">{t.label}</span>

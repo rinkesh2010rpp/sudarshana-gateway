@@ -42,8 +42,16 @@ export default function ControlAsks({ asks, busy, err }) {
   const known = !err
 
   return (
-    <section className="ov ov-asks">
-      <p className="ov-eyebrow">What I need from you</p>
+    <section className="ov-asks">
+      <div className="ctrl-qhead">
+        <h2>What I need from you</h2>
+        {known && list.length > 0 ? (
+          <span className="ctrl-count">
+            {list.length} open
+          </span>
+        ) : null}
+        <span className="ctrl-hint">Answer these and I can move.</span>
+      </div>
 
       {!known && (
         <p className="ov-note">

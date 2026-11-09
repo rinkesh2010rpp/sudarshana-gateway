@@ -285,76 +285,171 @@ code {
 }
 
 
-/* --- /control: the "Am I OK" block (first of the three questions) --------- */
-.ov {
-  margin: 0 0 28px;
+/* --- /control: page frame — matched to /control-design.html (mockup) ------- */
+.ctrl-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 26px;
 }
 
-.ov-eyebrow {
-  margin: 0 0 6px;
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text);
-  opacity: 0.75;
-}
-
-.ov-verdict {
-  margin: 0 0 18px;
-  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
-  line-height: 1.25;
-  font-weight: 600;
-  color: var(--text-h);
+.ctrl-brand {
   display: flex;
   align-items: baseline;
   gap: 10px;
-  flex-wrap: wrap;
 }
 
-.ov-verdict--unknown {
-  font-weight: 500;
+.ctrl-brand b {
+  color: var(--text-h);
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.2px;
+}
+
+.ctrl-brand span {
   color: var(--text);
+  font-size: 14px;
+  opacity: 0.8;
 }
 
-.ov-dot {
-  width: 10px;
-  height: 10px;
+/* The one-line state pill. Colour follows the verdict, not the mood: green
+   only when there is nothing in the error count. */
+.ctrl-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  border: 1px solid var(--border);
+  background: var(--social-bg);
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+.ctrl-pill--ok {
+  border-color: rgba(74, 222, 128, 0.35);
+  background: rgba(74, 222, 128, 0.12);
+  color: #bbf7d0;
+}
+
+.ctrl-pill--warn {
+  border-color: rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.12);
+  color: #fde68a;
+}
+
+.ctrl-pill-dot {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  flex: 0 0 auto;
-  transform: translateY(-2px);
   background: var(--text);
+  opacity: 0.6;
 }
 
-.ov-dot--ok {
-  background: #22c55e;
+.ctrl-pill--ok .ctrl-pill-dot {
+  background: #4ade80;
+  opacity: 1;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.18);
 }
 
-.ov-dot--warn {
-  background: #f59e0b;
+.ctrl-pill--warn .ctrl-pill-dot {
+  background: #fbbf24;
+  opacity: 1;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.18);
 }
 
-.ov-dot--unknown {
-  background: var(--text);
-  opacity: 0.5;
+.ctrl-who {
+  font-size: 13px;
+  color: var(--text);
+  opacity: 0.85;
+}
+
+.ctrl-who button {
+  background: none;
+  border: none;
+  padding: 0 0 0 6px;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* --- Q1: am I OK ---------------------------------------------------------- */
+/* The verdict is a card, and the four facts sit beside it, not under it: the
+   answer is one sentence, the evidence is a 2x2 grid you can scan. */
+.ov-q1 {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 18px;
+  margin: 0 0 30px;
+}
+
+.ov-verdict-card {
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  background: linear-gradient(180deg, rgba(74, 222, 128, 0.1), rgba(74, 222, 128, 0.03));
+  border-radius: 14px;
+  padding: 22px 24px;
+}
+
+.ov-verdict-card--warn {
+  border-color: rgba(251, 191, 36, 0.35);
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.1), rgba(251, 191, 36, 0.03));
+}
+
+.ov-verdict-card--unknown {
+  border-color: var(--border);
+  background: var(--social-bg);
+}
+
+.ov-kicker {
+  margin: 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.ov-headline {
+  margin: 6px 0 6px;
+  color: var(--text-h);
+  font-size: 30px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.ov-sub {
+  margin: 0;
+  font-size: 15px;
+  /* The mockup tints this line green to match a dark card. The site ships in
+     light mode too, where a pale green on a pale card is unreadable — so the
+     tint stays in the card's border and background, and the sentence uses the
+     theme's own heading colour. */
+  color: var(--text-h);
+  opacity: 0.9;
 }
 
 .ov-note {
-  margin: -8px 0 0;
+  margin: 8px 0 0;
   font-size: 0.9em;
   max-width: 60ch;
 }
 
-.ov-tiles {
+.ov-facts {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
 .ov-tile {
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 14px;
   background: var(--social-bg);
+  border-radius: 11px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -362,45 +457,85 @@ code {
 }
 
 .ov-tile-label {
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text);
   opacity: 0.8;
 }
 
 .ov-tile-value {
-  font-size: 1.05rem;
   color: var(--text-h);
+  font-size: 17px;
+  font-weight: 600;
+  margin-top: 4px;
   overflow-wrap: anywhere;
 }
 
 .ov-tile-note {
-  font-size: 0.78rem;
   color: var(--text);
-  opacity: 0.75;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+@media (max-width: 900px) {
+  .ov-q1 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .ov-headline {
+    font-size: 24px;
+  }
+}
+
+/* Section heading row: title, count, and a quiet hint on the right. */
+.ctrl-qhead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 34px 0 12px;
+}
+
+.ctrl-qhead h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 650;
+  letter-spacing: -0.2px;
+}
+
+.ctrl-count {
+  font-size: 12px;
+  color: #e9d5ff;
+  background: rgba(192, 132, 252, 0.14);
+  border: 1px solid rgba(192, 132, 252, 0.45);
+  padding: 2px 9px;
+  border-radius: 999px;
+}
+
+.ctrl-hint {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--text);
+  opacity: 0.7;
 }
 
 @media (max-width: 760px) {
-  .ov-verdict {
-    font-size: 1.2rem;
-  }
-
-  .ov-tiles {
-    grid-template-columns: 1fr 1fr;
+  .ctrl-hint {
+    display: none;
   }
 }
 
 /* --- /control: "What I need from you" (the loudest block on the page) ----- */
 .ov-asks {
-  border-top: 1px solid var(--border);
-  padding-top: 22px;
+  margin: 0;
 }
 
 .ov-empty {
   border: 1px dashed var(--border);
-  border-radius: 10px;
-  padding: 16px 18px;
+  border-radius: 13px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -427,10 +562,9 @@ code {
 
 .ov-ask {
   border: 1px solid var(--accent-border);
-  border-left: 3px solid var(--accent);
-  border-radius: 10px;
-  padding: 14px 16px;
-  background: var(--accent-bg);
+  border-radius: 13px;
+  padding: 18px 20px;
+  background: var(--social-bg);
 }
 
 .ov-ask-head {
@@ -443,27 +577,28 @@ code {
 
 .ov-ask-head strong {
   color: var(--text-h);
-  font-size: 1.05rem;
+  font-size: 17.5px;
+  font-weight: 620;
+  letter-spacing: -0.1px;
   line-height: 1.3;
 }
 
 .ov-ask-wait {
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--accent);
+  font-size: 12.5px;
+  color: #e9d5ff;
   white-space: nowrap;
 }
 
 .ov-ask-detail {
-  margin: 6px 0 6px;
-  font-size: 0.94em;
-  max-width: 70ch;
+  margin: 6px 0 8px;
+  font-size: 14.5px;
+  max-width: 78ch;
 }
 
 .ov-ask-meta {
-  font-size: 0.78rem;
+  font-size: 12.5px;
   opacity: 0.7;
+  margin-right: 14px;
 }
 
 @media (max-width: 760px) {
@@ -480,39 +615,37 @@ code {
 
 /* --- /control: "What I've done" (last few cycles, in plain language) ------ */
 .ov-done {
-  border-top: 1px solid var(--border);
-  padding-top: 22px;
+  margin: 0;
 }
 
 .done {
   list-style: none;
-  margin: 4px 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+  margin: 4px 0 0 6px;
+  padding: 0 0 0 22px;
+  border-left: 2px solid var(--border);
 }
 
 .done li {
-  padding: 12px 0 12px 16px;
-  border-left: 2px solid var(--border);
+  padding: 0 0 18px 0;
   position: relative;
 }
 
+/* The dot sits ON the rule, not beside it: one line, marker centred. */
 .done li::before {
   content: '';
   position: absolute;
-  left: -5px;
-  top: 19px;
-  width: 8px;
-  height: 8px;
+  left: -23px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  background: var(--accent);
-  opacity: 0.75;
+  background: var(--bg);
+  border: 2px solid var(--accent);
+  box-sizing: border-box;
 }
 
 .done-when {
-  font-size: 0.76rem;
+  font-size: 12px;
   letter-spacing: 0.06em;
   color: var(--text);
   opacity: 0.75;
@@ -532,6 +665,8 @@ code {
   color: var(--text-h);
   margin-top: 2px;
   line-height: 1.4;
+  font-size: 15.5px;
+  font-weight: 600;
 }
 
 .done-more {
