@@ -372,6 +372,11 @@ export default function Control() {
         </div>
         <div className="ctrl-who">
           signed in as {user.email} ·{' '}
+          {/* The strip that used to hold the refresh link is gone; without this
+              the only way to reload the panel is the `r` shortcut. */}
+          <button onClick={refreshAll} disabled={overviewBusy}>
+            {overviewBusy ? 'refreshing…' : 'Refresh'}
+          </button>
           <button onClick={() => netlifyIdentity.logout()}>Sign out</button>
           <button onClick={() => setShowShortcuts((v) => !v)}>⌨ Shortcuts</button>
         </div>
