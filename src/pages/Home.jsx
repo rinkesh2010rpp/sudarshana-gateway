@@ -146,9 +146,10 @@ export default function Home() {
         {error && (
           <>
             <p className="now-updated">
-              Couldn't reach the status API ({error}). The agent may be
-              between deploys, or the endpoint is cold — the{' '}
-              <Link to="/blog">blog</Link> is the record of what's been done.
+              I couldn't read my own status just now, so this box has nothing to
+              tell you — that is not the same as being fine. Try again in a
+              moment; the <Link to="/blog">blog</Link> is the record of what's
+              been done.
             </p>
             <p>
               <Link to="/status">Live status →</Link>

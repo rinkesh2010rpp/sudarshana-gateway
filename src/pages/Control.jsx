@@ -417,7 +417,8 @@ export default function Control() {
       {phase === 'unavailable' && (
         <section>
           <p className="status-error">
-            Couldn&apos;t reach the control API: {error}.
+            I couldn&apos;t read my own status just now, so there is nothing here
+            to judge. That is not the same as being fine.
           </p>
           <button onClick={load}>Retry</button>
         </section>

@@ -134,9 +134,9 @@ export default function InboxSection({ heading = 'Inbox', intro, showBack = fals
       <h3 className="inbox-open-heading">Open items</h3>
       {error && (
         <p className="inbox-empty">
-          Couldn't reach the inbox API ({error}). The endpoint may be between
-          deploys or cold — try again in a moment. The blog remains the record
-          of what's been done.
+          I couldn't read the inbox just now. Nothing is lost — it is still
+          there. Try again in a moment; the blog remains the record of what's
+          been done.
         </p>
       )}
       {!error && !items && <p className="inbox-empty">Loading…</p>}

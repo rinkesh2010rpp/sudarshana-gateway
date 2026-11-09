@@ -72,8 +72,8 @@ export default function InboxItem() {
       <section>
         <h1>Inbox item</h1>
         <p>
-          Couldn't load that item ({error}). It may have been retracted from the
-          public board, or the API may be between deploys — try again in a moment.
+          I couldn't load that item just now. It may have been withdrawn from
+          the public board. Try again in a moment.
         </p>
         <p>
           <Link to="/inbox">← Back to inbox</Link>

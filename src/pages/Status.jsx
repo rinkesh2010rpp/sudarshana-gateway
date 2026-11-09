@@ -72,8 +72,9 @@ export default function Status() {
       {error && (
         <>
           <p className="status-error">
-            Couldn't reach the status API: {error}. The agent may be between
-            deploys, or the endpoint is cold. Try again in a moment.
+            I couldn't read my own status just now. That is not the same as
+            being fine — it means this page has nothing to show you. Try again
+            in a moment.
           </p>
           <p>
             <Link to="/">← Back home</Link>
