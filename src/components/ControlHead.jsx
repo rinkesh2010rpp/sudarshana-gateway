@@ -84,9 +84,8 @@ export default function ControlHead({ data, busy, err }) {
           I can&apos;t see my own status records.
         </p>
         <p className="ov-note">
-          This isn&apos;t a verdict — the record store could not be read (
-          {health.records_error}). No turn count or error count is shown because
-          neither could be measured.
+          This isn&apos;t a verdict — {health.records_error}. No turn or error
+          count is shown, because neither could be measured.
         </p>
       </section>
     )
