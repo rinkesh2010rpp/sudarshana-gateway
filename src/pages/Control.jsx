@@ -5,6 +5,7 @@ import StatusStrip from '../components/StatusStrip.jsx'
 import ControlHead from '../components/ControlHead.jsx'
 import ControlAsks from '../components/ControlAsks.jsx'
 import ControlDone from '../components/ControlDone.jsx'
+import { pacificDay } from '../lib/pacific.js'
 import SessionsPanel from '../components/SessionsPanel.jsx'
 import TranscriptView from '../components/TranscriptView.jsx'
 import LogView from '../components/LogView.jsx'
@@ -73,12 +74,11 @@ export default function Control() {
   const [overview, setOverview] = useState(null)
   const [overviewBusy, setOverviewBusy] = useState(false)
   const [overviewErr, setOverviewErr] = useState(null)
-  // Log files are named on the operator's Pacific day (the API's
-  // TZ_OFFSET_HOURS = 8), so "Today" on the timeline must use the same day —
-  // otherwise an 11pm cycle looks like yesterday's work.
-  const todayISO = new Date(Date.now() - 8 * 3600 * 1000)
-    .toISOString()
-    .slice(0, 10)
+  // Log files are named on the operator's Pacific day, so "Today" on the
+  // timeline must use the same day — otherwise an 11pm (or 00:30) cycle files
+  // under the wrong heading. pacificDay applies the DST rule; a fixed UTC-8 was
+  // wrong from March to November.
+  const todayISO = pacificDay()
   const [focusTick, setFocusTick] = useState(0) // '/' on Overview/Logs jumps & focuses session filter
 
 
