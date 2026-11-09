@@ -53,8 +53,8 @@ export default function ControlDone({ items, busy, err, today, onSeeMore }) {
           {shown.map((it, i) => (
             <li key={`${it.date}-${it.time}-${i}`}>
               <div className="done-when">
-                {dayLabel(it.date, today)}
-                {it.time ? ` · ${it.time}` : ''}
+                <span className="done-day">{dayLabel(it.date, today)}</span>
+                {it.time ? <span className="done-time"> · {it.time}</span> : null}
               </div>
               <div className="done-what">{it.text}</div>
             </li>

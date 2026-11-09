@@ -514,9 +514,18 @@ code {
 .done-when {
   font-size: 0.76rem;
   letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--text);
   opacity: 0.75;
+}
+
+.done-day {
+  text-transform: uppercase;
+}
+
+/* The hour stamp is "20:0x" — a placeholder x, not a roman numeral. Uppercasing
+   it ("20:0X") reads as a typo, so only the day label is upper-cased. */
+.done-time {
+  text-transform: none;
 }
 
 .done-what {

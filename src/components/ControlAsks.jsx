@@ -19,7 +19,12 @@ function askedLabel(iso) {
   if (!iso) return ''
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return ''
-  return d.toLocaleString(undefined, {
+  // Pacific, like the day labels and the turn count — the rest of this panel
+  // runs on his calendar day, so an ask timestamp in the reader's timezone
+  // (or UTC in a headless build) would sit on a different clock than its
+  // neighbours.
+  return d.toLocaleString('en-US', {
+    timeZone: 'America/Los_Angeles',
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
