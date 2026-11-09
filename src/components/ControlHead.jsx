@@ -10,21 +10,32 @@ import { relTime } from './format.js'
 // admits it cannot see.
 
 function verdictFor(health) {
-  // errors_24h is a trailing-24h count, not "is something broken right now".
-  // Saying "something went wrong" as the headline when the last cycle finished
-  // clean reads as alarm the data doesn't support — so the headline is the
-  // present tense and the blemish is stated in the same sentence.
-  if (!health.ok) {
-    return { tone: 'warn', text: "I'm running, but something isn't right." }
-  }
-  if (health.errors24h > 0) {
-    const n = health.errors24h
+  // errors_24h is a trailing-24h count, not "is something broken right now" —
+  // so the headline leads with the present tense and states the blemish in the
+  // same sentence, rather than raising alarm the data doesn't support.
+  //
+  // Careful: the server's `ok` means "there are records and nothing went wrong
+  // in the last 24h", so it is necessarily false whenever errors24h > 0. Gating
+  // the earlier-turn sentence behind `ok` (as this did) made it unreachable —
+  // every one of those cases fell through to "something isn't right". Branch on
+  // the count itself, and use `ok` only to spot the case where there is no
+  // record at all.
+  const n = health.errors24h
+  if (n > 0) {
     return {
       tone: 'warn',
       text:
         n === 1
           ? "I'm fine now — one turn went wrong earlier."
           : `I'm fine now — ${n} turns went wrong earlier.`,
+    }
+  }
+  if (!health.ok) {
+    // No errors and still not "ok" can only mean the record set is empty: a
+    // fresh install, or every record aged out. That is not a green light.
+    return {
+      tone: 'unknown',
+      text: "I'm up, but I have no record of a turn yet.",
     }
   }
   return { tone: 'ok', text: "I'm fine. Nothing is broken." }
@@ -34,10 +45,16 @@ function outcomeNote(outcome) {
   // The newest record can be the turn running right now — it has not finished,
   // and the zombie outcome never finished either. Saying "finished running"
   // would be a small lie in the tile.
+  //
+  // The tile also must not print the outcome's internal name: it read
+  // "finished done" and "finished step-limit", which is a database field
+  // leaking onto a page written in plain words.
   if (!outcome) return 'no record'
   if (outcome === 'running') return 'in progress'
   if (outcome === 'zombie') return 'died mid-run'
-  return `finished ${outcome}`
+  if (outcome === 'done') return 'finished cleanly'
+  if (outcome === 'step-limit') return 'hit the step limit'
+  return 'finished, but not cleanly'
 }
 
 export default function ControlHead({ data, busy, err }) {
