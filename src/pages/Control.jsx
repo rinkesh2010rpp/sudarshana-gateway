@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import netlifyIdentity, { ensureIdentity } from '../identity.js'
-import StatusStrip from '../components/StatusStrip.jsx'
 import ControlHead from '../components/ControlHead.jsx'
 import ControlAsks from '../components/ControlAsks.jsx'
 import ControlDone from '../components/ControlDone.jsx'
@@ -441,17 +440,6 @@ export default function Control() {
                 err={overviewErr || overview?.recent_work_error}
                 today={todayISO}
                 onSeeMore={() => setTab('logs')}
-              />
-
-              {/* The strip is reference detail, not one of the three questions —
-                  it sits under the answer, above the deeper tabs. */}
-              <StatusStrip
-                sessions={sessions}
-                logs={logs}
-                stateMd={stateData?.files?.state_md}
-                loadedAt={loadedAt}
-                onRefresh={refreshAll}
-                onOpenSystem={() => setTab('system')}
               />
 
               <p className="ov-eyebrow ov-eyebrow--deeper">Go deeper</p>
