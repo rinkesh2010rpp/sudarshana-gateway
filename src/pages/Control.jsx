@@ -396,7 +396,23 @@ export default function Control() {
         </section>
       )}
 
-      {(phase === 'idle' || phase === 'loading') && <p>Loading…</p>}
+      {/* First paint. This used to be one bare "Loading…" for the whole page,
+          so for the first ~15 seconds the panel looked like a different, empty
+          page and then jumped. The three sections render themselves in their
+          busy state instead: same shape, same headings, honest "Checking…". */}
+      {(phase === 'idle' || phase === 'loading') && (
+        <section>
+          <ControlHead data={null} busy err={null} />
+          <ControlAsks asks={null} busy err={null} />
+          <ControlDone
+            items={null}
+            busy
+            err={null}
+            today={todayISO}
+            onSeeMore={null}
+          />
+        </section>
+      )}
 
       {phase === 'unavailable' && (
         <section>

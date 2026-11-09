@@ -45,10 +45,15 @@ export default function ControlDone({ items, busy, err, today, onSeeMore }) {
         </p>
       )}
 
-      {known && shown.length === 0 && (
-        <p className="ov-note">
-          {busy ? 'Checking…' : 'Nothing logged yet in the last two days.'}
-        </p>
+      {known && shown.length === 0 && busy && (
+        <div className="ov-empty" aria-busy="true">
+          <strong>Checking…</strong>
+          <span>Reading my logs.</span>
+        </div>
+      )}
+
+      {known && shown.length === 0 && !busy && (
+        <p className="ov-note">Nothing logged yet in the last two days.</p>
       )}
 
       {shown.length > 0 && (

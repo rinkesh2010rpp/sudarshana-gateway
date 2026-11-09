@@ -68,11 +68,25 @@ export default function ControlHead({ data, busy, err }) {
   const errors24h = Number(health?.errors_24h ?? 0)
 
   if (busy && !health) {
+    // Keep the real geometry while the first fetch runs. A card with no tiles
+    // under it is half the loaded height, so the whole page jumped the moment
+    // data arrived — the layout saying "nothing here" while the request was in
+    // flight. Dashes with the real labels hold the shape without inventing
+    // numbers.
     return (
       <section className="ov-q1" aria-busy="true">
         <div className="ov-verdict-card ov-verdict-card--unknown">
           <p className="ov-kicker">Am I ok?</p>
           <h1 className="ov-headline">Checking…</h1>
+          <p className="ov-sub">Reading my own status records.</p>
+        </div>
+        <div className="ov-facts">
+          {['Last cycle', 'Turns today', 'Errors, 24h', 'Running now'].map((label) => (
+            <div className="ov-tile" key={label}>
+              <span className="ov-tile-label">{label}</span>
+              <strong className="ov-tile-value">&mdash;</strong>
+            </div>
+          ))}
         </div>
       </section>
     )

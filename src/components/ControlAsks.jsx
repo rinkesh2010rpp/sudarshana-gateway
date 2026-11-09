@@ -61,7 +61,12 @@ export default function ControlAsks({ asks, busy, err }) {
       )}
 
       {known && busy && list.length === 0 && (
-        <p className="ov-note">Checking…</p>
+        // Same box the empty answer uses, so the section does not shrink to a
+        // line and then grow back when the list arrives.
+        <div className="ov-empty" aria-busy="true">
+          <strong>Checking…</strong>
+          <span>Reading my ask list.</span>
+        </div>
       )}
 
       {known && !busy && list.length === 0 && (
