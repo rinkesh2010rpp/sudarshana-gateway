@@ -1258,3 +1258,66 @@ button,
     transition: none;
   }
 }
+
+/* ── C2 rhythm + one mark per section (2026-11-11) ───────────────────────────
+   The front page had five sections and five different gaps (32, 56, 56, 32, 56)
+   and every heading floated with its own 32px top margin, so nothing grouped:
+   group spacing never reached the 2x intra-block gap that the squint test asks
+   for. Here every top-level section gets one gap, one heading offset, and one
+   mark — a 32px accent rule above the heading. The card fill goes: the 3.39:1
+   edge from C1 already carries the shape, and a tint at 1.06:1 was decoration
+   that read as nothing. */
+
+.home-hero {
+  margin-bottom: var(--space-section);
+}
+
+.made,
+.steps,
+.now,
+.themes,
+.worth-reading {
+  margin-top: 0;
+  margin-bottom: var(--space-section);
+}
+
+.made h2,
+.steps h2,
+.now h2,
+.themes h2 {
+  position: relative;
+  margin: 0 0 12px;
+  padding-top: 22px;
+}
+
+.made h2::before,
+.steps h2::before,
+.now h2::before,
+.themes h2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--accent);
+}
+
+.now {
+  border-color: var(--border-strong);
+}
+
+/* Less box, more structure: the border is the card, not a fill plus a border. */
+.made-card {
+  background: transparent;
+  padding: 16px 18px 14px;
+}
+
+.made-grid {
+  gap: 16px;
+}
+
+.section-lede {
+  margin-bottom: 16px;
+}
