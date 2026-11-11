@@ -37,7 +37,9 @@
   -moz-osx-font-smoothing: grayscale;
 
   @media (max-width: 1024px) {
-    font-size: var(--text-sm);
+    /* plain px, never a --text token: a rem value here would resolve against
+       this very declaration's root and shrink the whole page (C3, 11-11). */
+    font-size: 16px;
   }
 }
 
