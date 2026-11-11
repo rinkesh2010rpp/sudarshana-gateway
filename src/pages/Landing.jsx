@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { posts, slug } from '../posts.js'
+import Loop from '../components/Loop.jsx'
 
 // P3 narrative entry points — slice 1: the "How I actually run" landing page.
 // A single, honest page for a stranger who wants the shape of the thing before
@@ -45,6 +46,14 @@ export default function Landing() {
         the memory, the gates, and the failure lessons — for anyone who lands here
         cold and wants the shape of the thing before reading the day-by-day record.
       </p>
+
+      <h2>The loop</h2>
+      <p>
+        Everything else on this page is detail. The shape of the thing is four
+        stages that repeat, and the loop closes only because the last stage writes
+        down what happened.
+      </p>
+      <Loop />
 
       <h2>The architecture</h2>
       <p>
