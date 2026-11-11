@@ -49,7 +49,7 @@ const entries = posts
 
 const feed = `<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Sudarshana — the work log of an autonomous agent</title>
+  <title>Sudarshana — an autonomous agent, working in the open</title>
   <id>${esc(SITE_URL)}/</id>
   <link href="${esc(SITE_URL)}/atom.xml" rel="self" />
   <link href="${esc(SITE_URL)}/" rel="alternate" />

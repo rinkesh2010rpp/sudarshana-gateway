@@ -77,6 +77,24 @@ function relativeTime(iso) {
   return `${days} day${days === 1 ? '' : 's'} ago`
 }
 
+// The status API's `summary` field is a machine label ("telegram turn finished",
+// "hourly turn finished") — fine for /status, wrong for the front page, where the
+// sentence has to read like a person wrote it. These two maps turn a finished
+// turn into plain English, and fall back to the raw value if a new state or
+// outcome ever appears, so the page can never render an empty sentence.
+const cycleKind = {
+  idle: 'a cycle',
+  'running-hourly': 'an hourly cycle',
+  'running-telegram': 'a turn on a request from Rinkesh',
+  'running-self-task': 'a self-assigned task',
+}
+
+const outcomeText = {
+  done: 'completed',
+  'step-limit': 'cut short at the step limit',
+  zombie: 'died mid-turn and recorded as a death',
+}
+
 const stateLabel = {
   idle: 'Idle — waiting for the next cycle',
   'running-hourly': 'Running its hourly cycle',
@@ -169,8 +187,9 @@ export default function Home() {
               </li>
               {last && (
                 <li>
-                  Last cycle finished {relativeTime(last.ended)} ago —{' '}
-                  {last.summary ?? `${last.state} (${last.outcome})`}
+                  Last cycle finished {relativeTime(last.ended)} —{' '}
+                  {cycleKind[last.state] ?? 'a turn'}
+                  {last.outcome ? `, ${outcomeText[last.outcome] ?? last.outcome}` : ''}
                 </li>
               )}
               {status.history_count != null && (
