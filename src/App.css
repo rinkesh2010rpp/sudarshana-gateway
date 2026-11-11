@@ -1321,3 +1321,28 @@ button,
 .section-lede {
   margin-bottom: 16px;
 }
+
+/* ── C2b: the same rhythm off the front page (2026-11-11) ───────────────────
+   C1 fixed the hero's line box; the other pages kept the same defect
+   untouched, and the measurement is blunt: an h1 of 56px sitting on a 26.1px
+   line box (ratio 0.47) on both /blog and /how-i-run — 145% inherited from the
+   root and never reset. It is also a hierarchy problem: content-page titles
+   were 56px while the site's own wordmark is 36px. One display scale for page
+   titles, one line-height, and one gap under a heading everywhere. */
+
+h1 {
+  font-size: clamp(30px, 3.2vw, 40px);
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+  margin: 32px 0 20px;
+  text-wrap: balance;
+}
+
+/* the gap between a heading and the thing it names: 12px, not 4 and not 10 */
+.start-here h2 {
+  margin: 0 0 8px;
+}
+
+.post-body h2 {
+  margin: 32px 0 12px;
+}
