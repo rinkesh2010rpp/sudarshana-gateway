@@ -1101,5 +1101,160 @@ kbd {
   max-width: 460px;
   margin: 12px auto 0;
   font-size: 0.9em;
-  opacity: 0.85;
+  color: var(--ink-2);
+}
+
+/* ── C1 craft floor (2026-11-11) ─────────────────────────────────────────────
+   Why this block exists: the page was composed but flat. Measured on the live
+   stylesheet — the wordmark was 56px while the sentence that explains the page
+   was 20.7px (hierarchy inverted), card surfaces were 1.06:1 on white, borders
+   1.27:1, and every second-tier label carried its emphasis by `opacity: .7`,
+   which drops body text from 5.7:1 to 3.0:1. There were zero transitions, zero
+   :focus-visible rules, and one focus ring at 2.09:1.
+
+   This block sits at the end of App.css so it wins the cascade over both
+   stylesheets at equal specificity. It adds tokens and repairs contrast; it
+   does not restyle the design. Brief and sources: /data/actions/gateway-ui-craft.md */
+
+:root {
+  /* Meta ink: lighter than body, but never below 4.5:1. #746c80 = 5.0:1 on #fff. */
+  --ink-2: #746c80;
+  /* Structural hairline, 3.39:1 — for card edges, inputs and diagram boxes,
+     where 1px of --border was invisible. */
+  --border-strong: #948e9c;
+  /* Focus ring: 7.1:1 on white. Opaque on purpose — a 50%-alpha ring is not 3:1. */
+  --focus: #7b1fd0;
+  /* Accent that is legible as *text* (the fill accent is not: #aa3bff = 4.39:1). */
+  --accent-ink: #7b1fd0;
+  --space-section: 56px;
+  --dur: 160ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink-2: #8b8496; /* 4.97:1 on #16171d */
+    --border-strong: #5f626c; /* 3.47:1 */
+    --focus: #d8b4fe;
+    --accent-ink: #d8b4fe;
+  }
+}
+
+/* Hero: the sentence is the page's headline, the wordmark is its signature.
+   Inverted, with a display line-height and a measure short enough to be read
+   as a statement rather than as a paragraph. */
+.home-hero h1 {
+  font-size: clamp(30px, 3.4vw, 36px);
+  line-height: 1.1;
+  letter-spacing: -0.022em;
+  margin: 20px 0 12px;
+}
+
+.home-hero-line {
+  font-size: clamp(23px, 2.6vw, 30px);
+  line-height: 1.28;
+  letter-spacing: -0.012em;
+  max-width: 34ch;
+  margin: 0 0 16px;
+}
+
+/* Headings never break mid-phrase; paragraphs never leave an orphan word. */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* The opacity ladder, retired on the public pages: same de-emphasis, but at a
+   contrast that survives being read. */
+.post-meta,
+.topic-count,
+.now-updated,
+.inbox-item-summary,
+.inbox-detail-meta,
+.inbox-detail-question,
+.recent-posts-why,
+.worth-reading-why,
+.ov-note--detail {
+  opacity: 1;
+  color: var(--ink-2);
+}
+
+.loop-sub,
+.loop-back-label {
+  opacity: 1;
+  fill: var(--ink-2);
+}
+
+/* Surfaces you can see the edge of. */
+.made-card,
+.inbox-field,
+.loop-box {
+  border-color: var(--border-strong);
+}
+
+.loop-box {
+  stroke: var(--border-strong);
+}
+
+.loop-arrow {
+  stroke: var(--accent);
+}
+
+/* Sections get air: inter-section gaps are now ~2x the gap inside a card. */
+.made,
+.steps,
+.themes {
+  margin-bottom: var(--space-section);
+}
+
+/* Keyboard: one visible ring everywhere, on both themes, at >3:1. */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.blog-search-field:focus {
+  outline: 2px solid var(--focus);
+}
+
+/* Interaction: colour changes land instead of snapping. Only properties that
+   actually change are transitioned, and the guard comes last. */
+a,
+button,
+.made-card,
+.tag,
+.theme-link {
+  transition:
+    color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.made-cta:hover,
+.made-cta:focus-visible {
+  color: var(--accent-ink);
+}
+
+/* Counts and timestamps line up in columns. */
+.topic-count,
+.now-updated,
+.ctrl-count,
+.post-meta time {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a,
+  button,
+  .made-card,
+  .tag,
+  .theme-link {
+    transition: none;
+  }
 }
