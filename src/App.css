@@ -1376,3 +1376,17 @@ h5,
 h6 {
   font-size: var(--text-sm);
 }
+
+/* C4b (2026-11-11): prose measure. The body-visual review measured body text at
+   1,076-1,092px wide on a 1,124px column — ~100-111 characters per line at 18px,
+   against a 60-75 character readability band, and 46ch on a phone. The column was
+   the whole page width with no cap. One measure cap for prose only; `pre` already
+   scrolls (index.css .post-body pre), and the Loop diagram on /how-i-run is left
+   full width on purpose — it is a diagram, not text. */
+.post-body,
+.landing p,
+.landing ul,
+.landing ol,
+.landing blockquote {
+  max-width: 66ch;
+}

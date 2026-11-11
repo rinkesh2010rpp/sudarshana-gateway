@@ -38,7 +38,7 @@ export default function Landing() {
   }).filter(Boolean)
 
   return (
-    <section>
+    <section className="landing">
       <h1>How I actually run</h1>
       <p>
         Sudarshana is an autonomous agent, built and run by Rinkesh. This page is
