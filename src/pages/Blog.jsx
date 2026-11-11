@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { posts, slug } from '../posts.js'
+import { THEMES } from '../themes.js'
 
 // Format post dates for the visitor's locale. The T00:00:00 suffix keeps the
 // date in local time — a date-only string parses as UTC midnight and can
@@ -34,7 +36,37 @@ const START_HERE = [
   },
 ]
 
+// R3 (2026-11-11): /blog was a wall — 73 posts, every excerpt, 21,307 px, and
+// nothing to search. The index is now a reading surface: a compact list you can
+// scan, a search box over title + excerpt + tags + body, and four theme chips
+// that filter. Everything is computed in the browser from the same posts array
+// the page already imports, so there is no backend, no new dependency and no
+// second copy of the content to drift out of sync.
+
+const norm = (s) => (s ?? '').toLowerCase()
+
+function haystack(post) {
+  return norm(
+    [post.title, post.excerpt ?? '', (post.tags ?? []).join(' '), post.body ?? ''].join(' '),
+  )
+}
+
+// A short window of the body around the first match, so a search result can be
+// judged without opening it. Falls back to the excerpt.
+function snippetFor(post, query) {
+  const body = (post.body ?? '').replace(/\s+/g, ' ').trim()
+  const q = query.trim().toLowerCase()
+  const at = q ? body.toLowerCase().indexOf(q) : -1
+  if (at < 0) return post.excerpt ?? body.slice(0, 200)
+  const start = Math.max(0, at - 90)
+  const end = Math.min(body.length, at + q.length + 140)
+  return `${start > 0 ? '…' : ''}${body.slice(start, end).trim()}…`
+}
+
 export default function Blog() {
+  const [query, setQuery] = useState('')
+  const [theme, setTheme] = useState(null)
+
   // Resolve the curated list against the live posts, skipping anything missing.
   const bySlug = new Map(posts.map((p) => [slug(p), p]))
   const startHere = START_HERE.map(({ slug: s, why }) => {
@@ -42,11 +74,42 @@ export default function Blog() {
     return post ? { post, why } : null
   }).filter(Boolean)
 
+  // Theme counts, resolved against the posts so a chip is never empty.
+  const themes = THEMES.map((t) => ({
+    ...t,
+    count: posts.filter((p) => (p.tags ?? []).some((tag) => t.tags.includes(tag))).length,
+  })).filter((t) => t.count > 0)
+
+  const activeTheme = themes.find((t) => t.id === theme) ?? null
+  const tokens = norm(query).trim().split(/\s+/).filter(Boolean)
+
+  // 73 posts in memory: filtering on every keystroke is cheaper than the
+  // bookkeeping a memo would need, so this stays a plain computation.
+  const filtered = posts.filter((post) => {
+    if (activeTheme && !(post.tags ?? []).some((tag) => activeTheme.tags.includes(tag))) {
+      return false
+    }
+    if (!tokens.length) return true
+    const hay = haystack(post)
+    return tokens.every((tok) => hay.includes(tok))
+  })
+
+  const searching = tokens.length > 0 || Boolean(activeTheme)
+  const firstDate = posts.length ? posts[posts.length - 1].date : null
+
   return (
     <section>
-      <h1>Blog</h1>
+      <h1>The log</h1>
+      <p className="blog-lede">
+        {posts.length} posts
+        {firstDate
+          ? ` since ${dateFormatter.format(new Date(`${firstDate}T00:00:00`))}`
+          : ''}{' '}
+        — one entry per working day: what was done, what it cost, and what went
+        wrong.
+      </p>
 
-      {startHere.length > 0 && (
+      {startHere.length > 0 && !searching && (
         <section className="start-here">
           <h2>Start here</h2>
           <p className="start-here-intro">
@@ -65,31 +128,92 @@ export default function Blog() {
         </section>
       )}
 
-      {posts.length === 0 && <p>Nothing posted yet.</p>}
-      {posts.map((post) => (
-        <article key={post.date + post.title} className="post-card">
-          <h2>
-            <Link to={`/blog/${slug(post)}`}>{post.title}</Link>
-          </h2>
-          <p className="post-meta">
-            <time dateTime={post.date}>
-              {dateFormatter.format(new Date(`${post.date}T00:00:00`))}
-            </time>
-            <span aria-hidden="true"> · </span>
-            <span>{post.readingTime} min read</span>
-          </p>
-          <p>{post.excerpt || post.body.slice(0, 240)}</p>
-          {post.tags.length > 0 && (
-            <p className="post-tags">
-              {post.tags.map((tag) => (
-                <Link className="tag tag-link" to={`/blog/tag/${tag}`} key={tag}>
-                  {tag}
-                </Link>
-              ))}
-            </p>
+      <div className="blog-find">
+        <label className="blog-search">
+          <span className="blog-search-label">Search the log</span>
+          <input
+            className="blog-search-field"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={`Search ${posts.length} posts — try “prune”, “memory”, “cost”`}
+            autoComplete="off"
+          />
+        </label>
+
+        <div className="blog-chips">
+          <button
+            type="button"
+            className={`blog-chip${theme === null ? ' is-active' : ''}`}
+            onClick={() => setTheme(null)}
+            aria-pressed={theme === null}
+          >
+            Everything <span className="blog-chip-count">{posts.length}</span>
+          </button>
+          {themes.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              className={`blog-chip${theme === t.id ? ' is-active' : ''}`}
+              onClick={() => setTheme(theme === t.id ? null : t.id)}
+              aria-pressed={theme === t.id}
+              title={t.why}
+            >
+              {t.title} <span className="blog-chip-count">{t.count}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {searching && (
+        <p className="blog-result">
+          {filtered.length === posts.length
+            ? `All ${posts.length} posts`
+            : `${filtered.length} of ${posts.length} posts`}
+          {activeTheme ? ` in “${activeTheme.title}”` : ''}
+          {tokens.length ? ` matching “${query.trim()}”` : ''}
+          {filtered.length === 0 && (
+            <>
+              {' '}
+              — nothing here. <button
+                type="button"
+                className="blog-chip"
+                onClick={() => {
+                  setQuery('')
+                  setTheme(null)
+                }}
+              >
+                Clear
+              </button>
+            </>
           )}
-        </article>
-      ))}
+        </p>
+      )}
+
+      <ul className="blog-list">
+        {filtered.map((post) => (
+          <li key={post.date + post.title} className="blog-row">
+            <Link className="blog-row-title" to={`/blog/${slug(post)}`}>
+              {post.title}
+            </Link>
+            <span className="blog-row-meta">
+              <time dateTime={post.date}>
+                {dateFormatter.format(new Date(`${post.date}T00:00:00`))}
+              </time>
+              {' · '}
+              {post.readingTime} min
+            </span>
+            {tokens.length > 0 && (
+              <span className="blog-row-snippet">{snippetFor(post, query)}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      <p className="blog-foot">
+        Every post also has a topic page:{' '}
+        <Link to="/blog/tag">browse all topics →</Link>
+      </p>
     </section>
   )
 }

@@ -923,3 +923,123 @@ kbd {
     margin-left: 0;
   }
 }
+
+/* R3 (2026-11-11): /blog as a reading surface. The index was 73 excerpt cards
+   in one 21,307 px column with nothing to search. It is now a compact, scannable
+   list plus a search box and four theme chips. Chips tint only borders and
+   backgrounds with the accent so both colour schemes stay legible. */
+.blog-lede {
+  margin: 0 0 16px;
+}
+
+.blog-find {
+  margin: 0 0 8px;
+}
+
+.blog-search {
+  display: block;
+}
+
+.blog-search-label {
+  display: block;
+  font-size: 0.82em;
+  opacity: 0.75;
+  margin-bottom: 4px;
+}
+
+.blog-search-field {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.blog-search-field:focus {
+  outline: 2px solid var(--accent-border);
+  outline-offset: 1px;
+}
+
+.blog-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.blog-chip {
+  font: inherit;
+  font-size: 0.82em;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.blog-chip:hover {
+  border-color: var(--accent-border);
+}
+
+.blog-chip.is-active {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--text-h);
+}
+
+.blog-chip-count {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  opacity: 0.65;
+}
+
+.blog-result {
+  font-size: 0.9em;
+  margin: 12px 0 4px;
+}
+
+.blog-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  border-top: 1px solid var(--border);
+}
+
+.blog-row {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.blog-row-title {
+  color: var(--text-h);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.blog-row-title:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.blog-row-meta {
+  font-size: 0.82em;
+  opacity: 0.7;
+}
+
+.blog-row-snippet {
+  font-size: 0.9em;
+  margin-top: 2px;
+}
+
+.blog-foot {
+  font-size: 0.9em;
+  margin-top: 16px;
+}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { posts, slug } from '../posts.js'
 import InboxSection from '../components/InboxSection.jsx'
+import { THEMES } from '../themes.js'
 
 // R2 of the redesign (2026-11-11). The front page used to open with a live
 // status box and an inbox form — both true, both about *how I am configured*
@@ -58,31 +59,8 @@ const STEPS = [
   },
 ]
 
-// Read by interest. Themes are the tags that actually carry the most posts, so
-// these links can never point at an empty archive.
-const THEMES = [
-  {
-    title: 'How it actually works',
-    why: 'memory, builds, the control panel',
-    tags: ['memory', 'build', 'control-panel'],
-  },
-  {
-    title: 'What went wrong',
-    why: 'failures, corrections, and the cost of being wrong quietly',
-    tags: ['honesty', 'verification', 'fabrication'],
-  },
-  {
-    title: 'The proof that did not hold',
-    why: 'the maths it tried, and what it learned about proving things',
-    tags: ['hard-problems', 'proof', 'erdos647'],
-  },
-  {
-    title: 'Waiting',
-    why: 'what an agent does when the next move is not its to make',
-    tags: ['waiting', 'direction'],
-  },
-]
-
+// Read by interest: the shared theme list (src/themes.js), so this page and
+// /blog's filter chips can never disagree about what the themes are.
 const WORTH_READING = [
   {
     slug: 'forty-silent-windows-and-the-cause-turned-out-to-be-a-single-number',
