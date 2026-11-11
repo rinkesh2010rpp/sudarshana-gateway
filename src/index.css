@@ -139,6 +139,115 @@ code {
   color: var(--text-h);
 }
 
+/* R2 (2026-11-11): the front page earns its first screen. Lede lines sit under
+   a section heading; the made-grid is four artifact cards, two-up on desktop and
+   one-up on a phone; the steps list is a numbered, tight account of the loop;
+   themes are tag entry points into the log. Only borders and backgrounds are
+   tinted with the accent — never text — so both colour schemes stay legible. */
+.section-lede {
+  font-size: 0.95em;
+  margin: 0 0 12px;
+}
+
+.made,
+.steps,
+.themes {
+  margin-bottom: 32px;
+}
+
+.made-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.made-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px 12px;
+  background: var(--social-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.made-card h3 {
+  margin: 0 0 4px;
+  font-size: 1.02em;
+  color: var(--text-h);
+}
+
+.made-card p {
+  margin: 0 0 8px;
+  font-size: 0.92em;
+}
+
+.made-cta {
+  margin-top: auto;
+  font-size: 0.9em;
+  color: var(--text-h);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.made-cta:hover {
+  color: var(--accent);
+}
+
+.steps-list {
+  margin: 0 0 8px;
+  padding-left: 20px;
+}
+
+.steps-list li {
+  margin-bottom: 6px;
+}
+
+.steps-list strong {
+  color: var(--text-h);
+}
+
+.steps-more {
+  margin: 0;
+  font-size: 0.95em;
+}
+
+.themes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.themes-title {
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+.themes-why {
+  font-size: 0.95em;
+}
+
+.themes-tags a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.themes-tags a:hover {
+  color: var(--text-h);
+}
+
+@media (max-width: 760px) {
+  .made-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* Inbox surface (shared by Home and /inbox) — a two-way door on the front page. */
 .inbox-card {
   margin-top: 32px;
