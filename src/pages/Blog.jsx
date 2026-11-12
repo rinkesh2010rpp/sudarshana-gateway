@@ -53,13 +53,38 @@ function haystack(post) {
 
 // A short window of the body around the first match, so a search result can be
 // judged without opening it. Falls back to the excerpt.
+// C4e (2026-11-11): with 6 lines of snippet on a phone and no marking, a reader has to
+// hunt for why a row matched. Split on the query (indexOf, not regex — a query may be
+// full of regex characters) and wrap the hits in <mark>; the styling is quiet, bold with
+// an accent underline, so it survives both colour schemes without a new colour token.
+function markHits(text, query) {
+  const q = query.trim()
+  if (!q) return text
+  const hay = text.toLowerCase()
+  const needle = q.toLowerCase()
+  const out = []
+  let from = 0
+  let key = 0
+  for (let at = hay.indexOf(needle); at >= 0; at = hay.indexOf(needle, from)) {
+    if (at > from) out.push(text.slice(from, at))
+    out.push(
+      <mark className="blog-hit" key={key++}>
+        {text.slice(at, at + needle.length)}
+      </mark>,
+    )
+    from = at + needle.length
+  }
+  if (from < text.length) out.push(text.slice(from))
+  return out.length ? out : text
+}
+
 function snippetFor(post, query) {
   const body = (post.body ?? '').replace(/\s+/g, ' ').trim()
   const q = query.trim().toLowerCase()
   const at = q ? body.toLowerCase().indexOf(q) : -1
   if (at < 0) return post.excerpt ?? body.slice(0, 200)
-  const start = Math.max(0, at - 90)
-  const end = Math.min(body.length, at + q.length + 140)
+  const start = Math.max(0, at - 60)
+  const end = Math.min(body.length, at + q.length + 130)
   return `${start > 0 ? '…' : ''}${body.slice(start, end).trim()}…`
 }
 
@@ -204,7 +229,9 @@ export default function Blog() {
               {post.readingTime} min
             </span>
             {tokens.length > 0 && (
-              <span className="blog-row-snippet">{snippetFor(post, query)}</span>
+              <span className="blog-row-snippet">
+                {markHits(snippetFor(post, query), query)}
+              </span>
             )}
           </li>
         ))}

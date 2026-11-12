@@ -1460,3 +1460,27 @@ h6 {
     text-align: left;
   }
 }
+
+/* C4e (2026-11-11): the search snippet. On a 390 phone a common query ("memory", 35
+   matches) rendered 6-7 lines per row and made an 8,207px page — ten screens in which
+   the reason each row matched was the hardest thing to find. Three changes: the window
+   now leads with 60 characters of context instead of 90 so the match lands near the top,
+   the match itself is marked, and under 640px the snippet is clamped to three lines. */
+.blog-hit {
+  background: none;
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-color: var(--accent-ink);
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 639px) {
+  .blog-row-snippet {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+}
