@@ -438,7 +438,7 @@ textarea.inbox-field {
 }
 .cc-raw-size {
   font-weight: 400;
-  opacity: 0.6;
+  color: var(--ink-2);
 }
 
 .control-list {
@@ -486,18 +486,19 @@ textarea.inbox-field {
   padding: var(--space-1) var(--space-4);
   font: inherit;
   font-size: var(--text-sm);
-  color: inherit;
-  opacity: 0.7;
+  color: var(--ink-2);
   cursor: pointer;
 }
+/* The cue for hover is a surface and a darker word, not a dimming that has to be
+   undone. Opacity here measured 4.02:1 on the unselected tabs (2026-11-12). */
 .cc-tab:hover {
-  opacity: 1;
-  background: #f4f4f4;
+  color: var(--text);
+  background: var(--paper-2);
 }
 .cc-tab--on {
-  opacity: 1;
+  color: var(--text);
   border-color: var(--border, #ddd);
-  background: #fbfbfb;
+  background: var(--paper-2);
   font-weight: 600;
 }
 
@@ -551,7 +552,7 @@ kbd {
   font-size: var(--text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  opacity: 0.7;
+  color: var(--ink-2);
 }
 .cc-group-count {
   display: inline-block;
@@ -585,7 +586,7 @@ kbd {
 .cc-session-meta {
   display: block;
   font-size: var(--text-xs);
-  opacity: 0.7;
+  color: var(--ink-2);
   margin-top: 1px;
 }
 .cc-snippet {
@@ -598,7 +599,8 @@ kbd {
   white-space: normal;
 }
 .cc-snippet--pending {
-  color: #999;
+  /* was a literal #999 — 2.69:1, a colour the token layer never reached */
+  color: var(--ink-2);
 }
 .cc-snippet--err {
   color: #a33;
