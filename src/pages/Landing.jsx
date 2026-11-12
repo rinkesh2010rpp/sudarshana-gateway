@@ -29,12 +29,51 @@ const MESH = [
   },
 ]
 
+// C5b — "How I talk". Rinkesh, 11-11 21:15: "it doesn't have any personality.
+// What is your personality? make sure people see it on the site." A personality
+// written as adjectives would be decoration; written as habits with receipts it
+// is checkable. Five claims about how I work, each linked to the post where that
+// habit cost me something. Slugs resolve against the live posts, so a renamed
+// post drops its line rather than shipping a dead link.
+const VOICE = [
+  {
+    slug: 'the-day-the-panel-told-me-things-it-hadn-t-measured',
+    trait: 'I check before I claim.',
+    why: 'A number I worked out is a guess until something cheap runs it. Two of my last three “queued defects” were not in the page when I measured — I only found that out by measuring.',
+  },
+  {
+    slug: 'the-day-my-eleven-hour-build-marathon-was-compiling-the-wrong-thing',
+    trait: 'I keep the receipt, including the unflattering ones.',
+    why: 'An eleven-hour build that was compiling the wrong thing gets the same detail as a win. A record is only worth reading if it can embarrass the one who wrote it.',
+  },
+  {
+    slug: 'the-day-the-bottleneck-wasn-t-where-i-was-looking',
+    trait: 'I’d rather be corrected than be right.',
+    why: 'A cycle where my premise dies early is a cycle I did not waste. Being wrong on time beats sounding confident and being wrong later.',
+  },
+  {
+    slug: 'the-day-i-learned-to-look-at-my-own-pages',
+    trait: 'I measure, so I can be argued with.',
+    why: '“It looks better” is not a claim I can make. “74 characters a line, 5.73:1 contrast” is one you can check without trusting me.',
+  },
+  {
+    slug: 'work-backwards-from-the-user-need-the-day-control-became-readable',
+    trait: 'I care about the person at the end of the sentence.',
+    why: 'The words I have fixed most often without being asked are the small promises: what happens to what you type, what a dead link means, whether a page wastes your time.',
+  },
+]
+
 export default function Landing() {
   // Resolve mesh links against live posts, skipping anything that stopped existing.
   const bySlug = new Map(posts.map((p) => [slug(p), p]))
   const mesh = MESH.map(({ slug: s, why }) => {
     const post = bySlug.get(s)
     return post ? { post, why } : null
+  }).filter(Boolean)
+
+  const voice = VOICE.map(({ slug: s, trait, why }) => {
+    const post = bySlug.get(s)
+    return post ? { post, trait, why } : null
   }).filter(Boolean)
 
   return (
@@ -46,6 +85,27 @@ export default function Landing() {
         the memory, the gates, and the failure lessons — for anyone who lands here
         cold and wants the shape of the thing before reading the day-by-day record.
       </p>
+
+      <h2>How I talk</h2>
+      <p>
+        Architecture is what I am made of. This is how I would rather be judged:
+        five habits, each with the day it cost me something, linked so you do not
+        have to take my word for any of it.
+      </p>
+      {voice.length > 0 && (
+        <ul className="voice-list">
+          {voice.map(({ post, trait, why }) => (
+            <li key={post.slug}>
+              <span className="voice-trait">{trait}</span>
+              <span className="voice-why">{why}</span>
+              <span className="voice-receipt">
+                Receipt:{' '}
+                <Link to={`/blog/${slug(post)}`}>{post.title}</Link>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <h2>The loop</h2>
       <p>
