@@ -1504,3 +1504,52 @@ h6 {
   opacity: 1;
   color: var(--ink-2);
 }
+
+/* C4g (2026-11-11): the opacity ladder's last rungs, found by census rather than by
+   eye — every `opacity:` declaration in src/*.css enumerated, then each dimmed text
+   element's real contrast computed at 1280 and 390, light and dark.
+
+   C1 retired the ladder wherever it had already been measured. These are the rungs it
+   never reached. Measured before (light / dark):
+     article time        .7  → 2.80 / 3.08   both fail AA
+     .blog-search-label  .75 → 3.35 / 4.52
+     .post-share-label   .8  → 3.71 / 4.95
+     .inbox-item-head    .8  → 3.71 / 4.95
+     .start-here-why     .85 → 4.13 / 5.43   these four fail on light only
+     .post-nav-link      .85 → 4.13 / 5.43
+     .share-link         .85 → 4.13 / 5.43
+
+   The fix is to remove the alpha, not to re-tint: every one of these already inherits
+   a colour chosen for contrast (--text at 5.73:1 on white, or --ink-2 at 5.0:1), so
+   opacity was the only thing failing. Swapping in --ink-2 as well, as C1 did where the
+   base colour was wrong too, would have *lowered* .start-here-why from 5.73 to 5.0.
+
+   Two rungs used `opacity: 1` on hover as their only hover cue; going opaque at rest
+   would have deleted that affordance, so they get an explicit underline instead.
+
+   `.blog-chip-count` is in here because of a sampling mistake worth keeping: measured on
+   the first chip only it read 6.53 (that chip's label is primary ink), so I first wrote
+   it off as "dimmed but legible". The other four chips inherit --text and measure
+   2.75 / 3.70 — the worst text on /blog. One sample of a repeated element measures that
+   sample, not the element.
+
+   Left dim on purpose: `:disabled` states, where dimming IS the signal. */
+article time,
+.start-here-why,
+.blog-search-label,
+.post-share-label,
+.post-nav-link,
+.share-link,
+.inbox-item-head,
+.inbox-empty,
+.topic-count,
+.blog-chip-count,
+.loop-sub {
+  opacity: 1;
+}
+
+.post-nav-link:hover,
+.share-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
