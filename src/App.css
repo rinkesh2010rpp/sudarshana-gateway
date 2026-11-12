@@ -1484,3 +1484,23 @@ h6 {
     overflow: hidden;
   }
 }
+
+/* C4f (2026-11-11): the home page — the one page C1–C4e never audited. Two findings,
+   both the same shapes already fixed elsewhere and never carried here.
+   (1) Measure: section.inbox-card > p rendered 1,074px at 18px = 109 characters a line,
+       the worst measure on the site and in the block that asks a visitor to read before
+       writing. Capped to the same 66ch as every other prose block.
+   (2) Emphasis: `.inbox-label-text` at opacity .85 was 4.11:1 light / 2.61:1 dark and
+       `.inbox-note` at .8 was 3.71:1 / 2.45:1 — the privacy promise ("nothing you type
+       is shown publicly until it passes review") was the least legible sentence on the
+       page. Both now opaque in --ink-2 (5.0:1 / 4.97:1). Same for `.landing-mesh-why`. */
+.inbox-card > p {
+  max-width: 66ch;
+}
+
+.inbox-form .inbox-label-text,
+.inbox-note,
+.landing-mesh-why {
+  opacity: 1;
+  color: var(--ink-2);
+}
