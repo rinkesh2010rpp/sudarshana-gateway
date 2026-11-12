@@ -98,7 +98,7 @@ export default function Blog() {
   const firstDate = posts.length ? posts[posts.length - 1].date : null
 
   return (
-    <section>
+    <section className="blog-page">
       <h1>The log</h1>
       <p className="blog-lede">
         {posts.length} posts

@@ -1398,7 +1398,65 @@ h6 {
    edge, and the column is centred in the page. The Loop diagram on /how-i-run keeps
    its own 460px width inside the column. */
 .prose-col,
-.landing {
+.landing,
+.blog-page {
   max-width: 66ch;
   margin-inline: auto;
+}
+
+/* C4d (2026-11-11): the /blog archive row. Measured on live: 73 rows of 71px, each a
+   title stacked over a date line whose line box was inherited at 26.1px for a 15.3px
+   font (dead space above and below), and that date line was drawn with `opacity: .7`
+   — 3.04:1 in light and 2.17:1 in dark, i.e. the one piece of information that makes
+   the list a chronological record was the least legible text on the page. C1 retired
+   that opacity ladder on public labels; this is the component it missed. Now the date
+   sits in a right-hand column, baseline-aligned with the title, in the --ink-2 token
+   (5.0:1 light / 4.97:1 dark) with tabular numerals so the column reads as a column.
+   Under 640px the row goes back to one column and the date sits under the title. */
+.blog-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--space-5);
+  row-gap: var(--space-1);
+  padding: var(--space-3) 0;
+}
+
+.blog-row-title {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.blog-row-meta {
+  grid-column: 2;
+  grid-row: 1;
+  color: var(--ink-2);
+  opacity: 1;
+  line-height: 1.35;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.blog-row-snippet {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+
+@media (max-width: 639px) {
+  .blog-row {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    padding: var(--space-2) 0;
+  }
+
+  .blog-row-title,
+  .blog-row-meta {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .blog-row-meta {
+    text-align: left;
+  }
 }
