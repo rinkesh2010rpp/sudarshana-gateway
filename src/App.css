@@ -619,31 +619,32 @@ kbd {
 .cc-t-search {
   flex: 0 1 240px;
   padding: var(--space-1) var(--space-2);
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
   border-radius: 6px;
   font-size: var(--text-sm);
 }
 .cc-t-count {
   font-variant-numeric: tabular-nums;
-  color: #555;
+  color: var(--ink-2);
 }
 .cc-t-meta {
   margin-left: auto;
-  color: #777;
+  /* was a literal #777 — 4.23:1 on paper, under AA (measured 2026-11-12) */
+  color: var(--ink-2);
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
 }
 .cc-btn {
   padding: var(--space-1) var(--space-3);
-  border: 1px solid #bbb;
+  border: 1px solid var(--border-strong);
   border-radius: 6px;
-  background: #fff;
+  background: var(--paper);
   font-size: var(--text-sm);
   cursor: pointer;
 }
 .cc-btn:hover:not(:disabled) {
-  background: #f0f4f8;
-  border-color: #888;
+  background: var(--paper-2);
+  border-color: var(--border-strong);
 }
 .cc-btn:disabled {
   opacity: 0.45;
@@ -651,9 +652,9 @@ kbd {
 }
 .cc-t-box {
   position: relative; /* line-number gutter anchors inside this box */
-  border: 1px solid #e2e4e8;
+  border: 1px solid var(--border);
   border-radius: 10px;
-  background: #fcfcfd;
+  background: var(--paper-2);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: var(--text-xs);
   line-height: 1.65;
@@ -668,7 +669,9 @@ kbd {
   min-width: 4rem;
   padding: 0 var(--space-3) 0 0;
   text-align: right;
-  color: #9aa0a6;
+  /* was a literal #9aa0a6 — 2.58:1 on the surface and 40 of the 41
+     transcript-state failures (measured 2026-11-12) */
+  color: var(--ink-3);
   user-select: none;
   font-variant-numeric: tabular-nums;
 }
@@ -676,7 +679,7 @@ kbd {
   flex: 1;
   white-space: pre-wrap;
   word-break: break-word;
-  color: #222;
+  color: var(--text);
   max-width: 68ch;
   padding-right: var(--space-3);
 }
@@ -1636,6 +1639,11 @@ article time,
   --text: #4a443c; /* 9.08:1 on paper, 7.5:1 on the accent tint */
   --text-h: #1c1917; /* 16.5:1 */
   --ink-2: #5f584e; /* 6.62:1 on paper, 5.47:1 on the accent tint */
+  /* The lightest ink that still passes: 4.96:1 on paper, 4.59:1 on the raised
+     surface. This is the third tier hierarchy actually needs — before it existed
+     the sheet reached for `opacity: .7` instead, which is what put eight rules
+     under 4.5:1 (measured 2026-11-12). Dim with an ink, never with opacity. */
+  --ink-3: #746b5c;
   --border: #e6dccb;
   --border-strong: #b9a98f; /* ≥3:1 hairline for card edges */
   --accent: #a83a12; /* vermilion — 6.05:1 on paper, 5.0:1 on its tint */
@@ -1663,6 +1671,7 @@ article time,
     --text: #c9c2b6; /* 9.8:1 */
     --text-h: #f6f1e7; /* 16.6:1 */
     --ink-2: #b3a999; /* 7.47:1, and 6.5:1 on the accent tint */
+    --ink-3: #9a9082; /* 5.95:1 on paper, 5.52:1 on the raised surface */
     --border: #332e27;
     --border-strong: #5c5346;
     --accent: #f08a5d; /* 7.0:1 on the raised surface */
