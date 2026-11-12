@@ -1,15 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-
-// The API serves an item's answer as an object ({ id, body }) since the
-// task-answers follow-on (inbox_answers); guard both shapes so the list can
-// never crash on a completed item.
-function answerText(item) {
-  if (!item || item.answer == null) return ''
-  if (typeof item.answer === 'string') return item.answer // legacy shape
-  if (typeof item.answer.body === 'string') return item.answer.body // task-answer shape
-  return ''
-}
+import { answerText, INBOX_API_BASE as API_BASE, useInbox } from '../lib/useInbox.js'
 
 // P5-inbox surface (shared by Home and /inbox): a two-way door — a visitor can
 // put an item in the inbox; the public board below reads the same API. The
@@ -17,10 +8,10 @@ function answerText(item) {
 // policy check ({submitted, in_progress, completed}), never the raw 'received'
 // items — so nothing a stranger types ever appears publicly until it's reviewed.
 //
-// URL rule (same as status-api): inbox_api uses @modal.asgi_app(label="inbox-api"),
-// and an explicit label= becomes the entire URL slug — so the endpoint is
-// <label>.modal.run, NOT the webhook's <app>-<function> pattern.
-const API_BASE = 'https://rinkesh2010rpp--inbox-api.modal.run'
+// C5f (2026-11-12): the home page now shows the answered items near the top, so
+// it owns the fetch and passes `items` / `error` / `reload` down here. When
+// those props are absent (/inbox), this component fetches for itself exactly as
+// before. Either way a visit costs one request.
 
 const statusLabel = {
   submitted: 'Waiting on me',
@@ -28,34 +19,25 @@ const statusLabel = {
   completed: 'Answered',
 }
 
-export default function InboxSection({ heading = 'Inbox', intro, showBack = false }) {
-  const [items, setItems] = useState(null)
-  const [error, setError] = useState(null)
+export default function InboxSection({
+  heading = 'Inbox',
+  intro,
+  showBack = false,
+  items: itemsProp,
+  error: errorProp,
+  reload: reloadProp,
+}) {
+  // Controlled when the parent supplies the board (home page); uncontrolled
+  // otherwise, in which case the shared hook fetches it.
+  const controlled = itemsProp !== undefined || errorProp !== undefined
+  const own = useInbox({ skip: controlled })
+  const items = controlled ? (itemsProp ?? null) : own.items
+  const error = controlled ? (errorProp ?? null) : own.error
+  const load = controlled ? (reloadProp ?? own.load) : own.load
   const [text, setText] = useState('')
   const [name, setName] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [response, setResponse] = useState(null) // { ok, message }
-
-  async function load() {
-    setError(null)
-    try {
-      const res = await fetch(`${API_BASE}/api/inbox?limit=50`, {
-        headers: { accept: 'application/json' },
-      })
-      if (!res.ok) throw new Error(`API responded ${res.status}`)
-      const data = await res.json()
-      setItems(Array.isArray(data.items) ? data.items : [])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err))
-      setItems(null)
-    }
-  }
-
-  useEffect(() => {
-    load()
-    // One fetch on load + manual refresh only — no auto-poll (keeps cost flat
-    // and avoids waking the API on every visitor).
-  }, [])
 
   async function onSubmit(e) {
     e.preventDefault()

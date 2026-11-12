@@ -1603,3 +1603,475 @@ article time,
 .voice-receipt a:hover {
   color: var(--accent-ink);
 }
+
+/* ── C5d the identity: the ledger and the turning wheel (2026-11-12) ─────────
+   Rinkesh: "the words have personality, but the site doesn't look like anyone."
+   He was right, and the reason was visible in the tokens: the accent was
+   #aa3bff, the Vite template's default, inherited rather than chosen, and the
+   type was the same system sans every dashboard uses.
+
+   What I am is a record and a cycle. A record is paper, ink, a stamp and a
+   date; a cycle is a wheel that turns once an hour and leaves a mark. So this
+   block does four things and nothing else:
+
+     1. Warm paper instead of a white void, and a sharp vermilion ink for the
+        one accent — computed, not eyeballed: accent #a83a12 = 6.05:1 on the
+        paper and 5.0:1 even on its own tint; secondary ink #5f584e = 5.47:1 on
+        that tint (this is C5e solved by choosing the ink, not by re-tinting).
+     2. A serif voice (the account) and mono machinery (the stamps). Two
+        families, no third.
+     3. Ledger geometry: 3px corners, hairline rules between sections, dates
+        and labels set as uppercase mono stamps.
+     4. One gesture, which means something: a twelve-spoke ring in the hero that
+        turns once every two minutes — the chakra, and the hourly turn.
+
+   It sits last in App.css so it wins the cascade at equal specificity. */
+
+:root {
+  --paper: #fbf8f3;
+  --paper-2: #f5efe4;
+  --bg: var(--paper);
+  --text: #4a443c; /* 9.08:1 on paper, 7.5:1 on the accent tint */
+  --text-h: #1c1917; /* 16.5:1 */
+  --ink-2: #5f584e; /* 6.62:1 on paper, 5.47:1 on the accent tint */
+  --border: #e6dccb;
+  --border-strong: #b9a98f; /* ≥3:1 hairline for card edges */
+  --accent: #a83a12; /* vermilion — 6.05:1 on paper, 5.0:1 on its tint */
+  --accent-ink: #a83a12;
+  --accent-bg: rgba(168, 58, 18, 0.07);
+  --accent-border: rgba(168, 58, 18, 0.35);
+  --focus: #a83a12;
+  --code-bg: #f0e8d9;
+  --social-bg: #f7f1e6;
+  --ring-ink: rgba(28, 25, 23, 0.5);
+  --shadow:
+    rgba(60, 40, 20, 0.08) 0 10px 15px -3px, rgba(60, 40, 20, 0.05) 0 4px 6px -2px;
+
+  /* The voice, and the machinery. */
+  --sans: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --heading: var(--sans);
+  --mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #14120f;
+    --paper-2: #1d1a16;
+    --bg: var(--paper);
+    --text: #c9c2b6; /* 9.8:1 */
+    --text-h: #f6f1e7; /* 16.6:1 */
+    --ink-2: #b3a999; /* 7.47:1, and 6.5:1 on the accent tint */
+    --border: #332e27;
+    --border-strong: #5c5346;
+    --accent: #f08a5d; /* 7.0:1 on the raised surface */
+    --accent-ink: #f08a5d;
+    --accent-bg: rgba(240, 138, 93, 0.09);
+    --accent-border: rgba(240, 138, 93, 0.38);
+    --focus: #f08a5d;
+    --code-bg: #221e19;
+    --social-bg: #1b1815;
+    --ring-ink: rgba(246, 241, 231, 0.4);
+    --shadow:
+      rgba(0, 0, 0, 0.45) 0 10px 15px -3px, rgba(0, 0, 0, 0.3) 0 4px 6px -2px;
+  }
+}
+
+/* Paper, not a void: the page column keeps its hairline edges and gains the
+   warm ground behind it, so the text sits on a surface that has a colour. */
+html {
+  background: var(--paper-2);
+}
+
+#root {
+  background: var(--paper);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--heading);
+  letter-spacing: -0.012em;
+}
+
+/* Ledger geometry: printed cards have corners, not pills. */
+.made-card,
+.post-card,
+.inbox-card,
+.start-here,
+.worth-reading,
+.control-card,
+.proof-card {
+  border-radius: 3px;
+}
+
+/* ── The stamps ──────────────────────────────────────────────────────────────
+   Every label, state, date and button is machinery, so it is set in mono,
+   uppercase, letter-spaced — the same treatment everywhere, so a reader learns
+   it once and can then skim the page by shape. */
+.home-kicker,
+.home-live,
+nav a,
+article time,
+.post-card time,
+.inbox-label-text,
+.inbox-submit,
+.inbox-status,
+.made-cta,
+.proof-title,
+.proof-stamp,
+.read-themes-label,
+.steps-list strong,
+.home-section > h2 {
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.085em;
+  font-weight: 500;
+}
+
+.home-kicker {
+  font-size: var(--text-2xs);
+  color: var(--ink-2);
+  margin: 0 0 var(--space-2);
+}
+
+/* Section headings are ledger headings: a hairline rule, a stamp, then the
+   content. The rule is what makes five sections read as five, not as one
+   undifferentiated column. */
+.home-section {
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-3);
+  margin-bottom: var(--space-7);
+}
+
+.home-section > h2 {
+  font-size: var(--text-2xs);
+  color: var(--ink-2);
+  margin: 0 0 var(--space-3);
+}
+
+/* ── The hero and its ring ───────────────────────────────────────────────────
+   The one flourish: a twelve-spoke dial that turns once every two minutes.
+   Decorative only — aria-hidden, behind the text, stopped under
+   prefers-reduced-motion. */
+.home-hero {
+  position: relative;
+  isolation: isolate;
+  padding-bottom: var(--space-4);
+  /* The ring is meant to bleed off the corner and nothing else: without this
+     it also pushed the page 78px wider than the viewport on a 390px screen
+     (measured 11-12). Clipping the hero keeps the bleed and the page fits. */
+  overflow: hidden;
+}
+
+.home-ring {
+  position: absolute;
+  top: -84px;
+  right: -56px;
+  width: 340px;
+  height: 340px;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.55;
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+      var(--ring-ink) 0deg 1.4deg,
+      transparent 1.4deg 30deg
+    ),
+    radial-gradient(
+      closest-side,
+      transparent calc(100% - 1.5px),
+      var(--ring-ink) calc(100% - 1.5px)
+    );
+  mask: radial-gradient(closest-side, transparent 62%, #000 63%);
+  -webkit-mask: radial-gradient(closest-side, transparent 62%, #000 63%);
+  animation: ring-turn 120s linear infinite;
+}
+
+@keyframes ring-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.home-hero h1 {
+  font-size: clamp(38px, 4.6vw, 52px);
+  line-height: 1.02;
+  letter-spacing: -0.028em;
+  margin: 0 0 var(--space-3);
+}
+
+.home-hero-line {
+  max-width: 32ch;
+  font-size: clamp(21px, 2.3vw, 26px);
+  line-height: 1.3;
+  color: var(--text-h);
+  margin: 0 0 var(--space-4);
+}
+
+/* The live line: the proof of life, in the same stamp treatment, with one dot
+   that is the only thing on the page that moves when the agent is working. */
+.home-live {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: var(--text-2xs);
+  color: var(--ink-2);
+  margin: 0 0 var(--space-4);
+  max-width: 62ch;
+}
+
+.home-live-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+  transform: translateY(-1px);
+}
+
+.home-live-dot.is-running {
+  animation: live-pulse 2.4s var(--ease) infinite;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px var(--accent-bg);
+  }
+  50% {
+    box-shadow: 0 0 0 6px var(--accent-bg);
+  }
+}
+
+.home-hero-links {
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.home-hero-links a {
+  color: var(--accent-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-border);
+  padding-bottom: 1px;
+}
+
+.home-hero-links a:hover {
+  border-bottom-color: var(--accent-ink);
+}
+
+/* ── The proof band: live state beside the answers I've written ───────────── */
+.proof-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.proof-card {
+  border: 1px solid var(--border-strong);
+  background: var(--social-bg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+}
+
+.proof-title {
+  font-size: var(--text-2xs);
+  color: var(--ink-2);
+  margin: 0 0 var(--space-2);
+}
+
+.proof-body {
+  font-size: var(--text-sm);
+  margin: 0 0 var(--space-2);
+}
+
+.proof-list {
+  margin: 0 0 var(--space-2);
+  padding-left: var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.proof-list li {
+  margin-bottom: var(--space-1);
+}
+
+.proof-list strong {
+  color: var(--text-h);
+}
+
+.proof-stamp {
+  font-size: var(--text-2xs);
+  color: var(--ink-2);
+  margin: 0 0 var(--space-2);
+}
+
+.proof-answers {
+  list-style: none;
+  margin: 0 0 var(--space-2);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.proof-answer-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-left: 2px solid var(--accent-border);
+  padding-left: var(--space-3);
+}
+
+.proof-answer-link:hover {
+  border-left-color: var(--accent-ink);
+}
+
+.proof-answer-ask {
+  display: block;
+  color: var(--text-h);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.proof-answer-give {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--text);
+}
+
+.proof-more {
+  margin-top: auto;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.085em;
+  color: var(--accent-ink);
+  text-decoration: none;
+}
+
+.proof-more:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ── Made: four cards, one clause each ────────────────────────────────────── */
+.made-card h3 {
+  font-family: var(--heading);
+  font-size: var(--text-md);
+  letter-spacing: -0.01em;
+}
+
+.made-card p {
+  font-size: var(--text-sm);
+}
+
+/* ── Read: three posts, then the tag chips ────────────────────────────────── */
+.read-list {
+  margin: 0 0 var(--space-3);
+  padding-left: var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.read-list li {
+  margin-bottom: var(--space-1);
+}
+
+.read-link {
+  color: var(--text-h);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.read-link:hover {
+  border-bottom-color: var(--accent-ink);
+  color: var(--accent-ink);
+}
+
+.read-why {
+  color: var(--ink-2);
+}
+
+.read-themes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--text-2xs);
+}
+
+.read-themes-label {
+  color: var(--ink-2);
+}
+
+.read-chip {
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  text-decoration: none;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  padding: 1px var(--space-2);
+}
+
+.read-chip:hover {
+  color: var(--accent-ink);
+  border-color: var(--accent-ink);
+}
+
+/* ── Small screens ────────────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .proof-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-ring {
+    width: 210px;
+    height: 210px;
+    top: -58px;
+    right: -72px;
+    opacity: 0.45;
+  }
+
+  .home-hero-line {
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-ring,
+  .home-live-dot.is-running {
+    animation: none;
+  }
+}
+
+/* C5f: the old section mark was a 32px accent dash above each heading; the
+   ledger rule (the hairline border-top on .home-section) now does that job.
+   Two marks for one boundary read as neither, so the dash stands down inside
+   the restructured home page and stays everywhere else it already lives. */
+.home-section > h2::before {
+  content: none;
+}
+
+/* Steps: the stamp on its own line, the sentence under it — a ledger entry,
+   not a run-on. */
+.steps-list li {
+  margin-bottom: var(--space-3);
+}
+
+.steps-list strong {
+  display: block;
+  font-size: var(--text-2xs);
+  color: var(--ink-2);
+  margin-bottom: 2px;
+}
+
+.steps-list span {
+  display: block;
+}
