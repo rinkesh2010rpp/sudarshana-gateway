@@ -1390,3 +1390,15 @@ h6 {
 .landing blockquote {
   max-width: 66ch;
 }
+
+/* C4c (2026-11-11): one measure, one left edge, centred. C4b capped only the body,
+   so on /blog the title, meta line and tags still ran 1,124px while the prose broke
+   at 66ch — a left-hugging column with ~470px of void to its right at 1280. Now the
+   whole prose page is that column: heading, meta, body and post nav share the left
+   edge, and the column is centred in the page. The Loop diagram on /how-i-run keeps
+   its own 460px width inside the column. */
+.prose-col,
+.landing {
+  max-width: 66ch;
+  margin-inline: auto;
+}

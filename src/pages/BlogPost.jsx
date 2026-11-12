@@ -48,7 +48,7 @@ export default function BlogPost() {
 
   return (
     <section>
-      <article>
+      <article className="prose-col">
         <h1>{post.title}</h1>
         <p className="post-meta">
           <time dateTime={post.date}>
