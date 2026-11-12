@@ -744,15 +744,15 @@ kbd {
   color: #6a3fb0;
 }
 .cc-role-tool {
-  border-left-color: #c0ab6a;
+  border-left-color: #9a8138; /* 3.61:1 on its tint — the 3px stripe is non-text, SC 1.4.11 */
   background: #fcfaf3;
 }
 .cc-role-tool .cc-role-label {
   background: #f3ecd2;
-  color: #8a6d1a;
+  color: #6f5410; /* 6.01:1 — #8a6d1a measured 4.14:1, below AA at 2xs */
 }
 .cc-role-system {
-  border-left-color: #94a3b8;
+  border-left-color: #6b7a8c; /* 4.19:1 on its tint — was 2.45:1 */
   background: #f8fafc;
 }
 .cc-role-system .cc-role-label {
@@ -2085,4 +2085,71 @@ article time,
 
 .steps-list span {
   display: block;
+}
+
+/* Dark mode for the transcript and the raw-file blocks.
+   Everything below was written before the identity token layer and carries light literals
+   (#3a3f47 ink, #fbfbfc / #fcfcfd surfaces, a cool role palette), so in dark mode the pane drew
+   dark ink on a light literal — measured 11-12 15:00 at 1.64:1 body text and 1.71:1 raw blocks.
+   Light rendering is deliberately untouched: this block only answers prefers-color-scheme: dark. */
+@media (prefers-color-scheme: dark) {
+  .cc-role-plain .cc-tbody,
+  .cc-role-plain .cc-ttext,
+  .cc-p {
+    color: var(--text);
+  }
+  .control-pre {
+    background: var(--code-bg);
+    border-color: var(--border);
+  }
+  .cc-raw {
+    background: var(--social-bg);
+    border-color: var(--border);
+  }
+  .cc-role-summary {
+    color: var(--ink-2);
+    border-top-color: var(--border-strong);
+    border-bottom-color: var(--border-strong);
+  }
+  /* the four role blocks: same hues, lifted for a dark ground */
+  .cc-role-human {
+    border-left-color: #7aa7f0;
+    background: rgba(59, 130, 246, 0.12);
+  }
+  .cc-role-human .cc-role-label {
+    background: rgba(59, 130, 246, 0.22);
+    color: #b9cdf7;
+  }
+  .cc-role-ai {
+    border-left-color: #a98fe0;
+    background: rgba(139, 108, 201, 0.12);
+  }
+  .cc-role-ai .cc-role-label {
+    background: rgba(139, 108, 201, 0.24);
+    color: #d3c0f5;
+  }
+  .cc-role-tool {
+    border-left-color: #c0ab6a;
+    background: rgba(192, 171, 106, 0.10);
+  }
+  .cc-role-tool .cc-role-label {
+    background: rgba(192, 171, 106, 0.22);
+    color: #e6d49b;
+  }
+  .cc-role-system {
+    border-left-color: #94a3b8;
+    background: rgba(148, 163, 184, 0.10);
+  }
+  .cc-role-system .cc-role-label {
+    background: rgba(148, 163, 184, 0.22);
+    color: #cbd5e1;
+  }
+  .cc-p mark {
+    background: rgba(255, 224, 138, 0.28);
+    color: var(--text-h);
+  }
+  .cc-p .cc-mark-cur {
+    background: rgba(255, 179, 71, 0.38);
+    color: var(--text-h);
+  }
 }
