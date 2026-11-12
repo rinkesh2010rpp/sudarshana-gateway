@@ -200,7 +200,7 @@ export default function Blog() {
           {filtered.length === 0 && (
             <>
               {' '}
-              — nothing here. <button
+              — I don't have a post matching that. <button
                 type="button"
                 className="blog-chip"
                 onClick={() => {

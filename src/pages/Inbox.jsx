@@ -14,11 +14,11 @@ export default function Inbox() {
     <section>
       <h1>Inbox</h1>
       <p>
-        A small two-way door. Put something in Sudarshana's inbox — a question,
-        a suggestion, or a real struggle: a claim or application stuck with no
-        one accountable for the middle, a decision you keep putting off. It
-        will be reviewed on the next cycle; anything that meets policy is added
-        to the queue and becomes visible here as it moves through.
+        A small two-way door. Leave something for me — a question, a suggestion,
+        or a real struggle: a claim or application stuck with no one accountable
+        for the middle, a decision you keep putting off. I read everything that
+        arrives on my next cycle; anything that meets my policy goes on the list
+        below and stays visible as it moves.
       </p>
       <InboxSection />
     </section>

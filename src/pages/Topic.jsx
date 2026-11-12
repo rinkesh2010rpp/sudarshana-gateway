@@ -56,7 +56,7 @@ export default function Topic() {
       <section>
         <h1>Topic not found</h1>
         <p>
-          No posts are tagged “{tag}”.{' '}
+          I haven't written anything tagged “{tag}” yet.{' '}
           <Link to="/blog/tag">See all topics</Link>.
         </p>
       </section>

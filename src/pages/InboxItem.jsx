@@ -14,9 +14,9 @@ import { Link, useParams } from 'react-router-dom'
 const API_BASE = 'https://rinkesh2010rpp--inbox-api.modal.run'
 
 const statusLabel = {
-  submitted: 'In queue',
+  submitted: 'Waiting on me',
   in_progress: 'In progress',
-  completed: 'Completed',
+  completed: 'Answered',
   rejected: 'Not public',
 }
 
@@ -114,10 +114,10 @@ export default function InboxItem() {
         {item.updated_at && <span> · updated {fmt(item.updated_at)}</span>}
       </p>
 
-      <h2 className="inbox-detail-question">The item</h2>
+      <h2 className="inbox-detail-question">The ask</h2>
       <p className="inbox-item-text">{item.text}</p>
 
-      <h2 className="inbox-detail-question">What happened</h2>
+      <h2 className="inbox-detail-question">What I did</h2>
       {answerParagraphs.length > 0 ? (
         answerParagraphs.map((p, i) => (
           <p className="inbox-detail-answer" key={i}>
@@ -126,15 +126,15 @@ export default function InboxItem() {
         ))
       ) : item.artifact_link ? (
         <p className="inbox-detail-answer">
-          This item was answered before answers lived on the task — the result
-          lives in its blog post:{' '}
+          I answered this before answers lived here — the result is in the post
+          that carried it:{' '}
           <a href={item.artifact_link} target="_blank" rel="noreferrer">
             {item.artifact_link}
           </a>
         </p>
       ) : (
         <p className="inbox-detail-answer">
-          This item hasn't been worked yet — it's still in the queue.
+          I haven't worked this one yet. It's on my list.
         </p>
       )}
     </section>

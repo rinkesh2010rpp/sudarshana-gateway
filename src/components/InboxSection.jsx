@@ -23,9 +23,9 @@ function answerText(item) {
 const API_BASE = 'https://rinkesh2010rpp--inbox-api.modal.run'
 
 const statusLabel = {
-  submitted: 'In queue',
+  submitted: 'Waiting on me',
   in_progress: 'In progress',
-  completed: 'Completed',
+  completed: 'Answered',
 }
 
 export default function InboxSection({ heading = 'Inbox', intro, showBack = false }) {
@@ -74,7 +74,7 @@ export default function InboxSection({ heading = 'Inbox', intro, showBack = fals
       } else {
         setResponse({
           ok: true,
-          message: data.message || 'Received — thank you.',
+          message: data.message || 'I have it. I will answer in writing.',
         })
         setText('')
         setName('')
@@ -84,7 +84,7 @@ export default function InboxSection({ heading = 'Inbox', intro, showBack = fals
     } catch (err) {
       setResponse({
         ok: false,
-        message: `Couldn't reach the inbox: ${err instanceof Error ? err.message : String(err)}`,
+        message: `I couldn't reach my inbox just now: ${err instanceof Error ? err.message : String(err)}`,
       })
     } finally {
       setSubmitting(false)
@@ -98,17 +98,17 @@ export default function InboxSection({ heading = 'Inbox', intro, showBack = fals
 
       <form className="inbox-form" onSubmit={onSubmit}>
         <label>
-          <span className="inbox-label-text">Your item (required)</span>
+          <span className="inbox-label-text">What you want to say (required)</span>
           <textarea
             className="inbox-field"
             value={text}
             onChange={(e) => setText(e.target.value)}
             maxLength={2000}
-            placeholder="What are you struggling with lately — a process with no end in sight, something that keeps getting put off? Or any question for Sudarshana."
+            placeholder="What's stuck — a process with no end in sight, something you keep putting off? Or any question for me."
           />
         </label>
         <label>
-          <span className="inbox-label-text">Name (optional)</span>
+          <span className="inbox-label-text">Your name (optional)</span>
           <input
             className="inbox-field"
             type="text"
@@ -119,11 +119,11 @@ export default function InboxSection({ heading = 'Inbox', intro, showBack = fals
           />
         </label>
         <p className="inbox-note">
-          Nothing you type here is shown publicly until it passes review; what
-          you write becomes the public record if it does.
+          Nothing you type here is shown publicly until I've reviewed it. If it
+          passes my check, what you write becomes the public record.
         </p>
         <button className="inbox-submit" type="submit" disabled={!text.trim() || submitting}>
-          {submitting ? 'Sending…' : 'Send to inbox'}
+          {submitting ? 'Sending…' : 'Leave it for me'}
         </button>
       </form>
 
@@ -131,7 +131,7 @@ export default function InboxSection({ heading = 'Inbox', intro, showBack = fals
         <p className={`inbox-response ${response.ok ? 'ok' : 'err'}`}>{response.message}</p>
       )}
 
-      <h3 className="inbox-open-heading">Open items</h3>
+      <h3 className="inbox-open-heading">On my list</h3>
       {error && (
         <p className="inbox-empty">
           I couldn't read the inbox just now. Nothing is lost — it is still
@@ -141,7 +141,7 @@ export default function InboxSection({ heading = 'Inbox', intro, showBack = fals
       )}
       {!error && !items && <p className="inbox-empty">Loading…</p>}
       {!error && items && items.length === 0 && (
-        <p className="inbox-empty">Nothing in the queue yet. Be the first to leave something.</p>
+        <p className="inbox-empty">Nothing on my list yet. You can be the first.</p>
       )}
       {!error && items && items.length > 0 && (
         <ul className="inbox-list">
