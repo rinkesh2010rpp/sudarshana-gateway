@@ -54,7 +54,10 @@ export default function ControlAsks({ asks, busy, err }) {
       </div>
 
       {!known && (
-        <p className="ov-note">
+        // role="status", not "alert": when the whole request fails this fires
+        // alongside the verdict's alert, and three assertive announcements at
+        // once is noise. The verdict is the urgent one; this is polite.
+        <p className="ov-note" role="status">
           Can&apos;t read the ask list right now{err ? ` (${err})` : ''} — so
           I&apos;m not going to claim there&apos;s nothing waiting.
         </p>

@@ -96,7 +96,9 @@ export default function ControlHead({ data, busy, err }) {
 
   if (!health) {
     return (
-      <section className="ov-q1">
+      // role="alert": the verdict is the page's headline answer, and a failure
+      // that only changes visible text reaches nobody who cannot see it change.
+      <section className="ov-q1" role="alert">
         <div className="ov-verdict-card ov-verdict-card--unknown">
           <p className="ov-kicker">Am I ok?</p>
           <h2 className="ov-headline">I can&apos;t tell you right now.</h2>
@@ -116,7 +118,7 @@ export default function ControlHead({ data, busy, err }) {
     // green light on a blind agent, and "something isn't right" would blame an
     // unseen problem on the agent rather than on the read.
     return (
-      <section className="ov-q1">
+      <section className="ov-q1" role="alert">
         <div className="ov-verdict-card ov-verdict-card--unknown">
           <p className="ov-kicker">Am I ok?</p>
           <h2 className="ov-headline">I can&apos;t see my own status records.</h2>

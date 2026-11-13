@@ -46,7 +46,9 @@ export default function ControlDone({ items, busy, err, today, onSeeMore }) {
       </div>
 
       {!known && (
-        <p className="ov-note">
+        // Polite for the same reason as the ask list: the verdict above is the
+        // assertive one.
+        <p className="ov-note" role="status">
           Can&apos;t read my recent work right now{err ? ` (${err})` : ''}. I
           log every cycle, so an empty list here means the panel can&apos;t see
           the logs — not that nothing happened.

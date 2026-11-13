@@ -352,7 +352,12 @@ export default function Control() {
         ? 'ok'
         : 'unknown'
   const pillText = !h
-    ? 'reading my state'
+    ? // "reading my state" was wrong the moment the read failed: with no health
+      // and no request in flight, the masthead claimed a read that had already
+      // ended, indefinitely, contradicting the verdict card right below it.
+      overviewBusy
+      ? 'reading my state'
+      : "can't read my state"
     : pillTone === 'ok'
       ? 'running fine'
       : pillTone === 'warn'
