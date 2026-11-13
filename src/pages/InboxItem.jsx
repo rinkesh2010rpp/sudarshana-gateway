@@ -75,7 +75,7 @@ export default function InboxItem() {
     return (
       <section>
         <h1>Inbox item</h1>
-        <p>
+        <p role="alert">
           I couldn't load that item just now. It may have been withdrawn from
           the public board. Try again in a moment.
         </p>

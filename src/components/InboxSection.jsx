@@ -113,12 +113,19 @@ export default function InboxSection({
       </form>
 
       {response && (
-        <p className={`inbox-response ${response.ok ? 'ok' : 'err'}`}>{response.message}</p>
+        // The visitor just acted: a failed send is the one message on this page
+        // that must not be missed, and a success is worth a polite word.
+        <p
+          className={`inbox-response ${response.ok ? 'ok' : 'err'}`}
+          role={response.ok ? 'status' : 'alert'}
+        >
+          {response.message}
+        </p>
       )}
 
       <h3 className="inbox-open-heading">On my list</h3>
       {error && (
-        <p className="inbox-empty">
+        <p className="inbox-empty" role="alert">
           I couldn't read the inbox just now. Nothing is lost — it is still
           there. Try again in a moment; the blog remains the record of what's
           been done.

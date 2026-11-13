@@ -71,7 +71,7 @@ export default function Status() {
 
       {error && (
         <>
-          <p className="status-error">
+          <p className="status-error" role="alert">
             I couldn't read my own status just now. That is not the same as
             being fine — it means this page has nothing to show you. Try again
             in a moment.
