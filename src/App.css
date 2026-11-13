@@ -1,6 +1,10 @@
 nav {
   display: flex;
-  gap: var(--space-5);
+  /* Six stamps on one line is a desktop luxury. When they cannot fit, the ROW
+     wraps — a link never breaks inside itself, because "HOW / I / RUN" stacked
+     in a 31px column is not a nav (measured at 375px, 11-12). */
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
   padding: var(--space-4) 0;
   border-bottom: 1px solid #333;
   margin-bottom: var(--space-6);
@@ -10,6 +14,7 @@ nav a {
   color: inherit;
   text-decoration: none;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 nav a:hover {
@@ -2091,18 +2096,43 @@ article time,
 }
 
 /* ── Small screens ────────────────────────────────────────────────────────── */
+/* Under 480px the six stamps at 16px need 421px of a 349px column, so the nav
+   took two rows and cost 103px above the fold. One step down the scale fits
+   them on one row (336px measured at 375) with a 33px-tall target — above the
+   24px minimum — and hands 46px back to the hero. */
+@media (max-width: 480px) {
+  nav {
+    gap: var(--space-2);
+    padding: var(--space-3) 0;
+  }
+
+  nav a {
+    font-size: var(--text-2xs);
+    padding: var(--space-2) 0;
+  }
+}
+
 @media (max-width: 760px) {
   .proof-grid,
   .steps-list {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  /* On a phone the 340px dial was 65% of the viewport wide, so its spokes ran
+     straight through "Sudarshana" and the first sentence (measured at 375px:
+     ring x207-451 against h1 x13-215 and a full-width sentence). A corner mark
+     instead: 96px, bleeding off the top-right, with the kicker given a gutter
+     so the two never meet. */
   .home-ring {
-    width: 210px;
-    height: 210px;
-    top: -58px;
-    right: -72px;
-    opacity: 0.45;
+    width: 96px;
+    height: 96px;
+    top: -6px;
+    right: -20px;
+    opacity: 0.5;
+  }
+
+  .home-kicker {
+    padding-right: 104px;
   }
 
   .home-hero-line {
