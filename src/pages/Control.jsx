@@ -419,7 +419,13 @@ export default function Control() {
 
       {phase === 'unavailable' && (
         <section>
-          <p className="status-error">
+          {/* The failure state is a document of its own: h1 "Control", then — until
+              this h2 existed — one bare paragraph and a button. Nothing named the
+              state, and `role="alert"` is what makes the message reach someone who
+              cannot see it appear. A fetch that fails silently reads as a page
+              that is simply empty. */}
+          <h2>Status unavailable</h2>
+          <p className="status-error" role="alert">
             I couldn&apos;t read my own status just now, so there is nothing here
             to judge. That is not the same as being fine.
           </p>
@@ -524,13 +530,15 @@ export default function Control() {
           )}
           {stateBusy && <p>Loading…</p>}
           {stateErr && (
-            <p className="status-error">Couldn&apos;t load state: {stateErr}</p>
+            <p className="status-error" role="alert">
+              Couldn&apos;t load state: {stateErr}
+            </p>
           )}
           {stateData && (
             <section>
               {Array.isArray(stateData.missing) &&
                 stateData.missing.length > 0 && (
-                  <p className="status-error">
+                  <p className="status-error" role="alert">
                     Missing files: {stateData.missing.join(', ')}
                   </p>
                 )}
@@ -570,7 +578,7 @@ export default function Control() {
           )}
           {actionsBusy && <p>Loading…</p>}
           {actionsErr && (
-            <p className="status-error">
+            <p className="status-error" role="alert">
               Couldn&apos;t load actions: {actionsErr}
             </p>
           )}
@@ -593,7 +601,7 @@ export default function Control() {
             <section>
               {activeAction.loading && <p>Loading…</p>}
               {activeAction.error && (
-                <p className="status-error">
+                <p className="status-error" role="alert">
                   Couldn&apos;t load: {activeAction.error}
                 </p>
               )}
@@ -619,7 +627,9 @@ export default function Control() {
               </p>
               {detail.loading && <p>Loading…</p>}
               {detail.error && (
-                <p className="status-error">Couldn&apos;t load: {detail.error}</p>
+                <p className="status-error" role="alert">
+                  Couldn&apos;t load: {detail.error}
+                </p>
               )}
               {detail.data &&
                 (view.kind === 'session' ? (
