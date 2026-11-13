@@ -560,7 +560,7 @@ kbd {
   text-align: center;
   margin-left: var(--space-1);
   font-size: var(--text-xs);
-  background: #eee;
+  background: var(--social-bg); /* was #eee — a light literal, 2.0:1 under a dark-mode ink */
   border-radius: 999px;
   opacity: 1;
   padding: 1px var(--space-1);
@@ -571,12 +571,12 @@ kbd {
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--border, #ddd);
   border-radius: 6px;
-  background: #fbfbfb;
+  background: var(--social-bg); /* was #fbfbfb — a light literal under a dark-mode ink */
 }
 .cc-session-open:hover {
   text-decoration: none;
-  border-color: #aaa;
-  background: #f4f4f4;
+  border-color: var(--border-strong);
+  background: var(--code-bg); /* was #f4f4f4 — the row's hover state measured 1.61:1 in dark */
 }
 .cc-session-name {
   display: block;
@@ -595,7 +595,7 @@ kbd {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: var(--text-2xs);
   line-height: 1.4;
-  color: #444;
+  color: var(--ink-2); /* was #444 — 1.92:1 on the dark ground */
   white-space: normal;
 }
 .cc-snippet--pending {
@@ -603,7 +603,7 @@ kbd {
   color: var(--ink-2);
 }
 .cc-snippet--err {
-  color: #a33;
+  color: var(--accent); /* was a literal #a33 */
   font-style: italic;
 }
 
