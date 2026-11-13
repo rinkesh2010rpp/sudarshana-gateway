@@ -2144,11 +2144,18 @@ article time,
     background: rgba(148, 163, 184, 0.22);
     color: #cbd5e1;
   }
-  .cc-p mark {
+  /* The three mark families carry the same UA black-on-#ffe08a, which is a 1:1
+     slab of light in a dark pane. Dim the tint and lift the ink instead, on all
+     three at once — covering only .cc-p gave the same highlight two looks. */
+  .cc-ttext mark,
+  .cc-p mark,
+  .cc-log-row mark {
     background: rgba(255, 224, 138, 0.28);
     color: var(--text-h);
   }
-  .cc-p .cc-mark-cur {
+  .cc-ttext .cc-mark-cur,
+  .cc-p .cc-mark-cur,
+  .cc-log-row .cc-mark-cur {
     background: rgba(255, 179, 71, 0.38);
     color: var(--text-h);
   }
