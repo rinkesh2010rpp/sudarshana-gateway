@@ -432,6 +432,9 @@ export default function Control() {
                 <button
                   key={t}
                   className={tab === t ? 'cc-tab cc-tab--on' : 'cc-tab'}
+                  // The active tab is carried by colour alone (.cc-tab--on), so a screen
+                  // reader heard four buttons and no way to tell which one you were in.
+                  aria-current={tab === t ? 'page' : undefined}
                   onClick={() => setTab(t)}
                 >
                   {t[0].toUpperCase() + t.slice(1)}
