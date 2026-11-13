@@ -824,6 +824,16 @@ kbd {
 
 /* cc-log: daily-log viewer (prev/next day nav, in-log search, durable tint,
    published-marker badge) */
+/* A deep-linked detail view's title (transcript id). An h2 for the heading
+   order, rendered at the h3 metrics it replaced so nothing moves. */
+.cc-detail-title {
+  font-size: var(--text-md);
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  line-height: 1.306;
+  color: inherit;
+  margin: 1em 0;
+}
 .cc-l-head {
   display: flex;
   flex-wrap: wrap;
@@ -837,7 +847,15 @@ kbd {
   gap: var(--space-2);
 }
 .cc-l-date {
+  /* An h2 that keeps the span's metrics: same size and line-height as the row
+     it sits in, no heading margins. Verified 85x26 at 1280 and 76x23 at 390,
+     identical to the span it replaced. */
+  font-size: inherit;
+  line-height: inherit;
   font-weight: 600;
+  letter-spacing: 0.18px;
+  color: inherit;
+  margin: 0;
   font-variant-numeric: tabular-nums;
 }
 .cc-l-pub {

@@ -624,7 +624,11 @@ export default function Control() {
               {detail.data &&
                 (view.kind === 'session' ? (
                   <section>
-                    <h3>{detail.data.id}</h3>
+                    {/* The deep-linked transcript replaces the tab content, so
+                        its title is the document's h2 under the panel's h1 —
+                        an h3 here skipped a level (h1 -> h3), which the
+                        structure audit flags on /control/sessions/:id. */}
+                    <h2 className="cc-detail-title">{detail.data.id}</h2>
                     <TranscriptView
                       sessionId={detail.data.id}
                       initial={detail.data}

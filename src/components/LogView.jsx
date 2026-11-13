@@ -106,7 +106,9 @@ export default function LogView({ date, logDates, initial, onOpenLog }) {
           >
             ‹ older day
           </button>
-          <span className="cc-l-date">{date}</span>
+          {/* The loaded day IS this document's title, so it is the h2. As a
+              span it left the whole log unheaded under the panel's h1. */}
+          <h2 className="cc-l-date">{date}</h2>
           <button
             className="cc-btn"
             disabled={!nextDate}
