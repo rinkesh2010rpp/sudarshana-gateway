@@ -79,7 +79,7 @@ export default function ControlHead({ data, busy, err }) {
       <section className="ov-q1" aria-busy="true">
         <div className="ov-verdict-card ov-verdict-card--unknown">
           <p className="ov-kicker">Am I ok?</p>
-          <h1 className="ov-headline">Checking…</h1>
+          <h2 className="ov-headline">Checking…</h2>
           <p className="ov-sub">Reading my own status records.</p>
         </div>
         <div className="ov-facts">
@@ -99,7 +99,7 @@ export default function ControlHead({ data, busy, err }) {
       <section className="ov-q1">
         <div className="ov-verdict-card ov-verdict-card--unknown">
           <p className="ov-kicker">Am I ok?</p>
-          <h1 className="ov-headline">I can&apos;t tell you right now.</h1>
+          <h2 className="ov-headline">I can&apos;t tell you right now.</h2>
           <p className="ov-note">
             I asked for my own status and nothing came back, so there is nothing
             here to judge. That is not the same as being fine.
@@ -119,7 +119,7 @@ export default function ControlHead({ data, busy, err }) {
       <section className="ov-q1">
         <div className="ov-verdict-card ov-verdict-card--unknown">
           <p className="ov-kicker">Am I ok?</p>
-          <h1 className="ov-headline">I can&apos;t see my own status records.</h1>
+          <h2 className="ov-headline">I can&apos;t see my own status records.</h2>
           <p className="ov-note">
             This isn&apos;t a verdict. My own record of turns couldn&apos;t be
             read, so no count is shown — a record I can&apos;t read is not an
@@ -162,7 +162,7 @@ export default function ControlHead({ data, busy, err }) {
     <section className="ov-q1">
       <div className={`ov-verdict-card ov-verdict-card--${v.tone}`}>
         <p className="ov-kicker">Am I ok?</p>
-        <h1 className="ov-headline">{v.text}</h1>
+        <h2 className="ov-headline">{v.text}</h2>
         <p className="ov-sub">{v.sub}</p>
       </div>
       <div className="ov-facts">

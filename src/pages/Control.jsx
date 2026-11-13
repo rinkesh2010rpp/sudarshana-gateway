@@ -363,7 +363,10 @@ export default function Control() {
     <section>
       <header className="ctrl-top">
         <div className="ctrl-brand">
-          <b>Control</b>
+          {/* The page's own name, and the one heading that survives every tab
+              switch. It was a <b> — so on conversations, logs and system the
+              document had no h1 at all, only the tab's h2. */}
+          <h1 className="ctrl-title">Control</h1>
           <span>Sudarshana</span>
         </div>
         <div className={`ctrl-pill ctrl-pill--${pillTone}`}>
