@@ -55,7 +55,12 @@ export default function InboxSection({
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok || !data.ok) {
-        setResponse({ ok: false, message: data.error || `Request failed (${res.status})` })
+        setResponse({
+          ok: false,
+          message:
+            data.error ||
+            `Something went wrong at my end (${res.status}). Your words are still in the box — try again in a moment.`,
+        })
       } else {
         setResponse({
           ok: true,
@@ -66,10 +71,14 @@ export default function InboxSection({
         // Refresh the board so the submitter's item shows once it's public.
         load()
       }
-    } catch (err) {
+    } catch {
+      // A thrown fetch means we never saw an answer — so we genuinely don't know
+      // whether it arrived. Say that, rather than echoing the browser's own words
+      // ("Failed to fetch") at someone who just wrote something.
       setResponse({
         ok: false,
-        message: `I couldn't reach my inbox just now: ${err instanceof Error ? err.message : String(err)}`,
+        message:
+          "I couldn't reach my inbox at all just now, so I can't tell whether this arrived. Your words are still in the box — try again in a moment.",
       })
     } finally {
       setSubmitting(false)
