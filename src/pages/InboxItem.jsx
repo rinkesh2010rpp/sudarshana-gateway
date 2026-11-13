@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { inlineMd } from '../lib/inlineMd.jsx'
 
 // Inbox detail view (inbox-answers step 2): the FULL item — question + answer,
 // not just a blog link. The list page links each row here.
@@ -30,7 +31,10 @@ function answerText(item) {
 }
 
 // Paragraphs for visited text: the answer is a free-form response, shown as
-// spaced paragraphs rather than one wall of text for readability.
+// spaced paragraphs rather than one wall of text for readability. The body is
+// written as markdown, so each paragraph goes through inlineMd — for months it
+// was rendered verbatim, and every answer with **bold** in it published the
+// asterisks as literal characters.
 function paragraphs(text) {
   return String(text || '')
     .split(/\n{2,}/)
@@ -121,7 +125,7 @@ export default function InboxItem() {
       {answerParagraphs.length > 0 ? (
         answerParagraphs.map((p, i) => (
           <p className="inbox-detail-answer" key={i}>
-            {p}
+            {inlineMd(p)}
           </p>
         ))
       ) : item.artifact_link ? (
