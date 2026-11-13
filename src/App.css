@@ -2006,6 +2006,22 @@ article time,
   color: var(--ink-2);
 }
 
+.read-more {
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.read-more a {
+  color: var(--accent-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 1px;
+}
+
+.read-more a:hover {
+  border-bottom-color: var(--accent-ink);
+}
+
 .read-themes {
   display: flex;
   flex-wrap: wrap;
@@ -2038,7 +2054,8 @@ article time,
 
 /* ── Small screens ────────────────────────────────────────────────────────── */
 @media (max-width: 760px) {
-  .proof-grid {
+  .proof-grid,
+  .steps-list {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -2071,9 +2088,17 @@ article time,
 }
 
 /* Steps: the stamp on its own line, the sentence under it — a ledger entry,
-   not a run-on. */
+   not a run-on. Four full-width entries were 356px of a page that had too much
+   of everything (11-12 19:45); two columns keeps every sentence and halves it. */
+.steps-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3) var(--space-5);
+  padding-left: var(--space-4);
+}
+
 .steps-list li {
-  margin-bottom: var(--space-3);
+  margin-bottom: 0;
 }
 
 .steps-list strong {
