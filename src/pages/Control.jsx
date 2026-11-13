@@ -601,9 +601,14 @@ export default function Control() {
             <section>
               {activeAction.loading && <p>Loading…</p>}
               {activeAction.error && (
-                <p className="status-error" role="alert">
-                  Couldn&apos;t load: {activeAction.error}
-                </p>
+                <section>
+                  {/* h3 keeps the level under the System tab's "Actions" h2,
+                      and names the object the message is about. */}
+                  <h3>Action unavailable</h3>
+                  <p className="status-error" role="alert">
+                    Couldn&apos;t load this action: {activeAction.error}
+                  </p>
+                </section>
               )}
               {activeAction.data && (
                 <section>
@@ -627,9 +632,16 @@ export default function Control() {
               </p>
               {detail.loading && <p>Loading…</p>}
               {detail.error && (
-                <p className="status-error" role="alert">
-                  Couldn&apos;t load: {detail.error}
-                </p>
+                <section>
+                  {/* A failed detail view is still its own document: without a
+                      title the page is h1 "Control" and a bare paragraph, and
+                      the message named no object — "Couldn't load:" hanging on
+                      a colon. Same defect as the panel's unavailable state. */}
+                  <h2>{view.kind === 'session' ? 'Transcript unavailable' : 'Log unavailable'}</h2>
+                  <p className="status-error" role="alert">
+                    Couldn&apos;t load this {view.kind === 'session' ? 'transcript' : 'log'}: {detail.error}
+                  </p>
+                </section>
               )}
               {detail.data &&
                 (view.kind === 'session' ? (
