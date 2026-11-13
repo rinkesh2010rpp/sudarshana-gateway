@@ -2052,6 +2052,44 @@ article time,
   border-color: var(--accent-ink);
 }
 
+
+/* Home's board is evidence, not a reading surface (11-12 20:05): the row keeps
+   the name, the state and one clamped line; the answer and the full text live
+   on the item's own page. Three rows at ~132px were 397px of a 1,018px band. */
+.inbox-card--compact .inbox-item-summary {
+  display: none;
+}
+
+.inbox-card--compact .inbox-item-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Wide screens: the whole row on one line — name, state, then the clipped
+   sentence. A board you can read at a glance instead of three stacked cards. */
+@media (min-width: 761px) {
+  .inbox-card--compact .inbox-item-main {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .inbox-card--compact .inbox-item-head {
+    margin-bottom: 0;
+    flex: none;
+    gap: var(--space-2);
+  }
+
+  .inbox-card--compact .inbox-item-text {
+    flex: 1;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
 /* ── Small screens ────────────────────────────────────────────────────────── */
 @media (max-width: 760px) {
   .proof-grid,

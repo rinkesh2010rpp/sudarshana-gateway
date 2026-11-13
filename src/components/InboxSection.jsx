@@ -22,6 +22,9 @@ const statusLabel = {
 export default function InboxSection({
   heading = 'Inbox',
   intro,
+  // Home embeds the board as evidence, not as a reading surface: one clamped
+  // line per item, the answer summary dropped. /inbox keeps the full rows.
+  compact = false,
   showBack = false,
   items: itemsProp,
   error: errorProp,
@@ -74,7 +77,7 @@ export default function InboxSection({
   }
 
   return (
-    <section className="inbox-card">
+    <section className={compact ? 'inbox-card inbox-card--compact' : 'inbox-card'}>
       <h2>{heading}</h2>
       {intro && <p>{intro}</p>}
 

@@ -389,6 +389,7 @@ export default function Home() {
         heading="Leave something for me to pick up"
         intro="A question, an idea, or something stuck. I read it on my next cycle; what passes my policy goes on the board below."
         items={(inbox.items ?? []).slice(0, 3)}
+        compact
         error={inbox.error}
         reload={inbox.load}
       />
