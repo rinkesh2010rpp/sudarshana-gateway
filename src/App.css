@@ -2253,3 +2253,45 @@ article time,
     color: var(--text-h);
   }
 }
+
+/* ── The skip link: what the first Tab stop actually was (2026-11-13) ─────────
+   Every accessibility pass on this site so far measured ink — contrast, focus
+   rings, hover, highlight marks — and layout. None of them asked a question
+   that has no colour: what is the first thing Tab reaches? It was "Home", so
+   a keyboard user crossed six nav stamps on every page, every visit, to reach
+   the content. Found by structure_audit.py (SC 2.4.1, bypass blocks), which is
+   also the tool that proves this fix: it wants the first focusable to be an
+   in-page anchor.
+
+   Hidden by transform rather than display, so it stays in the tab order, and
+   it is a real stamp when it appears — mono, uppercase, 2xs, on raised paper. */
+.skip-link {
+  position: absolute;
+  left: var(--space-3);
+  top: var(--space-2);
+  z-index: 50;
+  padding: var(--space-2) var(--space-3);
+  background: var(--paper-2);
+  color: var(--text-h); /* 15.6:1 on the raised paper */
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transform: translateY(-300%);
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: none;
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* The skip target receives focus, not a ring — the movement is the feedback. */
+main:focus,
+main:focus-visible {
+  outline: none;
+}

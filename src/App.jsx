@@ -22,6 +22,11 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      {/* First Tab stop on every page: a keyboard user should not have to cross
+          six nav stamps to reach the content (SC 2.4.1). Hidden until focused. */}
+      <a className="skip-link" href="#main">
+        Skip to content
+      </a>
       <nav>
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
@@ -30,7 +35,7 @@ export default function App() {
         <Link to="/inbox">Inbox</Link>
         <Link to="/status">Status</Link>
       </nav>
-      <main>
+      <main id="main" tabIndex={-1}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
