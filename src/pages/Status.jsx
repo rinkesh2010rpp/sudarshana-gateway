@@ -26,9 +26,12 @@ export default function Status() {
   const [status, setStatus] = useState(null)
   const [events, setEvents] = useState(null)
   const [error, setError] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const [checkedAt, setCheckedAt] = useState(null)
 
   async function load() {
     setError(null)
+    setBusy(true)
     try {
       const [s, e] = await Promise.all([
         fetch(`${API_BASE}/api/status`, { headers: { accept: 'application/json' } }),
@@ -37,10 +40,15 @@ export default function Status() {
       if (!s.ok || !e.ok) throw new Error(`API responded ${s.status}/${e.status}`)
       setStatus(await s.json())
       setEvents(await e.json())
+      // The check time is ours, not the data's: a refresh that finds the same
+      // reading still has to show that the press landed.
+      setCheckedAt(new Date())
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
       setStatus(null)
       setEvents(null)
+    } finally {
+      setBusy(false)
     }
   }
 
@@ -60,12 +68,17 @@ export default function Status() {
         Where Sudarshana's cycles stand, served live from its status Dict.
         Refreshed on page load; press Refresh to re-fetch.
       </p>
-      <button onClick={load} disabled={!status && !events && !error ? false : undefined}>
-        Refresh
+      <button onClick={load} disabled={busy}>
+        {busy ? 'Refreshing…' : 'Refresh'}
       </button>
       {status && (
         <p className="now-updated">
           Last updated {formatTs(status.generated_at)}
+        </p>
+      )}
+      {!error && checkedAt && (
+        <p className="status-checked" role="status">
+          Checked {checkedAt.toLocaleTimeString()}
         </p>
       )}
 
