@@ -2313,3 +2313,14 @@ main:focus,
 main:focus-visible {
   outline: none;
 }
+
+/* Same reasoning for /control's landing heading. When a pressed read replaces
+   the panel, the heading that names the new region takes focus so the next thing
+   read is the panel, not the top of the document. A ring there would box a
+   display-size headline and stay there until the person tabs away — permanent
+   decoration on the panel's most-used state, and the whole panel changing is
+   louder feedback than any ring. Measured: outline solid 2px before this rule. */
+.ctrl-land:focus,
+.ctrl-land:focus-visible {
+  outline: none;
+}

@@ -54,6 +54,13 @@ export default function Control() {
   const [phase, setPhase] = useState('idle') // idle|loading|ready|unavailable|error
   const [error, setError] = useState(null)
   const [refreshing, setRefreshing] = useState(false) // a refresh over a panel that already has data
+  // A pressed read that lands in a panel other than the one it started in
+  // unmounts whatever held the focus, so focus falls to <body> and a keyboard
+  // user is back at the top of the document with nothing to say where the panel
+  // went. Set on the press, consumed by the effect below once the new panel is
+  // committed. Never set on mount or a background pull.
+  const landRef = useRef(false)
+  const contentRef = useRef(null) // the block that is on screen for this phase
   const [checked, setChecked] = useState(null) // {at, how:'refresh'|'again'} — the last press-driven read that landed
   const inFlight = useRef(false) // a refresh press already running
   const [view, setView] = useState(null) // {kind:'session'|'log', id} or null
@@ -147,6 +154,7 @@ export default function Control() {
       setLoadedAt(new Date())
       setPhase('ready')
       if (press) setChecked({ at: new Date(), how: holdPanel ? 'refresh' : 'again' })
+      if (press && !holdPanel) landRef.current = true
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
       if (!holdPanel) {
@@ -154,6 +162,10 @@ export default function Control() {
         setSessions(null)
         setLogs(null)
         setPhase('unavailable')
+        // A retry that failed again remounts the failure block, and the button
+        // that was pressed is gone with the old one — land on the state it
+        // replaced the panel with, rather than dropping focus to <body>.
+        if (press) landRef.current = true
       }
       // Held panel: keep what it read before, and say the refresh failed.
     } finally {
@@ -170,6 +182,29 @@ export default function Control() {
     // load() re-runs when the user object changes (login/logout).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
+
+  // Where focus lands when a pressed read REPLACES the panel.
+  // The button that was pressed is unmounted with the block it lived in, so the
+  // browser hands focus to <body> — measured, not assumed: `focus=body` after a
+  // successful Retry. The new panel's first h2 is the one element that names the
+  // region that replaced it, and it is where a screen reader resumes from.
+  // tabindex="-1" lets a heading take focus without joining the tab order, so
+  // nothing is added between the person and the panel's controls. Skipped for
+  // 'loading' — that is the skeleton, the same shape still being filled in, and
+  // focusing a placeholder would announce a panel that does not exist yet.
+  useEffect(() => {
+    if (!landRef.current) return
+    if (phase !== 'ready' && phase !== 'unavailable') return
+    landRef.current = false
+    const heading = contentRef.current?.querySelector('h2')
+    if (!heading) return
+    heading.setAttribute('tabindex', '-1')
+    // .ctrl-land suppresses the ring (see App.css): the panel replacing itself is
+    // the feedback, and a ring would sit boxed around the headline until the
+    // person moved focus.
+    heading.classList.add('ctrl-land')
+    heading.focus()
+  }, [phase])
 
   const detailRef = useRef(null)
   // Direct deep links: /control/sessions/:id and /control/logs/:date load
@@ -507,7 +542,7 @@ export default function Control() {
       )}
 
       {phase === 'unavailable' && (
-        <section>
+        <section ref={contentRef}>
           {/* The failure state is a document of its own: h1 "Control", then — until
               this h2 existed — one bare paragraph and a button. Nothing named the
               state, and `role="alert"` is what makes the message reach someone who
@@ -531,7 +566,7 @@ export default function Control() {
       )}
 
       {phase === 'ready' && (
-        <section>
+        <section ref={contentRef}>
           {!(detail && view) && tab !== 'overview' && (
             <nav className="cc-tabs" aria-label="Control sections">
               {['overview', 'conversations', 'logs', 'system'].map((t) => (
