@@ -53,6 +53,9 @@ export default function Control() {
   const [loadedAt, setLoadedAt] = useState(null) // when the strip data was fetched
   const [phase, setPhase] = useState('idle') // idle|loading|ready|unavailable|error
   const [error, setError] = useState(null)
+  const [refreshing, setRefreshing] = useState(false) // a refresh over a panel that already has data
+  const [checkedAt, setCheckedAt] = useState(null) // when a refresh last completed
+  const inFlight = useRef(false) // a refresh press already running
   const [view, setView] = useState(null) // {kind:'session'|'log', id} or null
   const [detail, setDetail] = useState(null) // {loading, data, error}
   const [stateData, setStateData] = useState(null) // /api/control/state payload
@@ -123,8 +126,14 @@ export default function Control() {
     }
   }, [])
 
-  async function load() {
-    setPhase('loading')
+  // `keep` = a refresh over a panel that is ALREADY showing data. Blanking it
+  // to the first-paint skeleton unmounts the content under the person's focus
+  // (focus falls to <body>) and announces nothing about the read it just made,
+  // so a refresh looks exactly like a page that went away and came back.
+  async function load({ keep = false } = {}) {
+    const holdPanel = keep && phase === 'ready'
+    if (holdPanel) setRefreshing(true)
+    else setPhase('loading')
     setError(null)
     try {
       const [s, l] = await Promise.all([
@@ -135,18 +144,25 @@ export default function Control() {
       setLogs(Array.isArray(l?.logs) ? l.logs : [])
       setLoadedAt(new Date())
       setPhase('ready')
+      if (holdPanel) setCheckedAt(new Date())
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
-      setSessions(null)
-      setLogs(null)
-      setPhase('unavailable')
+      if (!holdPanel) {
+        // Nothing on screen to keep — the failure IS the page.
+        setSessions(null)
+        setLogs(null)
+        setPhase('unavailable')
+      }
+      // Held panel: keep what it read before, and say the refresh failed.
+    } finally {
+      if (holdPanel) setRefreshing(false)
     }
   }
 
   useEffect(() => {
     if (user) {
       load()
-      loadState() // state.md powers the status strip's "Current state" card
+      loadState(false) // state.md powers the status strip: a background read, not a press
       loadOverview()
     }
     // load() re-runs when the user object changes (login/logout).
@@ -322,7 +338,14 @@ export default function Control() {
 
   // Refresh the strip AND the state card together.
   function refreshAll() {
-    load()
+    // The button stays ENABLED while it reads (see the header): disabling the
+    // focused element blurs it to <body>, and a person tabbing mid-read then
+    // restarts at the skip link. So the guard lives here instead.
+    if (inFlight.current) return
+    inFlight.current = true
+    load({ keep: true }).finally(() => {
+      inFlight.current = false
+    })
     loadState(false)
     loadOverview()
   }
@@ -416,13 +439,31 @@ export default function Control() {
           signed in as {user.email} ·{' '}
           {/* The strip that used to hold the refresh link is gone; without this
               the only way to reload the panel is the `r` shortcut. */}
-          <button onClick={refreshAll} disabled={overviewBusy}>
-            {overviewBusy ? 'refreshing…' : 'Refresh'}
+          {/* aria-disabled, not disabled: the press must not take the focus off
+              the button it was made on. The label carries the busy state and
+              refreshAll() ignores a second press while one is running. */}
+          <button onClick={refreshAll} aria-disabled={refreshing || overviewBusy || undefined}>
+            {refreshing || overviewBusy ? 'refreshing…' : 'Refresh'}
           </button>
           <button onClick={() => netlifyIdentity.logout()}>Sign out</button>
           <button onClick={() => setShowShortcuts((v) => !v)}>⌨ Shortcuts</button>
         </div>
       </header>
+
+      {/* Two lines, both only after a press: a refresh that worked says what
+          time it read, and one that failed says so without taking the panel
+          down with it. */}
+      {phase === 'ready' && checkedAt && !error && (
+        <p className="status-checked" role="status">
+          Refreshed — checked {checkedAt.toLocaleTimeString()}
+        </p>
+      )}
+      {phase === 'ready' && error && (
+        <p className="status-error" role="alert">
+          Couldn&apos;t refresh just now ({error}). This is what the panel read
+          earlier — it is not fresher than that.
+        </p>
+      )}
 
       {showShortcuts && (
         <section className="cc-help">
