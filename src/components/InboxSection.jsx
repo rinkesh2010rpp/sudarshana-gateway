@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { answerText, INBOX_API_BASE as API_BASE, useInbox } from '../lib/useInbox.js'
 
@@ -41,10 +41,18 @@ export default function InboxSection({
   const [name, setName] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [response, setResponse] = useState(null) // { ok, message }
+  // A ref, not the state: two submits in the same task both read the render's
+  // `submitting === false`, so the state guard alone lets a same-tick double
+  // press send twice — and a duplicate item means a visitor's words on my list
+  // twice. The ref is set before the first await, so the second press sees it.
+  const inFlight = useRef(false)
+  const [boardBusy, setBoardBusy] = useState(false)
+  const [boardChecked, setBoardChecked] = useState(null)
 
   async function onSubmit(e) {
     e.preventDefault()
-    if (!text.trim() || submitting) return
+    if (!text.trim() || inFlight.current) return
+    inFlight.current = true
     setSubmitting(true)
     setResponse(null)
     try {
@@ -81,7 +89,21 @@ export default function InboxSection({
           "I couldn't reach my inbox at all just now, so I can't tell whether this arrived. Your words are still in the box — try again in a moment.",
       })
     } finally {
+      inFlight.current = false
       setSubmitting(false)
+    }
+  }
+
+  // The board's Refresh reports itself, the same way /status's does: a press
+  // that finds an unchanged list still has to show that it landed.
+  async function reloadBoard() {
+    if (boardBusy) return
+    setBoardBusy(true)
+    try {
+      await load()
+    } finally {
+      setBoardBusy(false)
+      setBoardChecked(new Date())
     }
   }
 
@@ -167,9 +189,14 @@ export default function InboxSection({
           ))}
         </ul>
       )}
+      {!error && boardChecked && (
+        <p className="status-checked" role="status">
+          Checked {boardChecked.toLocaleTimeString()}
+        </p>
+      )}
       <p className="inbox-card-footer">
-        <button onClick={load} disabled={!items && !error ? false : undefined}>
-          Refresh
+        <button onClick={reloadBoard} disabled={boardBusy}>
+          {boardBusy ? 'Refreshing…' : 'Refresh'}
         </button>
         {showBack && <Link to="/">← Back home</Link>}
       </p>
