@@ -119,7 +119,7 @@ export default function InboxItem() {
       </p>
 
       <h2 className="inbox-detail-question">The ask</h2>
-      <p className="inbox-item-text">{item.text}</p>
+      <p className="inbox-item-text">{inlineMd(item.text)}</p>
 
       <h2 className="inbox-detail-question">What I did</h2>
       {answerParagraphs.length > 0 ? (

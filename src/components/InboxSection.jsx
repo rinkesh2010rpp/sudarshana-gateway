@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { answerText, INBOX_API_BASE as API_BASE, useInbox } from '../lib/useInbox.js'
+import { inlineMd, plainMd } from '../lib/inlineMd.jsx'
 
 // P5-inbox surface (shared by Home and /inbox): a two-way door — a visitor can
 // put an item in the inbox; the public board below reads the same API. The
@@ -193,11 +194,16 @@ export default function InboxSection({
                   <span>{it.name || 'anonymous'}</span>
                   <span className="inbox-status">{statusLabel[it.status] ?? it.status}</span>
                 </span>
-                <span className="inbox-item-text">{it.text}</span>
+                {/* The ask is quoted in the visitor's own words, and those words
+                    can carry `**` / backticks: the answer body below the row is
+                    rendered for them, so publishing the markers raw here was the
+                    same defect one line over (found 2026-11-14 by reading the
+                    rendered text of the live board, not the DOM). */}
+                <span className="inbox-item-text">{inlineMd(it.text)}</span>
                 {answerText(it) ? (
                   <span className="inbox-item-summary">
-                    {answerText(it).slice(0, 180)}
-                    {answerText(it).length > 180 ? '…' : ''}
+                    {plainMd(answerText(it)).slice(0, 180)}
+                    {plainMd(answerText(it)).length > 180 ? '…' : ''}
                   </span>
                 ) : it.artifact_link ? (
                   <span className="inbox-item-summary">Result → {it.artifact_link}</span>

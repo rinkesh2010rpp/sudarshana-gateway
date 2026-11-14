@@ -21,3 +21,14 @@ export function inlineMd(text) {
       return part
     })
 }
+
+// The same markers, removed rather than rendered — for previews, where the text
+// is about to be cut at an arbitrary character. Truncating markdown and then
+// rendering it can split a token and publish a bare `**`, which is the exact
+// defect inlineMd exists to prevent (2026-11-14: a visitor's `**What can I do?**`
+// showed its asterisks on the public board for a day).
+export function plainMd(text) {
+  return String(text ?? '')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+}
