@@ -54,7 +54,7 @@ export default function Control() {
   const [phase, setPhase] = useState('idle') // idle|loading|ready|unavailable|error
   const [error, setError] = useState(null)
   const [refreshing, setRefreshing] = useState(false) // a refresh over a panel that already has data
-  const [checkedAt, setCheckedAt] = useState(null) // when a refresh last completed
+  const [checked, setChecked] = useState(null) // {at, how:'refresh'|'again'} — the last press-driven read that landed
   const inFlight = useRef(false) // a refresh press already running
   const [view, setView] = useState(null) // {kind:'session'|'log', id} or null
   const [detail, setDetail] = useState(null) // {loading, data, error}
@@ -130,10 +130,12 @@ export default function Control() {
   // to the first-paint skeleton unmounts the content under the person's focus
   // (focus falls to <body>) and announces nothing about the read it just made,
   // so a refresh looks exactly like a page that went away and came back.
-  async function load({ keep = false } = {}) {
+  // `press` = a person asked for this read, as opposed to the mount effect or a
+  // background pull. Only a press is announced, and only a press says when.
+  async function load({ keep = false, press = false } = {}) {
     const holdPanel = keep && phase === 'ready'
-    if (holdPanel) setRefreshing(true)
-    else setPhase('loading')
+    setRefreshing(press)
+    if (!holdPanel) setPhase('loading')
     setError(null)
     try {
       const [s, l] = await Promise.all([
@@ -144,7 +146,7 @@ export default function Control() {
       setLogs(Array.isArray(l?.logs) ? l.logs : [])
       setLoadedAt(new Date())
       setPhase('ready')
-      if (holdPanel) setCheckedAt(new Date())
+      if (press) setChecked({ at: new Date(), how: holdPanel ? 'refresh' : 'again' })
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
       if (!holdPanel) {
@@ -155,7 +157,7 @@ export default function Control() {
       }
       // Held panel: keep what it read before, and say the refresh failed.
     } finally {
-      if (holdPanel) setRefreshing(false)
+      setRefreshing(false)
     }
   }
 
@@ -336,16 +338,22 @@ export default function Control() {
     }
   }
 
+  // One press, one read. A ref, not a state flag: `refreshing` is stale within a
+  // single task, so two presses in one tick would fire two reads.
+  function pressOnce(run) {
+    if (inFlight.current) return
+    inFlight.current = true
+    run().finally(() => {
+      inFlight.current = false
+    })
+  }
+
   // Refresh the strip AND the state card together.
   function refreshAll() {
     // The button stays ENABLED while it reads (see the header): disabling the
     // focused element blurs it to <body>, and a person tabbing mid-read then
     // restarts at the skip link. So the guard lives here instead.
-    if (inFlight.current) return
-    inFlight.current = true
-    load({ keep: true }).finally(() => {
-      inFlight.current = false
-    })
+    pressOnce(() => load({ keep: true, press: true }))
     loadState(false)
     loadOverview()
   }
@@ -453,9 +461,10 @@ export default function Control() {
       {/* Two lines, both only after a press: a refresh that worked says what
           time it read, and one that failed says so without taking the panel
           down with it. */}
-      {phase === 'ready' && checkedAt && !error && (
+      {phase === 'ready' && checked && !error && (
         <p className="status-checked" role="status">
-          Refreshed — checked {checkedAt.toLocaleTimeString()}
+          {checked.how === 'refresh' ? 'Refreshed' : 'Read again'} — checked{' '}
+          {checked.at.toLocaleTimeString()}
         </p>
       )}
       {phase === 'ready' && error && (
@@ -509,7 +518,15 @@ export default function Control() {
             I couldn&apos;t read my own status just now, so there is nothing here
             to judge. That is not the same as being fine.
           </p>
-          <button onClick={load}>Retry</button>
+          {/* The block unmounts the moment the press lands (phase goes to
+              'loading'), so the skeleton IS the busy state and a busy label here
+              would never be seen. What was missing is that a retry which finally
+              worked said nothing at all: press:true is what makes the header's
+              status line report the read it landed, and the header button shows
+              'refreshing…' while it runs because the button outlives the block. */}
+          <button onClick={() => pressOnce(() => load({ press: true }))} aria-disabled={refreshing || undefined}>
+            Retry
+          </button>
         </section>
       )}
 
