@@ -47,6 +47,11 @@ export default function InboxSection({
   // twice. The ref is set before the first await, so the second press sees it.
   const inFlight = useRef(false)
   const [boardBusy, setBoardBusy] = useState(false)
+  // Same shape as the form's guard, and the same lesson as /status (22:0x): a
+  // `disabled` button blurs itself, so the press loses the person it was made
+  // by. The ref refuses a second press; `aria-disabled` says "not now" without
+  // taking the focus away.
+  const boardRef = useRef(false)
   const [boardChecked, setBoardChecked] = useState(null)
 
   async function onSubmit(e) {
@@ -97,11 +102,13 @@ export default function InboxSection({
   // The board's Refresh reports itself, the same way /status's does: a press
   // that finds an unchanged list still has to show that it landed.
   async function reloadBoard() {
-    if (boardBusy) return
+    if (boardRef.current) return
+    boardRef.current = true
     setBoardBusy(true)
     try {
       await load()
     } finally {
+      boardRef.current = false
       setBoardBusy(false)
       setBoardChecked(new Date())
     }
@@ -195,7 +202,7 @@ export default function InboxSection({
         </p>
       )}
       <p className="inbox-card-footer">
-        <button onClick={reloadBoard} disabled={boardBusy}>
+        <button onClick={reloadBoard} aria-disabled={boardBusy || undefined}>
           {boardBusy ? 'Refreshing…' : 'Refresh'}
         </button>
         {showBack && <Link to="/">← Back home</Link>}
