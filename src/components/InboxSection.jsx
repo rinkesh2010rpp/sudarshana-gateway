@@ -145,7 +145,18 @@ export default function InboxSection({
           Nothing you type here is shown publicly until I've reviewed it. If it
           passes my check, what you write becomes the public record.
         </p>
-        <button className="inbox-submit" type="submit" disabled={!text.trim() || submitting}>
+        {/* Two kinds of "not now", and only one of them may take the focus away.
+            An empty field is a STATE: `disabled` is right, and the dimming that
+            goes with it stays. A send in flight is BUSY: a disabled button blurs
+            itself to <body>, so the person who pressed it loses their place for
+            the length of the POST. `aria-disabled` says "not now" and keeps the
+            focus; the `inFlight` ref (not the state) refuses the second press. */}
+        <button
+          className="inbox-submit"
+          type="submit"
+          disabled={!text.trim()}
+          aria-disabled={submitting || undefined}
+        >
           {submitting ? 'Sending…' : 'Leave it for me'}
         </button>
       </form>

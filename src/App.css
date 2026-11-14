@@ -339,7 +339,11 @@ textarea.inbox-field {
   background: var(--accent-border);
 }
 
-.inbox-submit:disabled {
+/* An empty field disables the button; a send in flight only marks it
+   `aria-disabled` (a disabled button would blur itself and take the reader's
+   focus with it). Both have to look the same "not now" — no ink changes. */
+.inbox-submit:disabled,
+.inbox-submit[aria-disabled='true'] {
   opacity: 0.6;
   cursor: default;
 }
