@@ -68,14 +68,14 @@ export default function Control() {
   const [stateData, setStateData] = useState(null) // /api/control/state payload
   const [stateBusy, setStateBusy] = useState(false)
   const [stateNote, setStateNote] = useState(null)
-  const stateBtnRef = useRef(null)
-  const refocusState = useRef(false)
+  // A ref, not the state flag: `stateBusy` is stale within a single task, and
+  // the button no longer carries `disabled` (see below), so the guard is here.
+  const stateBusyRef = useRef(false)
   const [stateErr, setStateErr] = useState(null)
   const [actions, setActions] = useState(null) // action-file list
   const [actionsBusy, setActionsBusy] = useState(false)
   const [actionsNote, setActionsNote] = useState(null)
-  const actionsBtnRef = useRef(null)
-  const refocusActions = useRef(false)
+  const actionsBusyRef = useRef(false)
   const [actionsErr, setActionsErr] = useState(null)
   const [activeAction, setActiveAction] = useState(null) // {id, loading, data, error}
   // cc-usability: one screen per need. Tab bar (Overview | Conversations | Logs |
@@ -322,6 +322,8 @@ export default function Control() {
   // `announce` is false when refreshAll() pulls the state in behind the
   // header Refresh — a background fetch should not report itself as a press.
   async function loadState(announce = true) {
+    if (stateBusyRef.current) return
+    stateBusyRef.current = true
     setStateBusy(true)
     setStateErr(null)
     if (announce) setStateNote(null)
@@ -335,26 +337,10 @@ export default function Control() {
     } catch (err) {
       setStateErr(err instanceof Error ? err.message : String(err))
     } finally {
+      stateBusyRef.current = false
       setStateBusy(false)
-      // Disabling the focused button blurs it, and focus falls to <body> — in a
-      // panel this long that loses the keyboard user's place entirely. Flag it
-      // and restore focus in the effect below, which runs after the re-render
-      // that re-enables the button (a timeout can fire before that commit).
-      if (announce) refocusState.current = true
     }
   }
-
-  useEffect(() => {
-    if (stateBusy || !refocusState.current) return
-    refocusState.current = false
-    stateBtnRef.current?.focus()
-  }, [stateBusy])
-
-  useEffect(() => {
-    if (actionsBusy || !refocusActions.current) return
-    refocusActions.current = false
-    actionsBtnRef.current?.focus()
-  }, [actionsBusy])
 
   // The three-question overview (health now; asks + recent work land next).
   // Never fabricates: on failure the block shows the reason, not a green light.
@@ -395,6 +381,8 @@ export default function Control() {
   }
 
   async function loadActions() {
+    if (actionsBusyRef.current) return
+    actionsBusyRef.current = true
     setActionsBusy(true)
     setActionsErr(null)
     setActionsNote(null)
@@ -406,8 +394,8 @@ export default function Control() {
     } catch (err) {
       setActionsErr(err instanceof Error ? err.message : String(err))
     } finally {
+      actionsBusyRef.current = false
       setActionsBusy(false)
-      refocusActions.current = true
     }
   }
 
@@ -664,9 +652,10 @@ export default function Control() {
           {!(detail && view) && tab === 'system' && (
             <section className="cc-system">
               <h2>State</h2>
-          {/* Kept mounted while busy: a button that unmounts on press takes the
-              keyboard user's focus with it, and focus falls back to <body>. */}
-          <button ref={stateBtnRef} onClick={() => loadState()} disabled={stateBusy}>
+          {/* `aria-disabled`, never `disabled`: a focused `disabled` button blurs
+              to <body>, so the reader loses the button mid-read and a Tab lands
+              back at the skip link. The guard is the busy ref in loadState(). */}
+          <button onClick={() => loadState()} aria-disabled={stateBusy || undefined}>
             {stateBusy ? 'Loading…' : stateData === null ? 'Load state' : 'Reload state'}
           </button>
           {stateNote && (
@@ -716,7 +705,7 @@ export default function Control() {
           )}
 
           <h2>Actions</h2>
-          <button ref={actionsBtnRef} onClick={loadActions} disabled={actionsBusy}>
+          <button onClick={loadActions} aria-disabled={actionsBusy || undefined}>
             {actionsBusy ? 'Loading…' : actions === null ? 'Load actions' : 'Reload actions'}
           </button>
           {actionsNote && (
