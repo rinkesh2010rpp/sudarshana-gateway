@@ -57,9 +57,15 @@ export default function Control() {
   const [detail, setDetail] = useState(null) // {loading, data, error}
   const [stateData, setStateData] = useState(null) // /api/control/state payload
   const [stateBusy, setStateBusy] = useState(false)
+  const [stateNote, setStateNote] = useState(null)
+  const stateBtnRef = useRef(null)
+  const refocusState = useRef(false)
   const [stateErr, setStateErr] = useState(null)
   const [actions, setActions] = useState(null) // action-file list
   const [actionsBusy, setActionsBusy] = useState(false)
+  const [actionsNote, setActionsNote] = useState(null)
+  const actionsBtnRef = useRef(null)
+  const refocusActions = useRef(false)
   const [actionsErr, setActionsErr] = useState(null)
   const [activeAction, setActiveAction] = useState(null) // {id, loading, data, error}
   // cc-usability: one screen per need. Tab bar (Overview | Conversations | Logs |
@@ -260,18 +266,42 @@ export default function Control() {
     navigate('/control')
   }
 
-  async function loadState() {
+  // `announce` is false when refreshAll() pulls the state in behind the
+  // header Refresh — a background fetch should not report itself as a press.
+  async function loadState(announce = true) {
     setStateBusy(true)
     setStateErr(null)
+    if (announce) setStateNote(null)
     try {
       const d = await authFetch('/api/control/state')
       setStateData(d)
+      if (announce) {
+        const n = d && typeof d.files === 'object' && d.files ? Object.keys(d.files).length : 0
+        setStateNote(`Loaded state — ${n} file${n === 1 ? '' : 's'}.`)
+      }
     } catch (err) {
       setStateErr(err instanceof Error ? err.message : String(err))
     } finally {
       setStateBusy(false)
+      // Disabling the focused button blurs it, and focus falls to <body> — in a
+      // panel this long that loses the keyboard user's place entirely. Flag it
+      // and restore focus in the effect below, which runs after the re-render
+      // that re-enables the button (a timeout can fire before that commit).
+      if (announce) refocusState.current = true
     }
   }
+
+  useEffect(() => {
+    if (stateBusy || !refocusState.current) return
+    refocusState.current = false
+    stateBtnRef.current?.focus()
+  }, [stateBusy])
+
+  useEffect(() => {
+    if (actionsBusy || !refocusActions.current) return
+    refocusActions.current = false
+    actionsBtnRef.current?.focus()
+  }, [actionsBusy])
 
   // The three-question overview (health now; asks + recent work land next).
   // Never fabricates: on failure the block shows the reason, not a green light.
@@ -293,20 +323,24 @@ export default function Control() {
   // Refresh the strip AND the state card together.
   function refreshAll() {
     load()
-    loadState()
+    loadState(false)
     loadOverview()
   }
 
   async function loadActions() {
     setActionsBusy(true)
     setActionsErr(null)
+    setActionsNote(null)
     try {
       const d = await authFetch('/api/control/actions')
-      setActions(Array.isArray(d?.actions) ? d.actions : [])
+      const list = Array.isArray(d?.actions) ? d.actions : []
+      setActions(list)
+      setActionsNote(`Loaded ${list.length} action file${list.length === 1 ? '' : 's'}.`)
     } catch (err) {
       setActionsErr(err instanceof Error ? err.message : String(err))
     } finally {
       setActionsBusy(false)
+      refocusActions.current = true
     }
   }
 
@@ -530,10 +564,14 @@ export default function Control() {
           {!(detail && view) && tab === 'system' && (
             <section className="cc-system">
               <h2>State</h2>
-          {stateData === null && !stateBusy && (
-            <button onClick={loadState}>Load state</button>
+          {/* Kept mounted while busy: a button that unmounts on press takes the
+              keyboard user's focus with it, and focus falls back to <body>. */}
+          <button ref={stateBtnRef} onClick={() => loadState()} disabled={stateBusy}>
+            {stateBusy ? 'Loading…' : stateData === null ? 'Load state' : 'Reload state'}
+          </button>
+          {stateNote && (
+            <p className="status-checked" role="status">{stateNote}</p>
           )}
-          {stateBusy && <p>Loading…</p>}
           {stateErr && (
             <p className="status-error" role="alert">
               Couldn&apos;t load state: {stateErr}
@@ -578,10 +616,12 @@ export default function Control() {
           )}
 
           <h2>Actions</h2>
-          {actions === null && !actionsBusy && (
-            <button onClick={loadActions}>Load actions</button>
+          <button ref={actionsBtnRef} onClick={loadActions} disabled={actionsBusy}>
+            {actionsBusy ? 'Loading…' : actions === null ? 'Load actions' : 'Reload actions'}
+          </button>
+          {actionsNote && (
+            <p className="status-checked" role="status">{actionsNote}</p>
           )}
-          {actionsBusy && <p>Loading…</p>}
           {actionsErr && (
             <p className="status-error" role="alert">
               Couldn&apos;t load actions: {actionsErr}
