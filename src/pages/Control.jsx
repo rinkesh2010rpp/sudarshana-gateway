@@ -383,7 +383,8 @@ export default function Control() {
     })
   }
 
-  // Refresh the strip AND the state card together.
+  // Read everything the panel shows: the strip (sessions/logs), the state card
+  // and the overview. One press, one read of each.
   function refreshAll() {
     // The button stays ENABLED while it reads (see the header): disabling the
     // focused element blurs it to <body>, and a person tabbing mid-read then
@@ -558,8 +559,14 @@ export default function Control() {
               would never be seen. What was missing is that a retry which finally
               worked said nothing at all: press:true is what makes the header's
               status line report the read it landed, and the header button shows
-              'refreshing…' while it runs because the button outlives the block. */}
-          <button onClick={() => pressOnce(() => load({ press: true }))} aria-disabled={refreshing || undefined}>
+              'refreshing…' while it runs because the button outlives the block.
+
+              It reads the WHOLE panel, not just this block's own read: the
+              outage this stands in for took out the strip, the state card and
+              the overview together, so a retry that re-read sessions/logs alone
+              landed a panel saying "Read again" above two sections still
+              reporting the failure it had just recovered from. */}
+          <button onClick={refreshAll} aria-disabled={refreshing || undefined}>
             Retry
           </button>
         </section>
