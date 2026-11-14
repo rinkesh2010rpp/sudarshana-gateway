@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // status-center tier 2: a thin client-side fetch of the read-only API on the
@@ -28,8 +28,16 @@ export default function Status() {
   const [error, setError] = useState(null)
   const [busy, setBusy] = useState(false)
   const [checkedAt, setCheckedAt] = useState(null)
+  // The in-flight guard is a ref, not the `disabled` attribute: a disabled
+  // focused button blurs to <body> (measured — focus landed on the skip link
+  // after one press), so someone refreshing from the keyboard lost their place
+  // for the length of the read. The button stays focusable and refuses a second
+  // press here instead.
+  const busyRef = useRef(false)
 
   async function load() {
+    if (busyRef.current) return
+    busyRef.current = true
     setError(null)
     setBusy(true)
     try {
@@ -48,6 +56,7 @@ export default function Status() {
       setStatus(null)
       setEvents(null)
     } finally {
+      busyRef.current = false
       setBusy(false)
     }
   }
@@ -68,7 +77,7 @@ export default function Status() {
         Where Sudarshana's cycles stand, served live from its status Dict.
         Refreshed on page load; press Refresh to re-fetch.
       </p>
-      <button onClick={load} disabled={busy}>
+      <button onClick={load} aria-disabled={busy || undefined}>
         {busy ? 'Refreshing…' : 'Refresh'}
       </button>
       {status && (
