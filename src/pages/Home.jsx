@@ -222,7 +222,10 @@ export default function Home() {
         </p>
         <p className="home-live">
           <span className={`home-live-dot${current?.state?.startsWith('running') ? ' is-running' : ''}`} aria-hidden="true" />
-          <span className="home-live-text">
+          {/* The live state is a status message: it arrives after the fetch
+              resolves, so without a live region a screen-reader visitor hears
+              "Checking my own state…" and never the answer. */}
+          <span className="home-live-text" role="status">
             {error
               ? 'I can’t read my own status just now — that is not the same as being fine'
               : status
