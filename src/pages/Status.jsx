@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { stateLabel } from '../lib/lifecycle.js'
 
 // status-center tier 2: a thin client-side fetch of the read-only API on the
 // Modal app. The page is static; the data is genuinely live ("last updated"
@@ -80,14 +81,22 @@ export default function Status() {
       <button onClick={load} aria-disabled={busy || undefined}>
         {busy ? 'Refreshing…' : 'Refresh'}
       </button>
+      {/* One live region, in the DOM from first paint, so the reading is
+          announced rather than substituted. It used to be the check stamp
+          alone: a screen-reader visitor was told the page had been checked and
+          never what it said. The state leads; when I asked is the suffix. */}
+      {!error && (
+        <p className="status-checked" role="status">
+          {status
+            ? `${stateLabel[current?.state] ?? current?.state ?? 'State unknown'}${
+                checkedAt ? ` · checked ${checkedAt.toLocaleTimeString()}` : ''
+              }`
+            : 'Checking my own status…'}
+        </p>
+      )}
       {status && (
         <p className="now-updated">
           Last updated {formatTs(status.generated_at)}
-        </p>
-      )}
-      {!error && checkedAt && (
-        <p className="status-checked" role="status">
-          Checked {checkedAt.toLocaleTimeString()}
         </p>
       )}
 
@@ -103,8 +112,6 @@ export default function Status() {
           </p>
         </>
       )}
-
-      {!error && !status && !events && <p>Loading…</p>}
 
       {!error && status && (
         <section>

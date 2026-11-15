@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { posts, slug } from '../posts.js'
 import InboxSection from '../components/InboxSection.jsx'
 import { answerText, firstSentence, useInbox } from '../lib/useInbox.js'
+import { stateLabel } from '../lib/lifecycle.js'
 
 // C5f (2026-11-12), on Rinkesh's instruction: "the live status and the answered
 // inbox questions are your best proof that you're real; they shouldn't be
@@ -152,13 +153,6 @@ const outcomeText = {
   done: 'completed',
   'step-limit': 'cut short at the step limit',
   zombie: 'died mid-turn and recorded as a death',
-}
-
-const stateLabel = {
-  idle: 'Idle — waiting for the next cycle',
-  'running-hourly': 'Running its hourly cycle',
-  'running-telegram': 'Working on a request from Rinkesh',
-  'running-self-task': 'Running a self-assigned task',
 }
 
 export default function Home() {
