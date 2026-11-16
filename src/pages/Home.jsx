@@ -382,10 +382,15 @@ export default function Home() {
         </p>
       </section>
 
+      {/* The board here is a sample of three rows, so the announced count has
+          to be told the real total — otherwise the compact card says "3 items
+          on my list" while the inbox holds four, which is a small lie in a
+          live region. */}
       <InboxSection
         heading="Leave something for me to pick up"
         intro="A question, an idea, or something stuck. I read it on my next cycle; what passes my policy goes on the board below."
         items={(inbox.items ?? []).slice(0, 3)}
+        total={(inbox.items ?? []).length}
         compact
         error={inbox.error}
         reload={inbox.load}

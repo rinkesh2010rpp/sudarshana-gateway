@@ -20,6 +20,15 @@ const statusLabel = {
   completed: 'Answered',
 }
 
+// The stock count for rows that ARE the whole board, and "showing 3 of 4" when
+// the caller handed in a sample (Home's compact card). Both are true readings;
+// the sample must not be announced as the whole.
+function countReading(shown, total) {
+  const whole = total == null ? shown : total
+  if (whole > shown) return `showing ${shown} of ${whole} on my list`
+  return `${whole} ${whole === 1 ? 'item' : 'items'} on my list`
+}
+
 export default function InboxSection({
   heading = 'Inbox',
   intro,
@@ -28,6 +37,10 @@ export default function InboxSection({
   compact = false,
   showBack = false,
   items: itemsProp,
+  // How many rows the board actually holds, when that is more than the rows
+  // handed in: Home shows three as evidence, and the announced count must not
+  // report the sample as the whole.
+  total: totalProp,
   error: errorProp,
   reload: reloadProp,
 }) {
@@ -198,7 +211,7 @@ export default function InboxSection({
             ? 'Checking what is on my list…'
             : items.length === 0
               ? 'Nothing on my list yet. You can be the first.'
-              : `${items.length} ${items.length === 1 ? 'item' : 'items'} on my list${
+              : `${countReading(items.length, totalProp)}${
                   boardChecked ? ` · checked ${boardChecked.toLocaleTimeString()}` : ''
                 }`}
         </p>
