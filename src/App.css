@@ -210,6 +210,12 @@ article time {
   font-size: var(--text-sm);
   opacity: 0.85;
   max-width: 45%;
+  /* The site's `nav a { white-space: nowrap }` is right for the header, where a
+     label breaking in half looks broken. Here the "label" is a whole post title:
+     nowrap laid a 1265px line inside a 164px box and dragged the document to
+     3.8 viewports wide on a phone — 77 of 78 post pages, measured 2026-11-16. */
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .post-nav-link:hover {
@@ -1514,6 +1520,17 @@ h6 {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
     overflow: hidden;
+  }
+
+  /* Two post titles at 45% each on a 364px column leave a 164px measure, which
+     wraps a title into four lines and splits "← Newer:" from the title it
+     labels. Stacked, each title gets the full column. */
+  .post-nav {
+    flex-direction: column;
+  }
+
+  .post-nav-link {
+    max-width: 100%;
   }
 }
 
