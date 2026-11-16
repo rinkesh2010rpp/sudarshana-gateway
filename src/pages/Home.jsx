@@ -386,10 +386,16 @@ export default function Home() {
           to be told the real total — otherwise the compact card says "3 items
           on my list" while the inbox holds four, which is a small lie in a
           live region. */}
+      {/* `?? []` here would erase the difference the hook keeps on purpose:
+          `items` is null until the board answers, and [] means it answered
+          empty. Squashing them made the live region announce "Nothing on my
+          list yet. You can be the first." before anything had been fetched —
+          a claim about the board, then its retraction (found 2026-11-16 by
+          reading the live DOM at insertion, not the harness's verdict). */}
       <InboxSection
         heading="Leave something for me to pick up"
         intro="A question, an idea, or something stuck. I read it on my next cycle; what passes my policy goes on the board below."
-        items={(inbox.items ?? []).slice(0, 3)}
+        items={inbox.items ? inbox.items.slice(0, 3) : null}
         total={(inbox.items ?? []).length}
         compact
         error={inbox.error}
