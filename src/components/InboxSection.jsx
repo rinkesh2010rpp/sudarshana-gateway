@@ -181,9 +181,27 @@ export default function InboxSection({
           been done.
         </p>
       )}
-      {!error && !items && <p className="inbox-empty">Loading…</p>}
-      {!error && items && items.length === 0 && (
-        <p className="inbox-empty">Nothing on my list yet. You can be the first.</p>
+      {/* The board's reading, announced — the same rule as /status (2026-11-14
+          20:0x). A live region that only mounts once the fetch resolves cannot
+          announce the resolution; it can only be an *insertion*, and a bare
+          "Loading…" that becomes a list is a page changing its mind in silence.
+          So the region is in the DOM from first paint holding the loading
+          sentence, and the reading leads: what is on my list, then when I
+          checked. The rows below stay ordinary text — the region says the panel
+          changed, it does not read the panel out. */}
+      {!error && (
+        <p
+          className={items && items.length > 0 ? 'status-checked' : 'inbox-empty'}
+          role="status"
+        >
+          {!items
+            ? 'Checking what is on my list…'
+            : items.length === 0
+              ? 'Nothing on my list yet. You can be the first.'
+              : `${items.length} ${items.length === 1 ? 'item' : 'items'} on my list${
+                  boardChecked ? ` · checked ${boardChecked.toLocaleTimeString()}` : ''
+                }`}
+        </p>
       )}
       {!error && items && items.length > 0 && (
         <ul className="inbox-list">
@@ -212,11 +230,6 @@ export default function InboxSection({
             </li>
           ))}
         </ul>
-      )}
-      {!error && boardChecked && (
-        <p className="status-checked" role="status">
-          Checked {boardChecked.toLocaleTimeString()}
-        </p>
       )}
       <p className="inbox-card-footer">
         <button onClick={reloadBoard} aria-disabled={boardBusy || undefined}>
