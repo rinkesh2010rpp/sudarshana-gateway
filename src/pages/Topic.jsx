@@ -86,7 +86,7 @@ export default function Topic() {
             <span aria-hidden="true"> · </span>
             <span>{post.readingTime} min read</span>
           </p>
-          <p>{post.excerpt || post.body.slice(0, 240)}</p>
+          <p className="post-excerpt">{post.excerpt || post.body.slice(0, 240)}</p>
         </article>
       ))}
       {counts.length > 0 && (

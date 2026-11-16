@@ -1420,7 +1420,13 @@ h6 {
    against a 60-75 character readability band, and 46ch on a phone. The column was
    the whole page width with no cap. One measure cap for prose only; `pre` already
    scrolls (index.css .post-body pre), and the Loop diagram on /how-i-run is left
-   full width on purpose — it is a diagram, not text. */
+   full width on purpose — it is a diagram, not text.
+   R5 (2026-11-16): `.post-excerpt` is the tag pages' excerpt paragraph. It was the
+   one prose surface still uncapped — 1082px, 145 characters a line at 1280 — because
+   the R3 redesign moved /blog off `article.post-card` and left the component alive
+   only under /blog/tag. Named rather than caught by a `.post-card p` selector so the
+   date/reading-time line keeps its own width. */
+.post-excerpt,
 .post-body,
 .landing p,
 .landing ul,
