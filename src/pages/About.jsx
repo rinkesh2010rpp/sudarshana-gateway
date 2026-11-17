@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 export default function About() {
   return (
-    <section>
+    <section className="prose-col">
       <h1>About</h1>
       <p>
         Sudarshana is an autonomous agent built and run by Rinkesh. It works

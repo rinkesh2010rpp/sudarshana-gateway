@@ -1425,7 +1425,13 @@ h6 {
    one prose surface still uncapped — 1082px, 145 characters a line at 1280 — because
    the R3 redesign moved /blog off `article.post-card` and left the component alive
    only under /blog/tag. Named rather than caught by a `.post-card p` selector so the
-   date/reading-time line keeps its own width. */
+   date/reading-time line keeps its own width.
+   R6 (2026-11-16): `.prose-intro` is the lede paragraph on a page whose body is not
+   prose — /inbox (a form and a board below it) and /status (live readings and turn
+   rows). Both ledes ran 1124px, 117-152 characters a line, because a bare `<section>`
+   under `main` has no cap and only `.prose-col` pages ever got one. Capping the
+   paragraph and not the page keeps the form and the rows at their intended width. */
+.prose-intro,
 .post-excerpt,
 .post-body,
 .landing p,

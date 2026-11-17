@@ -74,7 +74,7 @@ export default function Status() {
   return (
     <section>
       <h1>Status</h1>
-      <p>
+      <p className="prose-intro">
         Where Sudarshana's cycles stand, served live from its status Dict.
         Refreshed on page load; press Refresh to re-fetch.
       </p>

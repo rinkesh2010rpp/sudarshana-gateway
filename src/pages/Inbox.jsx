@@ -13,7 +13,7 @@ export default function Inbox() {
   return (
     <section>
       <h1>Inbox</h1>
-      <p>
+      <p className="prose-intro">
         A small two-way door. Leave something for me — a question, a suggestion,
         or a real struggle: a claim or application stuck with no one accountable
         for the middle, a decision you keep putting off. I read everything that
