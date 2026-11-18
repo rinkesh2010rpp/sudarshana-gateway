@@ -785,7 +785,7 @@ code {
 /* The hero: the one sentence he came to read. Large, tight, balanced. */
 .now-doing {
   margin: 0 0 var(--space-4);
-  max-width: 46ch;
+  max-width: 40ch;
   font-size: clamp(1.25rem, 0.7vw + 1.05rem, 1.5rem);
   line-height: 1.34;
   font-weight: 620;
@@ -797,8 +797,8 @@ code {
 /* Why, quieter and set off by a rule — a quotation of the request, not a
    second headline competing with the first. */
 .now-why {
-  margin: 0 0 var(--space-5);
-  max-width: 62ch;
+  margin: 0;
+  max-width: none;
   padding-left: var(--space-4);
   border-left: 2px solid var(--border);
   font-size: var(--text-sm);
@@ -815,32 +815,71 @@ code {
   color: var(--ink-2);
 }
 
-.now-next {
+/* Next and the finish line, as two aligned rows: the labels sit in their own
+   column so the two lines of text share a left edge. */
+.now-next,
+.now-donewhen {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: baseline;
   margin: 0;
   font-size: var(--text-xs);
   color: var(--text-h);
-  flex: 1 1 34ch;
 }
 
 .now-next .now-label,
 .now-donewhen .now-label {
-  display: inline;
-  margin-right: var(--space-2);
+  display: block;
+  margin: 0;
 }
 
-/* Done and left, as two quiet panels rather than two bullet lists — the
-   counts are the "how far along" answer, so they get a number, not a word. */
-.now-lists {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
-  margin: 0 0 var(--space-4);
+.now-donewhen {
+  font-size: var(--text-2xs);
+  color: var(--ink-2);
 }
 
 @media (max-width: 640px) {
-  .now-lists {
-    grid-template-columns: 1fr;
+  .now-next,
+  .now-donewhen {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
   }
+}
+
+/* The card's body: the sentence and its why on the left, the state rail on the
+   right. Full-width prose with the lists stacked under it left two thirds of
+   the card empty and made the whole thing read as a boxed paragraph. */
+.now-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+  margin: 0 0 var(--space-4);
+}
+
+.now-main {
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .now-body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+
+  .now-doing {
+    max-width: none;
+  }
+}
+
+/* Done and left, stacked in the rail: two quiet panels, not two bullet lists.
+   The counts are the "how far along" answer, so they get a number, not a word. */
+.now-lists {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
 }
 
 .now-panel {
@@ -926,15 +965,13 @@ code {
 /* The foot: next, the project tag, and the finish line, above a hairline. */
 .now-foot {
   display: flex;
-  align-items: baseline;
-  gap: var(--space-3);
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: var(--space-2);
   border-top: 1px solid var(--border);
   padding-top: var(--space-3);
 }
 
 .now-proj {
-  margin-left: auto;
   padding: 2px var(--space-2);
   border: 1px solid var(--accent-border);
   border-radius: 999px;
@@ -942,13 +979,6 @@ code {
   color: var(--text-h);
   font-size: var(--text-2xs);
   white-space: nowrap;
-}
-
-.now-donewhen {
-  flex: 1 0 100%;
-  margin: var(--space-1) 0 0;
-  font-size: var(--text-2xs);
-  color: var(--ink-2);
 }
 
 /* A stale report's sentence: amber tint in border and background, never in the

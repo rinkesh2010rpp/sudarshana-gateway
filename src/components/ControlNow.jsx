@@ -62,10 +62,13 @@ export default function ControlNow({ report, busy, err }) {
       <div className="now-strip">
         <h2 id="now-h">Now</h2>
         <FreshBadge known={known} busy={busy} err={err} run={run} fresh={fresh} />
+        {report?.project ? <code className="now-proj">{report.project}</code> : null}
         {run && (
           <span className="now-stamp">
             {reportedLabel(report.reported_at) || 'time unknown'} · {runLabel(run.kind)}
-            {run.outcome ? ` · ended ${run.outcome}` : ''}
+            {run.outcome && !['done', 'ok', 'completed'].includes(run.outcome)
+              ? ` · ended ${run.outcome}`
+              : ''}
           </span>
         )}
       </div>
@@ -116,17 +119,22 @@ export default function ControlNow({ report, busy, err }) {
             </p>
           )}
 
-          <p className="now-doing">{report.doing}</p>
+          {/* Words on the left, state on the right: the card is dense at a
+              glance instead of a column of text with a dead margin. */}
+          <div className="now-body">
+            <div className="now-main">
+              <p className="now-doing">{report.doing}</p>
 
-          {report.why ? (
-            <p className="now-why">
-              <span className="now-label">Why</span>
-              {report.why}
-            </p>
-          ) : null}
+              {report.why ? (
+                <p className="now-why">
+                  <span className="now-label">Why</span>
+                  {report.why}
+                </p>
+              ) : null}
+            </div>
 
-          {(report.done?.length > 0 || report.left?.length > 0) && (
-            <div className="now-lists">
+            {(report.done?.length > 0 || report.left?.length > 0) && (
+              <div className="now-lists">
               {report.done?.length > 0 && (
                 <div className="now-panel">
                   <p className="now-panel-head">
@@ -152,9 +160,10 @@ export default function ControlNow({ report, busy, err }) {
                     ))}
                   </ul>
                 </div>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
+          </div>
 
           {(report.next || report.project || report.done_when) && (
             <div className="now-foot">
@@ -164,7 +173,6 @@ export default function ControlNow({ report, busy, err }) {
                   {report.next}
                 </p>
               ) : null}
-              {report.project ? <code className="now-proj">{report.project}</code> : null}
               {report.done_when ? (
                 <p className="now-donewhen">
                   <span className="now-label">done when</span> {report.done_when}
