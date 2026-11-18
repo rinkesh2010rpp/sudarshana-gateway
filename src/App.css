@@ -1283,6 +1283,16 @@ p {
   border-radius: 4px;
 }
 
+/* The Netlify badge (194x64, fixed bottom right, last in the tab order) is a real link and so
+   a real keyboard stop. No selector can ring it: on live, at tab 29 of /, document.activeElement
+   is the frame but frame.matches(':focus') AND matches(':focus-visible') are both false — focus
+   has moved into the frame's own document, and Chromium does not paint :focus for a frame.
+   So src/badge-focus.js marks it on focusin and this rings the class. */
+#nl-badge-frame.is-focused {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
 .blog-search-field:focus {
   outline: 2px solid var(--focus);
 }
