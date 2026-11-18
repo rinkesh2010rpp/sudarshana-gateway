@@ -929,6 +929,20 @@ kbd {
   background: #ffb347;
 }
 
+/* Tablet band (641–1126px). #root is a 1126px bordered column with no
+   horizontal padding of its own, so in this band — where the column IS the
+   viewport — the content ran flush against the viewport edge: measured at
+   768 and 1024, prose began at x=1 and x=0, hard against the hairline.
+   Above 1126 the column is centred with page margin outside its border, so
+   the flush edge reads as a printed page; phones below 641 have their own
+   smaller gutter. Only this middle band was unpadded. Give it more room than
+   the phone gutter because there is more width to spend. */
+@media (min-width: 641px) and (max-width: 1126px) {
+  #root {
+    padding: 0 var(--space-4);
+  }
+}
+
 /* cc-polish: mobile (phones, ≤640px). #root is a 1126px bordered column with
    no horizontal padding, so content presses the edges — pad it on small
    screens. Inputs get 16px fonts so iOS Safari doesn't auto-zoom on focus.
