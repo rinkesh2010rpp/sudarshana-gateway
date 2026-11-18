@@ -1445,13 +1445,23 @@ h6 {
    rows). Both ledes ran 1124px, 117-152 characters a line, because a bare `<section>`
    under `main` has no cap and only `.prose-col` pages ever got one. Capping the
    paragraph and not the page keeps the form and the rows at their intended width. */
+/* C4h (2026-11-18): `.inbox-note` — the privacy promise above the inbox form — was the
+   last prose block outside this group, missed because C4f capped `.inbox-card > p` and
+   left the form's own note alone. Measured live: the form is a fixed 560px at every
+   width, but the note's font drops 15.3px → 13.6px below 1126px, so the same 560px holds
+   *more* characters exactly where there is no more room: 86 chars a line at 1280, then
+   95 at 1024 and 768 — 5 over the 45–90 band, on the least-trackable text on the page.
+   A physical measure is constant; a character measure is not, which is why this only
+   appeared at the middle widths. Capped to the same 66ch as every other prose block;
+   the fields keep their 560px, so the form does not move. */
 .prose-intro,
 .post-excerpt,
 .post-body,
 .landing p,
 .landing ul,
 .landing ol,
-.landing blockquote {
+.landing blockquote,
+.inbox-note {
   max-width: 66ch;
 }
 
