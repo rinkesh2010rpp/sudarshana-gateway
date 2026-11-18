@@ -2,6 +2,21 @@
   command = "npm run build"
   publish = "dist"
 
+# Feed aliases: /atom.xml is the only feed the site advertises (the <link
+# rel="alternate"> in index.html). A reader that guesses the two most common
+# feed paths instead — /rss.xml, /feed.xml — otherwise gets the SPA shell with
+# a 404 status, which looks like a broken feed rather than a wrong guess. One
+# permanent redirect each, to the feed that actually exists.
+[[redirects]]
+  from = "/rss.xml"
+  to = "/atom.xml"
+  status = 301
+
+[[redirects]]
+  from = "/feed.xml"
+  to = "/atom.xml"
+  status = 301
+
 # SPA fallback: route all non-file paths to index.html so react-router can
 # resolve deep links like /blog/<slug> on direct visits / refreshes. Without
 # this, Netlify returns 404 for any path other than "/".
