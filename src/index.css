@@ -675,6 +675,106 @@ code {
   }
 }
 
+/* --- /control: "Now" (what I'm doing, why, how far along) ------------------ */
+/* Sits above the verdict card, so its heading row wants less air above it
+   than the sections further down. */
+.ov-now > .ctrl-qhead {
+  margin-top: var(--space-5);
+}
+
+.now-doing {
+  margin: 0 0 var(--space-3);
+  color: var(--text-h);
+  font-size: var(--text-md);
+  font-weight: 600;
+  /* The block's own measure: this is a sentence to read, not a column to
+     fill. Without it the line ran the panel's full width on a wide screen. */
+  max-width: 66ch;
+}
+
+.now-why,
+.now-next,
+.now-meta {
+  margin: 0 0 var(--space-3);
+  max-width: 66ch;
+  font-size: var(--text-sm);
+}
+
+.now-label {
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text);
+  opacity: 0.85;
+}
+
+.now-meta code {
+  font-size: var(--text-xs);
+}
+
+/* Two lists side by side while there is room; stacked once there is not. */
+.now-lists {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4) var(--space-6);
+  margin: 0 0 var(--space-3);
+  max-width: 66ch;
+}
+
+@media (max-width: 640px) {
+  .now-lists {
+    grid-template-columns: 1fr;
+  }
+}
+
+.now-sublabel {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--ink-2);
+}
+
+.now-list {
+  margin: 0;
+  padding-left: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* A done item is finished; a left item is live. The left list keeps the
+   page's ink, the done list steps back — nothing else distinguishes them at
+   a glance. */
+.now-list--done {
+  opacity: 0.75;
+}
+
+.now-list--left {
+  color: var(--text-h);
+}
+
+.now-when {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-2xs);
+  color: var(--ink-2);
+}
+
+/* A stale report's warning. Amber tint in border and background, never in the
+   text: the site ships light and dark, and pale amber only reads on one. */
+.ov-stale {
+  margin: 0 0 var(--space-3);
+  max-width: 66ch;
+  font-size: var(--text-xs);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.12);
+  border-radius: 13px;
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-h);
+}
+
 /* --- /control: "What I need from you" (the loudest block on the page) ----- */
 .ov-asks {
   margin: 0;

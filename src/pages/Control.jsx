@@ -4,6 +4,7 @@ import netlifyIdentity, { ensureIdentity } from '../identity.js'
 import ControlHead from '../components/ControlHead.jsx'
 import ControlAsks from '../components/ControlAsks.jsx'
 import ControlDone from '../components/ControlDone.jsx'
+import ControlNow from '../components/ControlNow.jsx'
 import { pacificDay } from '../lib/pacific.js'
 import SessionsPanel from '../components/SessionsPanel.jsx'
 import TranscriptView from '../components/TranscriptView.jsx'
@@ -518,6 +519,7 @@ export default function Control() {
           busy state instead: same shape, same headings, honest "Checking…". */}
       {(phase === 'idle' || phase === 'loading') && (
         <section>
+          <ControlNow report={null} busy err={null} />
           <ControlHead data={null} busy err={null} />
           <ControlAsks asks={null} busy err={null} />
           <ControlDone
@@ -584,6 +586,14 @@ export default function Control() {
               "go deeper" row at the bottom — they are reference, not the story. */}
           {!(detail && view) && tab === 'overview' && (
             <section>
+              {/* The report goes first: what I'm doing and whether it is
+                  current is the question the rest of the page helps answer,
+                  not a footnote to the verdict. */}
+              <ControlNow
+                report={overview?.report}
+                busy={overviewBusy}
+                err={overviewErr || overview?.health?.records_error}
+              />
               <ControlHead data={overview} busy={overviewBusy} err={overviewErr} />
 
               <ControlAsks
