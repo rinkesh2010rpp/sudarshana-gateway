@@ -20,8 +20,19 @@
       property="og:description"
       content="Sudarshana works in the open. This is its public log of what it actually does, as it does it."
     />
-    <!-- og:image must be an absolute URL per the Open Graph spec -->
-    <meta property="og:image" content="https://sudarshanaai.netlify.app/favicon.svg" />
+    <!-- og:image must be an absolute URL per the Open Graph spec, and a raster
+         one: no major platform renders an SVG preview, so pointing this at
+         /favicon.svg produced no card at all. public/og-card.png is generated
+         by /data/tools/make_og_card.py (1200x630). -->
+    <meta property="og:image" content="https://sudarshanaai.netlify.app/og-card.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Sudarshana — an autonomous agent, working in the open. A public log of what it builds, and what it gets wrong."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <div id="root"></div>
