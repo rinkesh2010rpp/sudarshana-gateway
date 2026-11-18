@@ -12,8 +12,12 @@
 // The one rule this block lives or dies by: a stale report must never read as
 // a current one. A report from two hours and three silent runs ago is still
 // worth reading — it is the last thing I said — but it is labelled as exactly
-// that, in the badge and again in a sentence, rather than shown as "what I'm
-// doing now".
+// that, in the badge, in the amber rule at the top of the card, and again in a
+// sentence, rather than shown as "what I'm doing now".
+//
+// It is a card, not a paragraph dump: the panel's other blocks are surfaces
+// (the verdict card, the ask cards, the timeline), and the one thing he opens
+// the page for sat between them as loose text with no edges.
 
 function reportedLabel(iso) {
   if (!iso) return ''
@@ -47,13 +51,23 @@ export default function ControlNow({ report, busy, err }) {
   const run = known && report.run ? report.run : null
   const fresh = freshOf(report)
   const missed = known ? Math.max(0, Number(report.missed_runs) || 0) : 0
+  // The stale skin only applies to a report there is something to show for.
+  const stale = known && !!run && !fresh
 
   return (
-    <section className="ov-now" aria-labelledby="now-h">
-      <div className="ctrl-qhead">
+    <section
+      className={`ov-now${stale ? ' ov-now--stale' : ''}`}
+      aria-labelledby="now-h"
+    >
+      <div className="now-strip">
         <h2 id="now-h">Now</h2>
         <FreshBadge known={known} busy={busy} err={err} run={run} fresh={fresh} />
-        <span className="ctrl-hint">what I&apos;m doing, and whether it&apos;s current</span>
+        {run && (
+          <span className="now-stamp">
+            {reportedLabel(report.reported_at) || 'time unknown'} · {runLabel(run.kind)}
+            {run.outcome ? ` · ended ${run.outcome}` : ''}
+          </span>
+        )}
       </div>
 
       {!known && err && (
@@ -68,11 +82,9 @@ export default function ControlNow({ report, busy, err }) {
       )}
 
       {!known && !err && busy && (
-        // The same box the empty answer uses, so nothing jumps when the
-        // report arrives.
-        <div className="ov-empty" aria-busy="true">
-          <strong>Checking…</strong>
-          <span>Reading my latest report.</span>
+        <div className="now-skeleton" aria-busy="true">
+          <span className="now-bar" />
+          <span className="now-bar now-bar--short" />
         </div>
       )}
 
@@ -94,8 +106,8 @@ export default function ControlNow({ report, busy, err }) {
 
       {known && run && (
         <>
-          {!fresh && (
-            <p className="ov-stale">
+          {stale && (
+            <p className="now-stale">
               <strong>Not current.</strong>{' '}
               {missed > 0
                 ? `${plural(missed, 'finished run')} since this one ended without reporting.`
@@ -108,32 +120,19 @@ export default function ControlNow({ report, busy, err }) {
 
           {report.why ? (
             <p className="now-why">
-              <span className="now-label">Why</span> {report.why}
-            </p>
-          ) : null}
-
-          {report.project || report.done_when ? (
-            <p className="now-meta">
-              {report.project ? (
-                <>
-                  <span className="now-label">Project</span>{' '}
-                  <code>{report.project}</code>
-                </>
-              ) : null}
-              {report.project && report.done_when ? ' · ' : null}
-              {report.done_when ? (
-                <>
-                  <span className="now-label">done when</span> {report.done_when}
-                </>
-              ) : null}
+              <span className="now-label">Why</span>
+              {report.why}
             </p>
           ) : null}
 
           {(report.done?.length > 0 || report.left?.length > 0) && (
             <div className="now-lists">
               {report.done?.length > 0 && (
-                <div>
-                  <p className="now-sublabel">Done</p>
+                <div className="now-panel">
+                  <p className="now-panel-head">
+                    Done
+                    <span className="now-count">{report.done.length}</span>
+                  </p>
                   <ul className="now-list now-list--done">
                     {report.done.map((it, i) => (
                       <li key={`d${i}`}>{it}</li>
@@ -142,8 +141,11 @@ export default function ControlNow({ report, busy, err }) {
                 </div>
               )}
               {report.left?.length > 0 && (
-                <div>
-                  <p className="now-sublabel">Left</p>
+                <div className="now-panel now-panel--left">
+                  <p className="now-panel-head">
+                    Left
+                    <span className="now-count">{report.left.length}</span>
+                  </p>
                   <ul className="now-list now-list--left">
                     {report.left.map((it, i) => (
                       <li key={`l${i}`}>{it}</li>
@@ -154,17 +156,22 @@ export default function ControlNow({ report, busy, err }) {
             </div>
           )}
 
-          {report.next ? (
-            <p className="now-next">
-              <span className="now-label">Next</span> {report.next}
-            </p>
-          ) : null}
-
-          <p className="now-when">
-            reported {reportedLabel(report.reported_at) || 'at an unknown time'} ·{' '}
-            {runLabel(run.kind)}
-            {run.outcome ? ` · ended ${run.outcome}` : ''}
-          </p>
+          {(report.next || report.project || report.done_when) && (
+            <div className="now-foot">
+              {report.next ? (
+                <p className="now-next">
+                  <span className="now-label">Next</span>
+                  {report.next}
+                </p>
+              ) : null}
+              {report.project ? <code className="now-proj">{report.project}</code> : null}
+              {report.done_when ? (
+                <p className="now-donewhen">
+                  <span className="now-label">done when</span> {report.done_when}
+                </p>
+              ) : null}
+            </div>
+          )}
         </>
       )}
     </section>
@@ -180,31 +187,26 @@ function freshOf(report) {
 
 function FreshBadge({ known, busy, err, run, fresh }) {
   if (err) {
-    return <span className="ctrl-pill">can&apos;t read it</span>
+    return <span className="now-badge">can&apos;t read it</span>
   }
   if (!known) {
     return (
-      <span className="ctrl-pill" aria-busy={busy || undefined}>
+      <span className="now-badge" aria-busy={busy || undefined}>
         {busy ? 'reading' : 'no report'}
       </span>
     )
   }
   if (!run) {
-    return (
-      <span className="ctrl-pill ctrl-pill--warn">
-        <span className="ctrl-pill-dot" aria-hidden="true" />
-        no report yet
-      </span>
-    )
+    return <span className="now-badge now-badge--warn">no report yet</span>
   }
   return fresh ? (
-    <span className="ctrl-pill ctrl-pill--ok">
-      <span className="ctrl-pill-dot" aria-hidden="true" />
+    <span className="now-badge now-badge--ok">
+      <span className="now-dot" aria-hidden="true" />
       current
     </span>
   ) : (
-    <span className="ctrl-pill ctrl-pill--warn">
-      <span className="ctrl-pill-dot" aria-hidden="true" />
+    <span className="now-badge now-badge--warn">
+      <span className="now-dot" aria-hidden="true" />
       out of date
     </span>
   )

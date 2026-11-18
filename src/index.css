@@ -676,49 +676,165 @@ code {
 }
 
 /* --- /control: "Now" (what I'm doing, why, how far along) ------------------ */
-/* Sits above the verdict card, so its heading row wants less air above it
-   than the sections further down. */
-.ov-now > .ctrl-qhead {
-  margin-top: var(--space-5);
+/* The panel's masthead card. It was loose text; everything else on the page
+   is a surface, so the one block he opens the page for looked like a note
+   someone left in the margins. The card gives it edges, a top accent rule,
+   a hero line, and two quiet panels for done/left. */
+.ov-now {
+  position: relative;
+  margin: var(--space-5) 0 0;
+  padding: var(--space-5) var(--space-6) var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, var(--accent-bg), transparent 58%),
+    var(--bg);
 }
 
-.now-doing {
-  margin: 0 0 var(--space-3);
-  color: var(--text-h);
-  font-size: var(--text-md);
-  font-weight: 600;
-  /* The block's own measure: this is a sentence to read, not a column to
-     fill. Without it the line ran the panel's full width on a wide screen. */
-  max-width: 66ch;
-}
-
-.now-why,
-.now-next,
-.now-meta {
-  margin: 0 0 var(--space-3);
-  max-width: 66ch;
-  font-size: var(--text-sm);
-}
-
-.now-label {
-  font-size: var(--text-2xs);
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--text);
+/* A 2px accent rule along the top edge, fading right: enough to read as the
+   page's headline surface, not enough to shout over the asks below. */
+.ov-now::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  border-radius: 18px 18px 0 0;
+  background: linear-gradient(90deg, var(--accent), transparent 72%);
   opacity: 0.85;
 }
 
-.now-meta code {
-  font-size: var(--text-xs);
+/* Stale: the same card, lit amber instead of accent. The tint stays in the
+   border and the rule — never the text, which has to read in light and dark. */
+.ov-now--stale {
+  border-color: rgba(251, 191, 36, 0.45);
 }
 
-/* Two lists side by side while there is room; stacked once there is not. */
+.ov-now--stale::before {
+  background: linear-gradient(90deg, #fbbf24, transparent 72%);
+}
+
+.now-strip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin: 0 0 var(--space-4);
+}
+
+.now-strip h2 {
+  margin: 0;
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-h);
+}
+
+.now-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 1px var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: var(--text-2xs);
+  color: var(--ink-2);
+  background: var(--bg);
+  white-space: nowrap;
+}
+
+.now-badge--ok {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--text-h);
+}
+
+.now-badge--warn {
+  border-color: rgba(251, 191, 36, 0.45);
+  background: rgba(251, 191, 36, 0.12);
+  color: var(--text-h);
+}
+
+.now-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+.now-badge--ok .now-dot {
+  background: var(--accent);
+  opacity: 1;
+}
+
+.now-badge--warn .now-dot {
+  background: #fbbf24;
+  opacity: 1;
+}
+
+/* The stamp is the provenance line: when I said it, and to which kind of turn.
+   It sits right of the badge and steps back from it. */
+.now-stamp {
+  margin-left: auto;
+  font-size: var(--text-2xs);
+  color: var(--ink-2);
+  text-align: right;
+}
+
+/* The hero: the one sentence he came to read. Large, tight, balanced. */
+.now-doing {
+  margin: 0 0 var(--space-4);
+  max-width: 46ch;
+  font-size: clamp(1.25rem, 0.7vw + 1.05rem, 1.5rem);
+  line-height: 1.34;
+  font-weight: 620;
+  letter-spacing: -0.35px;
+  color: var(--text-h);
+  text-wrap: balance;
+}
+
+/* Why, quieter and set off by a rule — a quotation of the request, not a
+   second headline competing with the first. */
+.now-why {
+  margin: 0 0 var(--space-5);
+  max-width: 62ch;
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--border);
+  font-size: var(--text-sm);
+  color: var(--text);
+}
+
+.now-label {
+  display: block;
+  margin: 0 0 2px;
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-2);
+}
+
+.now-next {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--text-h);
+  flex: 1 1 34ch;
+}
+
+.now-next .now-label,
+.now-donewhen .now-label {
+  display: inline;
+  margin-right: var(--space-2);
+}
+
+/* Done and left, as two quiet panels rather than two bullet lists — the
+   counts are the "how far along" answer, so they get a number, not a word. */
 .now-lists {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-4) var(--space-6);
-  margin: 0 0 var(--space-3);
-  max-width: 66ch;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-4);
 }
 
 @media (max-width: 640px) {
@@ -727,52 +843,159 @@ code {
   }
 }
 
-.now-sublabel {
-  margin: 0 0 var(--space-1);
+.now-panel {
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--social-bg);
+}
+
+.now-panel-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-2);
   font-size: var(--text-2xs);
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.14em;
   color: var(--ink-2);
 }
 
-.now-list {
-  margin: 0;
-  padding-left: var(--space-4);
-  font-size: var(--text-xs);
-  color: var(--text);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
+/* The count sits at the far end of the panel's head, in the accent — it is
+   the only number on the card and it answers "how far along". */
+.now-count {
+  margin-left: auto;
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  color: var(--text-h);
+  font-size: var(--text-2xs);
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
 }
 
-/* A done item is finished; a left item is live. The left list keeps the
-   page's ink, the done list steps back — nothing else distinguishes them at
-   a glance. */
+.now-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+}
+
+.now-list li {
+  position: relative;
+  padding-left: calc(var(--space-3) + 3px);
+  line-height: 1.45;
+}
+
+/* A done item is a filled dot, stepped back; a left item is an open ring in
+   the accent. The shape carries the difference, so the ink can stay the
+   page's own — no strikethrough, no colour-only signal. */
+.now-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
 .now-list--done {
-  opacity: 0.75;
+  color: var(--text);
+}
+
+.now-list--done li::before {
+  background: var(--text);
+  opacity: 0.35;
 }
 
 .now-list--left {
   color: var(--text-h);
 }
 
-.now-when {
-  margin: var(--space-2) 0 0;
+.now-list--left li::before {
+  border: 1.5px solid var(--accent);
+}
+
+/* The foot: next, the project tag, and the finish line, above a hairline. */
+.now-foot {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-3);
+}
+
+.now-proj {
+  margin-left: auto;
+  padding: 2px var(--space-2);
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--text-h);
+  font-size: var(--text-2xs);
+  white-space: nowrap;
+}
+
+.now-donewhen {
+  flex: 1 0 100%;
+  margin: var(--space-1) 0 0;
   font-size: var(--text-2xs);
   color: var(--ink-2);
 }
 
-/* A stale report's warning. Amber tint in border and background, never in the
-   text: the site ships light and dark, and pale amber only reads on one. */
-.ov-stale {
-  margin: 0 0 var(--space-3);
-  max-width: 66ch;
+/* A stale report's sentence: amber tint in border and background, never in the
+   text — the site ships light and dark, and pale amber only reads on one. */
+.now-stale {
+  margin: 0 0 var(--space-4);
+  max-width: 72ch;
   font-size: var(--text-xs);
   border: 1px solid rgba(251, 191, 36, 0.35);
   background: rgba(251, 191, 36, 0.12);
-  border-radius: 13px;
-  padding: var(--space-3) var(--space-4);
+  border-radius: 10px;
+  padding: var(--space-2) var(--space-3);
   color: var(--text-h);
+}
+
+/* Reading: two bars where the sentence will be, so the card holds its shape
+   instead of collapsing to a caption and then jumping. */
+.now-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-1) 0 var(--space-2);
+}
+
+.now-bar {
+  height: 12px;
+  border-radius: 6px;
+  background: var(--border);
+  opacity: 0.6;
+  max-width: 46ch;
+}
+
+.now-bar--short {
+  max-width: 26ch;
+}
+
+@media (max-width: 640px) {
+  .ov-now {
+    padding: var(--space-4);
+    border-radius: 16px;
+  }
+
+  .now-stamp {
+    margin-left: 0;
+    text-align: left;
+    flex: 1 0 100%;
+  }
 }
 
 /* --- /control: "What I need from you" (the loudest block on the page) ----- */
