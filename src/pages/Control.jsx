@@ -5,6 +5,7 @@ import ControlHead from '../components/ControlHead.jsx'
 import ControlAsks from '../components/ControlAsks.jsx'
 import ControlDone from '../components/ControlDone.jsx'
 import ControlNow from '../components/ControlNow.jsx'
+import ControlRoadmap from '../components/ControlRoadmap.jsx'
 import { pacificDay } from '../lib/pacific.js'
 import SessionsPanel from '../components/SessionsPanel.jsx'
 import TranscriptView from '../components/TranscriptView.jsx'
@@ -566,7 +567,7 @@ export default function Control() {
         <section ref={contentRef}>
           {!(detail && view) && tab !== 'overview' && (
             <nav className="cc-tabs" aria-label="Control sections">
-              {['overview', 'conversations', 'logs', 'system'].map((t) => (
+              {['overview', 'roadmap', 'conversations', 'logs', 'system'].map((t) => (
                 <button
                   key={t}
                   className={tab === t ? 'cc-tab cc-tab--on' : 'cc-tab'}
@@ -615,13 +616,21 @@ export default function Control() {
 
               <p className="ov-eyebrow ov-eyebrow--deeper">Go deeper</p>
               <nav className="cc-tabs" aria-label="Control sections">
-                {['conversations', 'logs', 'system'].map((t) => (
+                {['roadmap', 'conversations', 'logs', 'system'].map((t) => (
                   <button key={t} className="cc-tab" onClick={() => setTab(t)}>
                     {t[0].toUpperCase() + t.slice(1)}
                   </button>
                 ))}
               </nav>
             </section>
+          )}
+
+          {/* The queue itself: initiatives -> tasks, from the roadmap store
+              the tools own. It reads its own endpoints (list + doc) rather
+              than riding the overview payload, so a slow or broken store
+              can't take the verdict card down with it. */}
+          {!(detail && view) && tab === 'roadmap' && (
+            <ControlRoadmap apiFetch={authFetch} />
           )}
 
           {/* N2/N3 find + read a conversation. */}

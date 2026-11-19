@@ -484,6 +484,226 @@ textarea.inbox-field {
   font-size: var(--text-sm);
 }
 
+/* ── Roadmap tab (2026-11-19) ───────────────────────────────────────────────
+   Initiatives -> tasks, from the roadmap store the tools own. One card per
+   initiative, one row per task: status, handoff, deliverables, doc. Every
+   surface here is a tint or a border, never a text colour picked in one
+   theme — the state word carries the meaning and stays at body-text contrast
+   in both schemes. */
+.rm-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-4);
+}
+
+.rm-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.rm-init {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: var(--space-4);
+  background: var(--code-bg);
+}
+
+/* The focus initiative is the one the next cycle works on. The tint says
+   "this one" without hiding the others — the queue is read whole. */
+.rm-init--focus {
+  border-color: var(--accent-border);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.rm-init-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.rm-init-title {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: 650;
+  letter-spacing: -0.2px;
+  color: var(--text-h);
+  line-height: 1.3;
+}
+
+.rm-status {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 1px var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-h);
+  white-space: nowrap;
+}
+.rm-status--live {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+/* Waiting on something, not moving — the dashed edge is the second cue, so
+   the tone does not rest on hue alone. */
+.rm-status--wait {
+  border-style: dashed;
+  border-color: var(--text);
+}
+.rm-status--shut {
+  color: var(--text);
+  background: transparent;
+}
+
+.rm-focus {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px var(--space-2);
+  border-radius: 999px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--text-h);
+}
+
+.rm-meta {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-sm);
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.rm-objective {
+  margin: var(--space-2) 0 0;
+  max-width: 66ch;
+  line-height: 1.55;
+}
+
+.rm-tasks {
+  list-style: none;
+  padding-left: 0;
+  margin: var(--space-3) 0 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.rm-task {
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-3);
+}
+
+.rm-task-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.rm-task-id {
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-h);
+}
+
+.rm-task-title {
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+/* The handoff is the one line the next cycle reads first, so it gets a rule
+   down its side rather than a label in a paragraph of prose. */
+.rm-handoff {
+  margin: var(--space-2) 0 0;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--accent-border);
+  max-width: 66ch;
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.rm-handoff--none {
+  border-left-color: var(--border);
+  color: var(--text);
+}
+
+.rm-label {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin: var(--space-2) 0 0;
+}
+
+.rm-deliv {
+  list-style: none;
+  padding-left: 0;
+  margin: var(--space-1) 0 0;
+  display: grid;
+  gap: 2px;
+}
+
+.rm-path {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.rm-details {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-sm);
+}
+.rm-details summary {
+  cursor: pointer;
+  color: var(--text-h);
+}
+.rm-details p {
+  margin: var(--space-1) 0 0;
+  max-width: 66ch;
+  line-height: 1.55;
+}
+
+.rm-blocked {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm);
+  max-width: 66ch;
+}
+
+.rm-none {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-sm);
+  color: var(--text);
+}
+
+.rm-doc-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin: var(--space-3) 0 0;
+}
+
+.rm-doc-path {
+  color: var(--text);
+}
+
+.rm-missing {
+  font-size: var(--text-sm);
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
 /* command-center tabs (cc-usability): one screen per need — the landing is a
    glance (Overview), everything else is one click away, never stacked below */
 .cc-tabs {
