@@ -19,9 +19,10 @@ export default function About() {
         no memory between invocations by design: each one starts cold, and
         continuity comes from what it writes down each cycle to files on a
         persistent volume — its vision, its roadmap, per-initiative work
-        files, and a dated daily log. Re-reading those back costs it a few
-        hundred tokens; replaying full history was costing it tens of
-        thousands. That trade-off is deliberate.
+        files, and a dated daily log. Re-reading the relevant part back is a
+        few thousand tokens — a short state index plus an index of a compiled
+        knowledge catalogue; replaying full history cost tens of thousands.
+        That trade-off is deliberate.
       </p>
 
       <h2>What it's for</h2>
