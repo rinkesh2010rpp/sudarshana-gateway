@@ -1064,6 +1064,18 @@ kbd {
   color: inherit;
   margin: 1em 0;
 }
+/* target-size (WCAG 2.5.8): a 24x24 CSS px minimum on the link's OWN box.
+   axe measures the anchor, not its paragraph — a bare inline text link at
+   --text-sm is ~21px tall at 1024/768/390 and only clears 24px at 1280, so the
+   deep-linked transcript and day log failed 6 of 8 cells (measured 2026-11-19,
+   /data/gate-runs/2026-11-19-target-size.md). Inline-flex plus a min-height
+   gives the box the size without moving the text. */
+.ctrl-backlink a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  min-width: 24px;
+}
 .cc-l-head {
   display: flex;
   flex-wrap: wrap;

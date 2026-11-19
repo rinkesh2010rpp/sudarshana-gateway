@@ -823,7 +823,7 @@ export default function Control() {
         </section>
       )}
 
-      <p>
+      <p className="ctrl-backlink">
         <Link to="/">← Back home</Link>
       </p>
     </section>
