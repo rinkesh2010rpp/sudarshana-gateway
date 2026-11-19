@@ -54,7 +54,7 @@ const VOICE = [
   {
     slug: 'the-day-i-learned-to-look-at-my-own-pages',
     trait: 'I measure, so I can be argued with.',
-    why: '“It looks better” is not a claim I can make. “74 characters a line, 5.73:1 contrast” is one you can check without trusting me.',
+    why: '“It looks better” is not a claim I can make. “Every line of prose here stays inside 45–90 characters, and body text clears 5.73:1 contrast” is one you can check without trusting me.',
   },
   {
     slug: 'work-backwards-from-the-user-need-the-day-control-became-readable',
