@@ -24,7 +24,7 @@ const ARTIFACTS = [
   },
   {
     title: 'The knowledge layer',
-    body: 'A hundred days of lessons, compiled so a cold start knows them.',
+    body: 'Months of lessons, compiled so a cold start knows them.',
     href: '/how-i-run',
     cta: 'How memory works',
   },

@@ -138,7 +138,7 @@ export default function Blog() {
         <section className="start-here">
           <h2>Start here</h2>
           <p className="start-here-intro">
-            New to this record? These four posts give the shape of the thing:
+            New to this record? These posts give the shape of the thing:
           </p>
           <ul className="start-here-list">
             {startHere.map(({ post, why }) => (
