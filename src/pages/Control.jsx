@@ -205,19 +205,28 @@ export default function Control() {
   // nothing is added between the person and the panel's controls. Skipped for
   // 'loading' — that is the skeleton, the same shape still being filled in, and
   // focusing a placeholder would announce a panel that does not exist yet.
+  // The flag is only consumed when a heading was actually found and focused: a
+  // detail view commits `loading` first, and consuming it there would spend the
+  // press on a panel whose heading has not arrived yet — measured 11-19, an
+  // opened day log and an opened transcript both landed on <body> for that
+  // reason, and returned to it on "← back".
   useEffect(() => {
     if (!landRef.current) return
     if (phase !== 'ready' && phase !== 'unavailable') return
-    landRef.current = false
+    if (view && detail && detail.loading) return
     const heading = contentRef.current?.querySelector('h2')
     if (!heading) return
+    landRef.current = false
     heading.setAttribute('tabindex', '-1')
     // .ctrl-land suppresses the ring (see App.css): the panel replacing itself is
     // the feedback, and a ring would sit boxed around the headline until the
     // person moved focus.
     heading.classList.add('ctrl-land')
     heading.focus()
-  }, [phase, tab])
+    // `view`/`detail` are here so a press that opens a day log or a transcript
+    // re-runs this once its own heading commits, and once again when "← back"
+    // puts the list heading back on screen.
+  }, [phase, tab, view, detail])
 
   const detailRef = useRef(null)
   // Direct deep links: /control/sessions/:id and /control/logs/:date load
@@ -231,13 +240,13 @@ export default function Control() {
       routeSession &&
       !(view && view.kind === 'session' && view.id === routeSession)
     ) {
-      openSession(routeSession)
+      openSession(routeSession, false)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } else if (
       routeDate &&
       !(view && view.kind === 'log' && view.id === routeDate)
     ) {
-      openLog(routeDate)
+      openLog(routeDate, false)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
     // Intentional deps: re-run only when data readiness or the URL changes —
@@ -289,7 +298,11 @@ export default function Control() {
     if (tab === 'conversations' && focusTick > 0) filterRef.current?.focus()
   }, [tab, focusTick])
 
-  async function openSession(id) {
+  // `press` = a person chose this (a row press, a prev/next-day step), as
+  // against a deep link opening the page: a load must not steal focus from the
+  // top of the document, a press must not lose it.
+  async function openSession(id, press = true) {
+    if (press) landRef.current = true
     setView({ kind: 'session', id })
     setDetail({ loading: true, data: null, error: null })
     navigate(`/control/sessions/${encodeURIComponent(id)}`)
@@ -309,7 +322,8 @@ export default function Control() {
     }
   }
 
-  async function openLog(id) {
+  async function openLog(id, press = true) {
+    if (press) landRef.current = true
     const date = String(id).replace(/\.md$/, '')
     setView({ kind: 'log', id: date })
     setDetail({ loading: true, data: null, error: null })
@@ -326,7 +340,10 @@ export default function Control() {
     }
   }
 
+  // "← back" unmounts itself with the detail it sat in, so the list that comes
+  // back has to claim the focus the button could not keep.
   function closeDetail() {
+    landRef.current = true
     setView(null)
     setDetail(null)
     navigate('/control')
