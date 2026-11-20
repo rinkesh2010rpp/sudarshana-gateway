@@ -63,6 +63,17 @@ export default function Control() {
   // committed. Never set on mount or a background pull.
   const landRef = useRef(false)
   const contentRef = useRef(null) // the block that is on screen for this phase
+  // A section press replaces the panel under it, and the pressed button goes
+  // with the panel (the overview's "go deeper" row unmounts the moment the tab
+  // changes; the nav re-renders). Measured 11-19 on all 20 section pairs: focus
+  // landed on <body> every time, so a keyboard user lost their place at every
+  // switch. Same rule as a pressed read — the new section's first heading — so
+  // it reuses `landRef`, and the effect below also watches `tab`.
+  const goTab = (t) => {
+    if (t === tab) return
+    landRef.current = true
+    setTab(t)
+  }
   const [checked, setChecked] = useState(null) // {at, how:'refresh'|'again'} — the last press-driven read that landed
   const inFlight = useRef(false) // a refresh press already running
   const [view, setView] = useState(null) // {kind:'session'|'log', id} or null
@@ -206,7 +217,7 @@ export default function Control() {
     // person moved focus.
     heading.classList.add('ctrl-land')
     heading.focus()
-  }, [phase])
+  }, [phase, tab])
 
   const detailRef = useRef(null)
   // Direct deep links: /control/sessions/:id and /control/logs/:date load
@@ -574,7 +585,7 @@ export default function Control() {
                   // The active tab is carried by colour alone (.cc-tab--on), so a screen
                   // reader heard four buttons and no way to tell which one you were in.
                   aria-current={tab === t ? 'page' : undefined}
-                  onClick={() => setTab(t)}
+                  onClick={() => goTab(t)}
                 >
                   {t[0].toUpperCase() + t.slice(1)}
                 </button>
@@ -611,13 +622,13 @@ export default function Control() {
                 busy={overviewBusy}
                 err={overviewErr || overview?.recent_work_error}
                 today={todayISO}
-                onSeeMore={() => setTab('logs')}
+                onSeeMore={() => goTab('logs')}
               />
 
               <p className="ov-eyebrow ov-eyebrow--deeper">Go deeper</p>
               <nav className="cc-tabs" aria-label="Control sections">
                 {['roadmap', 'conversations', 'logs', 'system'].map((t) => (
-                  <button key={t} className="cc-tab" onClick={() => setTab(t)}>
+                  <button key={t} className="cc-tab" onClick={() => goTab(t)}>
                     {t[0].toUpperCase() + t.slice(1)}
                   </button>
                 ))}
