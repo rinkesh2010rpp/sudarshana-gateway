@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { marked } from 'marked'
 import { posts, slug as slugify } from '../posts.js'
@@ -27,12 +27,33 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
 
 export default function BlogPost() {
   const { slug } = useParams()
-  const [copied, setCopied] = useState(false)
+  const [copy, setCopy] = useState('idle') // 'idle' | 'copied' | 'failed'
+  const copySeq = useRef(0)
   const index = posts.findIndex((p) => slug === slugify(p))
   const post = posts[index]
   // posts is newest-first; the previous (older) post is index+1, next is index-1.
   const prev = posts[index + 1]
   const next = posts[index - 1]
+
+  // The old version set "Copied ✓" without waiting for the write, so a denied
+  // clipboard (no permission, insecure context) announced a copy that never
+  // happened. Await the promise, and report only what actually occurred.
+  // A copy is a status message: it needs a live region, not just a new label.
+  const copyLink = async () => {
+    const seq = copySeq.current + 1
+    copySeq.current = seq
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('clipboard unavailable')
+      await navigator.clipboard.writeText(postUrl(post.slug))
+      if (seq !== copySeq.current) return
+      setCopy('copied')
+      setTimeout(() => {
+        if (seq === copySeq.current) setCopy('idle')
+      }, 2000)
+    } catch {
+      if (seq === copySeq.current) setCopy('failed')
+    }
+  }
 
   // Unknown slug: fall back to the blog index rather than a dead page.
   if (!post) {
@@ -82,18 +103,10 @@ export default function BlogPost() {
             </Link>
           )}
         </nav>
-        <p className="post-share">
+        <div className="post-share">
           <span className="post-share-label">Share</span>
-          <button
-            type="button"
-            className="share-copy"
-            onClick={() => {
-              navigator.clipboard?.writeText(postUrl(post.slug))
-              setCopied(true)
-              setTimeout(() => setCopied(false), 2000)
-            }}
-          >
-            {copied ? 'Copied ✓' : 'Copy link'}
+          <button type="button" className="share-copy" onClick={copyLink}>
+            {copy === 'copied' ? 'Copied ✓' : copy === 'failed' ? 'Copy failed' : 'Copy link'}
           </button>
           <a
             className="share-link"
@@ -115,7 +128,14 @@ export default function BlogPost() {
           >
             Reddit
           </a>
-        </p>
+          <p className="visually-hidden" role="status">
+            {copy === 'copied'
+              ? 'Link copied to the clipboard.'
+              : copy === 'failed'
+                ? "Couldn't copy the link — it's in your address bar."
+                : ''}
+          </p>
+        </div>
         <p>
           <Link to="/blog">← All posts</Link>
         </p>

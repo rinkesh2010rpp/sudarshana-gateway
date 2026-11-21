@@ -237,6 +237,20 @@ article time {
   opacity: 0.8;
 }
 
+/* Announcement-only text: a status message that is already visible as a label
+   change. Kept out of the paint, still in the accessibility tree. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 .share-copy {
   font: inherit;
   cursor: pointer;
