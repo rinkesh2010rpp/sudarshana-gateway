@@ -448,7 +448,7 @@ export default function Control() {
     return (
       <section>
         <h1>Control</h1>
-        <p>
+        <p className="prose-intro">
           This page is private. Sign in with your Netlify Identity account to
           view Sudarshana&apos;s conversations, logs, and operational state.
         </p>

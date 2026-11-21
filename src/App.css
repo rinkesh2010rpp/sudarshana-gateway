@@ -1716,7 +1716,13 @@ h6 {
    95 at 1024 and 768 — 5 over the 45–90 band, on the least-trackable text on the page.
    A physical measure is constant; a character measure is not, which is why this only
    appeared at the middle widths. Capped to the same 66ch as every other prose block;
-   the fields keep their 560px, so the form does not move. */
+   the fields keep their 560px, so the form does not move.
+   R7 (2026-11-21): the sign-out gate on /control was this shape a third time — a bare <p>
+   in a <section>, 1124px wide, 129 characters a line, on the one page behind identity
+   that a stranger actually reaches. It now carries `.prose-intro`; the class sets no type,
+   only the cap, so nothing else about it moves. Found by measuring /control for the first
+   time rather than by a stage noticing — which is why /how-i-run and /control are now in
+   the measured set too. */
 .prose-intro,
 .post-excerpt,
 .post-body,
