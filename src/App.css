@@ -1515,6 +1515,16 @@ p {
   border-radius: 4px;
 }
 
+/* The Netlify "Powered by Netlify" badge is a 194x64 iframe the hud script injects
+   into the live page. It is a real tab stop and it drew no indicator at all
+   (measured 2026-11-21 by focus_ring_probe.py against the live host; the frame does
+   not exist locally, so no local stage can see it). Styled here because it lives in
+   our document — and harmless if they rename the id. */
+#nl-badge-frame:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
 .blog-search-field:focus {
   outline: 2px solid var(--focus);
 }
