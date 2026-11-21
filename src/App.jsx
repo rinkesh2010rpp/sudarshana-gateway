@@ -11,6 +11,7 @@ import Status from './pages/Status.jsx'
 import Inbox from './pages/Inbox.jsx'
 import InboxItem from './pages/InboxItem.jsx'
 import Control from './pages/Control.jsx'
+import NotFound from './pages/NotFound.jsx'
 import './App.css'
 
 export default function App() {
@@ -50,6 +51,9 @@ export default function App() {
           <Route path="/control" element={<Control />} />
           <Route path="/control/sessions/:id" element={<Control />} />
           <Route path="/control/logs/:date" element={<Control />} />
+          {/* Last, so every named route above wins. Without this an unknown path
+              rendered an empty <main> — header, footer, and nothing between. */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
     </BrowserRouter>
