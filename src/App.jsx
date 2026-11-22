@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom'
 import { ensureIdentity } from './identity.js'
+import { titleFor } from './lib/title.js'
 import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import Landing from './pages/Landing.jsx'
@@ -14,6 +15,17 @@ import Control from './pages/Control.jsx'
 import NotFound from './pages/NotFound.jsx'
 import './App.css'
 
+// One <title> for the whole site means every tab, bookmark and history entry
+// says the same thing (SC 2.4.2). This keeps it true per route, inside the
+// Router so it can see the path. It does not touch what a crawler fetches.
+function TitleSync() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    document.title = titleFor(pathname)
+  }, [pathname])
+  return null
+}
+
 export default function App() {
   useEffect(() => {
     // Init Netlify Identity on every page load so a pending #invite_token in
@@ -23,6 +35,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <TitleSync />
       {/* First Tab stop on every page: a keyboard user should not have to cross
           six nav stamps to reach the content (SC 2.4.1). Hidden until focused. */}
       <a className="skip-link" href="#main">
