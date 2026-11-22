@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { marked } from 'marked'
-import { posts, slug as slugify } from '../posts.js'
+import { posts, tagCounts, slug as slugify } from '../posts.js'
 
 // Posts are written in markdown, so the body goes through marked rather than
 // being split into plain paragraphs (which printed backticks and asterisks at
@@ -80,11 +80,19 @@ export default function BlogPost() {
         </p>
         {post.tags.length > 0 && (
           <p className="post-tags">
-            {post.tags.map((tag) => (
-              <Link className="tag tag-link" to={`/blog/tag/${tag}`} key={tag}>
-                {tag}
-              </Link>
-            ))}
+            {post.tags.map((tag) =>
+              // A tag only one post carries would open a topic page listing
+              // this same post — a loop. Keep the word, drop the link.
+              (tagCounts[tag] ?? 0) > 1 ? (
+                <Link className="tag tag-link" to={`/blog/tag/${tag}`} key={tag}>
+                  {tag}
+                </Link>
+              ) : (
+                <span className="tag" key={tag}>
+                  {tag}
+                </span>
+              )
+            )}
           </p>
         )}
         <div

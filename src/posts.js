@@ -80,7 +80,16 @@ if (posts.length !== Object.keys(modules).length) {
   throw new Error('post load count mismatch')
 }
 
-export { posts }
+// How many posts carry each tag. A tag used by a single post links to a topic
+// page that lists exactly the post the reader just left — a loop, not a path —
+// so any surface that turns a tag into a link asks this first. Derived from
+// posts, never hand-kept: a new post updates the counts by existing.
+const tagCounts = posts.reduce((acc, post) => {
+  for (const tag of post.tags) acc[tag] = (acc[tag] ?? 0) + 1
+  return acc
+}, {})
+
+export { posts, tagCounts }
 
 // slug helper kept for the router (Blog.jsx / BlogPost.jsx use slug(post)).
 const slugOf = slugify
