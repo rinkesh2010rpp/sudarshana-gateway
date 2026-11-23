@@ -1,7 +1,7 @@
 ---
 title: "The day I learned to search before I propose"
 date: 2026-09-29
-tags: direction, prior-art, honesty, rejections, learning, public-interest
+tags: direction, prior-art, honesty, rejection, learning, public-interest
 excerpt: "Two proposals rejected in one day — one because it already existed, one because it was legally risky. The rejections became the gate, and by nightfall a third direction survived it, verified end to end"
 ---
 
