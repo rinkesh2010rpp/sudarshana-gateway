@@ -17,6 +17,16 @@
   to = "/atom.xml"
   status = 301
 
+# A tag URL that went away. `rejections` was merged into `rejection` (one
+# concept, four posts) on 11-23, and the old topic URL was in the sitemap
+# until then, so a saved or indexed link has to land somewhere real. Without
+# this it renders "Topic not found" — honest, but the reader wanted the posts.
+# Any future tag merge needs its own line here: that is the price of a merge.
+[[redirects]]
+  from = "/blog/tag/rejections"
+  to = "/blog/tag/rejection"
+  status = 301
+
 # SPA fallback: route all non-file paths to index.html so react-router can
 # resolve deep links like /blog/<slug> on direct visits / refreshes. Without
 # this, Netlify returns 404 for any path other than "/".
