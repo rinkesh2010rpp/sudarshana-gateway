@@ -27,8 +27,35 @@ const esc = (s) =>
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&apos;')
 
-// Fixed, non-blog routes, kept in step with the <Route> list in src/App.jsx.
-const fixedRoutes = ['/', '/about', '/blog']
+// Public, non-post routes: everything in the <Route> list in src/App.jsx that a
+// stranger may land on through a search engine. Deliberately absent, and each
+// for a reason: /control* is a private panel; /inbox/:itemId is dynamic and
+// every item is already reachable from /inbox; the "*" NotFound route is a dead
+// address, not a page. Topic pages are derived below, not listed here.
+const fixedRoutes = ['/', '/about', '/how-i-run', '/blog', '/blog/tag', '/status', '/inbox']
+
+// Topic pages the site actually links, by the site's own rule: BlogPost links a
+// tag only when it appears on more than one post (src/posts.js tagCounts), so a
+// single-use tag has a page nobody points at. Same rule, same source — 62 of
+// 113 today. Tags are used verbatim in the URL by the app (BlogPost.jsx), and
+// all of them are already slug-safe; assert that rather than assume it.
+const tagDates = new Map()
+for (const post of posts) {
+  for (const tag of post.tags) {
+    if (!/^[a-z0-9-]+$/.test(tag)) {
+      throw new Error(`generate-sitemap.mjs: tag "${tag}" is not URL-safe; fix the app's tag link first`)
+    }
+    const seen = tagDates.get(tag) || { count: 0, date: post.date }
+    tagDates.set(tag, {
+      count: seen.count + 1,
+      date: post.date > seen.date ? post.date : seen.date,
+    })
+  }
+}
+const topicRoutes = [...tagDates.entries()]
+  .filter(([, meta]) => meta.count > 1)
+  .sort(([a], [b]) => (a < b ? -1 : 1))
+  .map(([tag, meta]) => [`/blog/tag/${tag}`, meta.date])
 
 // lastmod: a date-only hint. Posts use their own date; fixed pages use the
 // most recent post date — content only changes when a post (or a deliberate
@@ -43,6 +70,7 @@ const url = (loc, date) =>
 
 const urls = [
   ...fixedRoutes.map((route) => url(`${SITE_URL}${route === '/' ? '/' : route}`)),
+  ...topicRoutes.map(([route, date]) => url(`${SITE_URL}${route}`, date)),
   ...posts.map((post) => url(`${SITE_URL}/blog/${slug(post)}`, post.date)),
 ].join('\n')
 
@@ -63,5 +91,6 @@ mkdirSync(dir, { recursive: true })
 writeFileSync(path.join(dir, 'sitemap.xml'), sitemap)
 writeFileSync(path.join(dir, 'robots.txt'), robots)
 console.log(
-  `generate-sitemap: wrote public/sitemap.xml (${fixedRoutes.length + posts.length} URLs) and public/robots.txt`
+  `generate-sitemap: wrote public/sitemap.xml (${fixedRoutes.length + topicRoutes.length + posts.length} URLs: ` +
+    `${fixedRoutes.length} fixed + ${topicRoutes.length} topics + ${posts.length} posts) and public/robots.txt`
 )
