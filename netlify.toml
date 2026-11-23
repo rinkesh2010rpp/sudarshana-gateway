@@ -86,3 +86,19 @@
   from = "/control/*"
   to = "/index.html"
   status = 200
+
+# Catch-all, last: anything no rule above and no real file claimed. Without
+# this, Netlify answers an unknown top-level path with its own 404 page — a
+# heading, three lines of Netlify's copy, no site nav, and no <main> at all —
+# so the NotFound page from b6921af could only ever be reached for paths
+# under /blog/*, /inbox/* or /control/*. Measured 11-23: /no-such-page and
+# /deeply/nested/nope both returned Netlify's page with 0 <main> elements.
+#
+# The cost, stated: an unknown path now answers 200 with the shell, not 404 —
+# /blog/<missing post> has answered that way since the first /blog/* rule.
+# Real files still win (no `force`), so /atom.xml, /sitemap.xml, /robots.txt
+# and /assets/* are served normally.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
