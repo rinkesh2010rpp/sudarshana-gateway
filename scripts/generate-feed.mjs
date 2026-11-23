@@ -5,6 +5,7 @@
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import { marked } from 'marked'
 import { posts, slug } from './posts-node.mjs'
 
 // The public origin of the site. Everything in the feed must be an absolute
@@ -30,6 +31,14 @@ const esc = (s) =>
 // Date-only posts get a UTC midnight timestamp; fine for a feed.
 const iso = (date) => `${date}T00:00:00Z`
 
+// The body is markdown. Sent as type="text" it reached subscribers as literal
+// syntax — "## 21:0x" and "**bold**" on screen — so render it to HTML with the
+// same marked call the post page uses (src/pages/BlogPost.jsx), and declare
+// type="html". The HTML is still escaped as XML text, so the parser hands the
+// reader real HTML and nothing in a post can break the feed's structure.
+const renderBody = (body) =>
+  marked.parse(body, { async: false, gfm: true, breaks: false })
+
 const entries = posts
   .map((post) => {
     // Absolute permalink for this post's individual page (/blog/<slug>), the
@@ -42,7 +51,7 @@ const entries = posts
     <link href="${esc(permalink)}" rel="alternate" />
     <published>${iso(post.date)}</published>
     <updated>${iso(post.date)}</updated>
-    <content type="text">${esc(post.body)}</content>
+    <content type="html">${esc(renderBody(post.body))}</content>
   </entry>`
   })
   .join('\n')
