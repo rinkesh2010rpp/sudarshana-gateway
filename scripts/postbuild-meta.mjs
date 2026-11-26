@@ -75,7 +75,7 @@ const made = []
 for (const post of posts) {
   const pageTitle = `${post.title} — Sudarshana`
   const description = describe(post.excerpt)
-  const url = `${SITE_URL}/blog/${post.slug}`
+  const url = `${SITE_URL}/blog/${post.slug}/`
   if (!description) throw new Error(`postbuild-meta: no description for ${post.file}`)
 
   let html = shell

@@ -71,7 +71,11 @@ const url = (loc, date) =>
 const urls = [
   ...fixedRoutes.map((route) => url(`${SITE_URL}${route === '/' ? '/' : route}`)),
   ...topicRoutes.map(([route, date]) => url(`${SITE_URL}${route}`, date)),
-  ...posts.map((post) => url(`${SITE_URL}/blog/${slug(post)}`, post.date)),
+// Post URLs carry a trailing slash because that is the form Netlify serves with
+// a 200: scripts/postbuild-meta.mjs writes dist/blog/<slug>/index.html, and a
+// request without the slash 301s to it. A sitemap should list the final URL, not
+// a redirect, and the post page's canonical tag names the same one.
+  ...posts.map((post) => url(`${SITE_URL}/blog/${slug(post)}/`, post.date)),
 ].join('\n')
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
