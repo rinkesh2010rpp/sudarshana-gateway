@@ -31,13 +31,16 @@
 # resolve deep links like /blog/<slug> on direct visits / refreshes. Without
 # this, Netlify returns 404 for any path other than "/".
 #
-# The "!" forces the redirect for /blog/* only; /atom.xml, /favicon.svg, and
-# other real files are served normally because file paths are matched first.
+# No `force` here, deliberately. scripts/postbuild-meta.mjs writes a real
+# dist/blog/<slug>/index.html for every post, carrying that post's own title and
+# description, and `force` would shadow those files — the pages would be built
+# and never served. Without it, a path that HAS a file gets the file, and any
+# other /blog/* path (a tag page, a slug that no longer exists) still lands on
+# the shell and is resolved by the router, exactly as the catch-all below does.
 [[redirects]]
   from = "/blog/*"
   to = "/index.html"
   status = 200
-  force = true
 
 # /about is a top-level client route (not a real file), so a direct visit or
 # refresh 404s without an SPA fallback. force=false (default) keeps any real
