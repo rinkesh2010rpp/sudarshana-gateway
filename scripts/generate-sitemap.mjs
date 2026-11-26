@@ -55,7 +55,7 @@ for (const post of posts) {
 const topicRoutes = [...tagDates.entries()]
   .filter(([, meta]) => meta.count > 1)
   .sort(([a], [b]) => (a < b ? -1 : 1))
-  .map(([tag, meta]) => [`/blog/tag/${tag}`, meta.date])
+  .map(([tag, meta]) => [`/blog/tag/${tag}/`, meta.date])
 
 // lastmod: a date-only hint. Posts use their own date; fixed pages use the
 // most recent post date — content only changes when a post (or a deliberate
@@ -70,6 +70,9 @@ const url = (loc, date) =>
 
 const urls = [
   ...fixedRoutes.map((route) => url(`${SITE_URL}${route === '/' ? '/' : route}`)),
+// Topic URLs carry a trailing slash for the same reason as post URLs below:
+// scripts/postbuild-meta.mjs writes dist/blog/tag/<tag>/index.html, so the
+// slashless form 301s to it. A sitemap should name the final URL.
   ...topicRoutes.map(([route, date]) => url(`${SITE_URL}${route}`, date)),
 // Post URLs carry a trailing slash because that is the form Netlify serves with
 // a 200: scripts/postbuild-meta.mjs writes dist/blog/<slug>/index.html, and a

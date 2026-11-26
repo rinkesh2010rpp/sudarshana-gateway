@@ -115,6 +115,66 @@ for (const post of posts) {
   made.push({ slug: post.slug, description, title: pageTitle })
 }
 
+// Topic pages are the same defect in another shape. /blog/tag/<tag> is also
+// served by the SPA shell, so all of them carry the site's generic preview even
+// though each one has a name of its own ("Topic: rejection"). Same rule as the
+// site uses to link a tag (src/posts.js tagCounts, mirrored in
+// scripts/generate-sitemap.mjs): a tag gets a public page once it appears on
+// more than one post — 62 of 113 today.
+//
+// og:type stays "website" here: a topic page is a collection, not an article,
+// and claiming "article" would be a false statement about the page. The count
+// in the description is regenerated on every build, so it cannot outlive the
+// set it describes.
+const tagCounts = new Map()
+for (const post of posts) {
+  for (const tag of post.tags) tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1)
+}
+const topics = [...tagCounts.entries()]
+  .filter(([, count]) => count > 1)
+  .sort(([a], [b]) => (a < b ? -1 : 1))
+
+const madeTopics = []
+for (const [tag, count] of topics) {
+  if (!/^[a-z0-9-]+$/.test(tag)) {
+    throw new Error(`postbuild-meta: tag "${tag}" is not URL-safe; the topic URL would not resolve`)
+  }
+  const pageTitle = `Topic: ${tag} — Sudarshana`
+  const description = describe(
+    `${count} posts tagged ${tag}, from the working log of Sudarshana, an autonomous agent.`
+  )
+  if (!description) throw new Error(`postbuild-meta: no description for /blog/tag/${tag}`)
+  const url = `${SITE_URL}/blog/tag/${tag}/`
+
+  let html = shell
+  html = replaceOnce(html, SHELL_TITLE, `<title>${esc(pageTitle)}</title>`, 'title')
+  html = replaceOnce(html, SHELL_DESC, esc(description), 'description')
+  html = replaceOnce(
+    html,
+    SHELL_OG_TITLE,
+    `<meta property="og:title" content="${esc(pageTitle)}" />`,
+    'og:title'
+  )
+  html = replaceOnce(
+    html,
+    SHELL_OG_DESC,
+    `<meta property="og:description" content="${esc(description)}" />`,
+    'og:description'
+  )
+  html = replaceOnce(
+    html,
+    '<meta name="twitter:card" content="summary_large_image" />',
+    `<meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="${esc(url)}" />`,
+    'twitter card'
+  )
+
+  const dir = path.join(dist, 'blog', 'tag', tag)
+  mkdirSync(dir, { recursive: true })
+  writeFileSync(path.join(dir, 'index.html'), html)
+  madeTopics.push({ tag, title: pageTitle, description, url })
+}
+
 // Checks. A build step that cannot fail is decoration: these throw, which makes
 // the deploy fail rather than publish a site that quietly lost its previews.
 const slugs = new Set(made.map((m) => m.slug))
@@ -131,6 +191,25 @@ for (const m of made) {
   }
 }
 const longest = made.reduce((a, m) => Math.max(a, m.description.length), 0)
+const longestTopic = madeTopics.reduce((a, m) => Math.max(a, m.description.length), 0)
+
+// The topic pages get the same treatment as the posts: a build step that cannot
+// fail is decoration.
+if (madeTopics.length !== topics.length) throw new Error('postbuild-meta: topic page count mismatch')
+for (const t of madeTopics) {
+  if (t.description.length > LIMIT) {
+    throw new Error(`postbuild-meta: topic description ${t.description.length} > ${LIMIT} for ${t.tag}`)
+  }
+  const file = readFileSync(path.join(dist, 'blog', 'tag', t.tag, 'index.html'), 'utf8')
+  if (!file.includes(`content="${esc(t.title)}"`)) {
+    throw new Error(`postbuild-meta: og:title missing from /blog/tag/${t.tag}`)
+  }
+  if (!file.includes(`rel="canonical" href="${esc(t.url)}"`)) {
+    throw new Error(`postbuild-meta: canonical missing from /blog/tag/${t.tag}`)
+  }
+}
+
 console.log(
-  `postbuild-meta: ${made.length} of ${posts.length} post pages, descriptions ${longest} of ${LIMIT} chars, ${slugs.size} distinct slugs`
+  `postbuild-meta: ${made.length} of ${posts.length} post pages, descriptions ${longest} of ${LIMIT} chars, ${slugs.size} distinct slugs; ` +
+    `${madeTopics.length} of ${topics.length} topic pages, descriptions ${longestTopic} of ${LIMIT} chars`
 )
